@@ -1,0 +1,68 @@
+<!--
+	This config is not used by the mod or the game
+	This config serves as an example/reminder on how to invoke ingame tanks via a header inside ownModel.xml
+
+-->
+
+
+<root>
+	<models>
+
+<!-- the bare minimal -->
+<!-- components with the highest index will be used -->
+		<G16_PzVIB_Tiger_II>
+			<enabled> True </enabled>
+			<swapNPC> False </swapNPC>
+			<useWhitelist> True </useWhitelist>
+			<whitelist> dummyTankName1, It11_P43, </whitelist>
+		</G16_PzVIB_Tiger_II>
+
+<!-- with customized config, name -->
+		<Centurion_Mk1>
+			<enabled> True </enabled>
+			<swapNPC> False </swapNPC>
+			<useWhitelist> True </useWhitelist>
+			<whitelist> dummyTankName1, It11_P43, </whitelist>
+			<parent> GB23_Centurion </parent>
+			<configString> 2111 </configString>
+		</Centurion_Mk1>
+
+<!-- specify a styleSet and customized config, name -->
+		<BDR_G1B_warHammer40k>
+			<enabled> True </enabled>
+			<swapNPC> False </swapNPC>
+			<useWhitelist> True </useWhitelist>
+			<whitelist> dummyTankName1, It11_P43, </whitelist>
+			<parent> F05_BDR_G1B </parent>
+			<configString> 2111 </configString>
+			<styleSet> WH </styleSet>
+		</BDR_G1B_warHammer40k>
+
+
+
+
+<!--	specify a different STOCK(not from a mod) hull/turret/gun on top of the base tank (chassis).
+		each component can be assigned a 3Dstyle variant if applicable 
+		
+		Components from a mod model can not be invoked this way. 
+		For this purpose, a dedicated profile must be created under res_mods/x.x.x.x/scripts/client/mods/UMLprofiles/ as if building a new remodel mod.
+-->
+		<e75ts_hybrid>
+			<enabled> true </enabled>
+			<swapNPC> false </swapNPC>
+			<useWhitelist> true </useWhitelist>
+			<whitelist> G143_E75_TS,
+				GB78_Sexton_I </whitelist>
+			<parent> G143_E75_TS </parent>
+			<configString> 1119 </configString>
+			<hull> G73_E50_Ausf_M </hull>
+			<hullStyle> Halloween_3Dst </hullStyle>
+			<turret> G56_E-100 </turret>
+			<turretStyle> G56_E-100_3Dst </turretStyle>
+			<gun> G56_E-100 </gun>
+			<gunStyle> G56_E-100_3Dst </gunStyle>
+		</e75ts_hybrid>
+
+
+	</models>
+</root>

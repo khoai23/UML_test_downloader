@@ -1,0 +1,1 @@
+example.html	https://pyinstaller.readthedocs.io/en/stable/operating-mode.html

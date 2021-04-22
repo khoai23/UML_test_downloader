@@ -1,0 +1,65 @@
+<!--
+	author: atacms
+	19/10/2017
+	Configs are now divided into serveral lib files and one end-user config file.
+	The purporse is to preserve user config when loader or remodel got updated.
+
+	<configEndUser> links to an XML that defines which profiles to activate, and how they should be activated.
+		General options defined within this file will overwrite the same options found inside ownModelMeta.xml
+		So that by preserving this file(ownModel.xml) during Mod update, user can reuse previous config.
+
+	<configLib> defines the filename that contain information on remodel profiles.
+		<enabled> <swapNPC> <useWhitelist> <whitelist> in these files still work but not recommended. 
+		Because when these files got updated, user modification made to them will be lost.
+		Remodel profile will be active if it's enabled in either <configLib> or <configEndUser>. 
+		To disable however, require it be deactived in lib AND deactivated/removed in end-user config
+		So in release default, all profiles within these lib files are disabled.
+		
+	Aside from <configLib>, any xml found under res_mods/x.x.x/scripts/client/mods/UMLprofiles will be treated 
+	like a lib file and loaded after <configLib>. It's made so that remodels in *.wotmod format can be packed
+	with a pre-enabled profile under this path without interfering with each other.
+
+		
+-->
+
+<root>
+	<configEndUser>ownModel.xml</configEndUser>
+	<configEndUserAutoFill> True </configEndUserAutoFill>
+	<configLib>lib_stock.xml, lib_remodel.xml, lib_vlss.xml</configLib>
+	<debug> False </debug>
+	<affectHangar> True </affectHangar>
+	<removeClanLogo> False </removeClanLogo>
+	<swapAllFriendly> False </swapAllFriendly>
+	<friendlyProfiles>milky_T-90A, W07_T80BV, W09_BMP2 </friendlyProfiles>
+	<swapAllEnemy> False </swapAllEnemy>
+	<enemyProfiles> g137_pzvi_tiger_217</enemyProfiles>
+	
+	<!-- hotkey to execute and rewind customized animation if it is defined as hotkey triggered.
+	for valid keycode check hotkeys.txt
+	-->
+	<hotkey_animation>KEY_INSERT</hotkey_animation>
+	<hotkey_animation_reverse>KEY_DELETE</hotkey_animation_reverse>
+	<hotkey_fire_secondary>KEY_BACKSLASH</hotkey_fire_secondary>
+	
+	<!-- override rank of MOE for specified tanks
+	auto - do not change
+	0    - no MOE (rank 0)
+	1    - rank 1 MOE
+	2    - rank 2 MOE
+	3    - rank 3 MOE
+	 -->
+	<MOE_rank> auto </MOE_rank>
+	
+	<!-- override MOE nation type for all nations -->
+	<!-- possible values: auto, ussr, germany, usa, china, france, uk, japan, czech, sweden, poland-->
+	<MOE_nation> auto </MOE_nation>
+	
+	<!-- if previous setting is not 'auto', change MOE rank for following tanks -->
+	<!-- 'any' means all player-controlled tank -->
+	<MOE_list>
+		dummy,
+		f28_105_lefh18b2
+	</MOE_list>
+	
+
+</root>

@@ -1,0 +1,7 @@
+<gun_reload_effects.xml>
+  <uml_reload_abrams>
+    <type>	SimpleReload	</type>
+    <duration>2899</duration>
+    <sound>uml_gun_rld_abrams</sound>
+  </uml_reload_abrams>
+</gun_reload_effects.xml>

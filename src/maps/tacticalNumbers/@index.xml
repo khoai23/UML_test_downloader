@@ -1,0 +1,46 @@
+<root>
+	<!-- index offset to move these decals away from sections already occupied by stock WoT decals-->	
+	<!-- by setting it to 0 it's possible to overwrite stock WoT playerEmblems -->
+	<offset> 16100 </offset> 
+
+	<styleSets>
+		<germany>
+			<indexStart>0</indexStart>
+			<path>maps/tacticalNumbers/germany</path>
+		</germany>
+		<russian>
+			<indexStart>10</indexStart>
+			<path>maps/tacticalNumbers/russian</path>
+		</russian>
+		<germany_red>
+			<indexStart>20</indexStart>	
+			<path>maps/tacticalNumbers/germany_red</path>
+		</germany_red>
+		<uk>
+			<indexStart>60</indexStart>	
+			<path>maps/tacticalNumbers/uk</path>
+		</uk>
+		
+		
+		<!-- courtesy of wookiee_monster -->
+		<russian_old>
+			<indexStart>30</indexStart>
+			<path>maps/tacticalNumbers/russian_old</path>
+		</russian_old>
+		<sweden>
+			<indexStart>40</indexStart>
+			<path>maps/tacticalNumbers/sweden</path>
+		</sweden>
+		<chinese>
+			<indexStart>50</indexStart>
+			<path>maps/tacticalNumbers/chinese</path>
+		</chinese>
+
+		<!-- courtesy of Ceberion_Lancer -->
+		<russian_red>
+			<indexStart>70</indexStart>	
+			<path>maps/tacticalNumbers/russian_red</path>
+		</russian_red>
+
+	</styleSets>
+</root>

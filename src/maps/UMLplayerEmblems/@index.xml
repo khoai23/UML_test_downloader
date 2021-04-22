@@ -1,0 +1,91 @@
+<root>
+
+	<!-- index offset to move UML emblems away from sections already occupied by stock WoT decals-->	
+	<!-- by setting it to 0 it's possible to overwrite stock WoT playerEmblems -->
+	<offset> 16000 </offset> 
+
+	<emblems>
+
+		<!-- Polish Insignias, courtesy of RazNaRok -->
+		<poland_chekers_diamond>
+			<id> 0 </id>	
+			<path> maps/UMLplayerEmblems/sticker_00.dds </path>
+			<comment> Emblem of Polish Army, diamond shape(1960-1980)</comment>
+		</poland_chekers_diamond>
+		<poland_eagle>
+			<id> 1 </id>	
+			<path> maps/UMLplayerEmblems/sticker_01.dds </path>
+			<comment>white eagle emblem </comment>
+		</poland_eagle>
+		<poland_bison>
+			<id> 2 </id>	
+			<path> maps/UMLplayerEmblems/sticker_02.dds </path>
+			<comment>white bison emblem </comment>
+		</poland_bison>
+		<poland_bear>
+			<id> 3 </id>	
+			<path> maps/UMLplayerEmblems/sticker_03.dds </path>
+			<comment>black bear emblem </comment>
+		</poland_bear>
+		<poland_wing>
+			<id> 4 </id>	
+			<path> maps/UMLplayerEmblems/sticker_04.dds </path>
+			<comment>black winged helmet </comment>
+		</poland_wing>
+		<poland_scorpion1>
+			<id> 5 </id>	
+			<path> maps/UMLplayerEmblems/sticker_05.dds </path>
+			<comment>black scorpion </comment>
+		</poland_scorpion1>
+		<poland_scorpion2>
+			<id> 6 </id>	
+			<path> maps/UMLplayerEmblems/sticker_06.dds </path>
+			<comment>black scorpion with red triangle </comment>
+		</poland_scorpion2>
+		<poland_puma>
+			<id> 7 </id>	
+			<path> maps/UMLplayerEmblems/sticker_07.dds </path>
+			<comment>white puma </comment>
+		</poland_puma>
+		<WoTi>
+			<id> 8 </id>	
+			<path> maps/UMLplayerEmblems/WoTi.dds </path>
+			<comment>clan logo WoT international </comment>
+		</WoTi>
+		<ODS_V>
+			<id> 9 </id>	
+			<path> maps/UMLplayerEmblems/ODS_V.dds </path>
+			<comment>ODS V symbol </comment>
+		</ODS_V>
+		<ODS_Vsmall>
+			<id> 10 </id>	
+			<path> maps/UMLplayerEmblems/ODS_Vsmall.dds </path>
+			<comment>ODS V symbol (small) </comment>
+		</ODS_Vsmall>
+		<round_yellow>
+			<id> 11 </id>	
+			<path> maps/UMLplayerEmblems/round_yellow.dds </path>
+			<comment>round shape yellow </comment>
+		</round_yellow>
+		<round_green>
+			<id> 12 </id>	
+			<path> maps/UMLplayerEmblems/round_green.dds </path>
+			<comment>round shape green </comment>
+		</round_green>
+		<round_white>
+			<id> 13 </id>	
+			<path> maps/UMLplayerEmblems/round_white.dds </path>
+			<comment>round shape white </comment>
+		</round_white>
+		<dashCircle_black>
+			<id> 14 </id>	
+			<path> maps/UMLplayerEmblems/dashCircle_black.dds </path>
+			<comment>dashed black circle (UK) </comment>
+		</dashCircle_black>
+		<dashCircle_white>
+			<id> 15 </id>	
+			<path> maps/UMLplayerEmblems/dashCircle_white.dds </path>
+			<comment>dashed white circle (UK) </comment>
+		</dashCircle_white>
+	</emblems>
+</root>
