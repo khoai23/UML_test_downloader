@@ -21,37 +21,53 @@ def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="
         df.write("\n".join(lines))
     outstream.write("{:d} Entries written to file {:s}.\n".format(len(filelist), dfile))
 
-def download(filename, onlinefile, retry=3, wait=1.0, cacheloc=None, outstream=sys.stdout):
+def download(filepath, onlinefile, retry=3, wait=1.0, cacheloc=None, outstream=sys.stdout):
     # download raw file and make directory if needed
-    if not os.path.exists(os.path.dirname(filename)):
+    if not os.path.exists(os.path.dirname(filepath)):
         try:
-            os.makedirs(os.path.dirname(filename))
+            os.makedirs(os.path.dirname(filepath))
         except OSError as exc: # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise exc
                 
-    # if the file is found in cacheloc, copy over
-    if(cacheloc is not None and os.path.exists(os.path.join(cacheloc, filename))):
-        shutil.copyfile(os.path.join(cacheloc, filename), filename)
-        outstream.write("Found file in cache directory, copying {:s} -> {:s}".format(os.path.join(cacheloc, filename), filename))
+    # if the file already exist, skip
+    if(os.path.exists(filepath)):
+        outstream.write("Found file {:s} already in directory.\n".format(filepath))
+        return
     
-    with open(filename, "wb") as f:
-        while(retry > 0):
-            try:
-                data = requests.get(onlinefile).content
+    # if the file is found in cacheloc, copy over
+    if(cacheloc is not None and os.path.exists(os.path.join(cacheloc, os.path.basename(filepath)))):
+        cachepath = os.path.join(cacheloc, os.path.basename(filepath))
+        shutil.copyfile(cachepath, filepath)
+        outstream.write("Found file in cache directory, copying {:s} -> {:s}\n".format(cachepath, filepath))
+        return
+    
+    while(retry > 0):
+        try:
+            response = requests.get(onlinefile)
+            if(response.status_code == 200):
+                data = response.content # only this get out of the function and go to f.write
                 retry = 0
-            except Exception as e:
+            elif(response.status_code == 404):
+                # no file to download
+                outstream.write("Request received 404 code, please recheck the online path {:s}\n.".format(onlinefile))
+                return
+            else:
+                outstream.write("Request received unusual status code {:d}\n".format(response.status_code))
                 retry -= 1
-                if(retry == 0): # if pass n-times retries, raise the exception
-                    outstream.write("Out of retries for downloading {:s} -> {:s}, exiting.".format(onlinefile, filename))
-                    raise e
-                else:
-                    outstream.write("The last attempt failed, retries left: {:d}, waiting {:.2f} before retrying.\n".format(retry, wait))
-                    outstream.write(str(e) + "\n")
-                    if(wait > 0.0):
-                        time.sleep(wait * 1000)
+        except Exception as e:
+            retry -= 1
+            if(retry == 0): # if pass n-times retries, raise the exception
+                outstream.write("Out of retries for downloading {:s} -> {:s}, exiting.\n".format(onlinefile, filepath))
+                raise e
+            else:
+                outstream.write("The last attempt failed, retries left: {:d}, waiting {:.2f} before retrying.\n".format(retry, wait))
+                outstream.write(str(e) + "\n")
+                if(wait > 0.0):
+                    time.sleep(wait * 1000)
+    with open(filepath, "wb") as f:
         f.write(data)
-    outstream.write("File {:s} downloaded to {:s}\n".format(onlinefile, filename))
+    outstream.write("File {:s} downloaded to {:s}\n".format(onlinefile, filepath))
 
 def download_to_folder(required_file, location, outstream=sys.stdout):
     # download all files specified to specific location

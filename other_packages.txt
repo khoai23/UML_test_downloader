@@ -5,7 +5,7 @@ TheFalkonett/UUP-UK	UUP/British HTs/TheFalkonett's_UUP_Super_Conqueror.wotmod	(U
 
 Atacms's models
 khoai23/UML_test_downloader	mods/[atacms]W14_T80U.wotmod	Atacms T-80U model
-khoai23/UML_test_downloader	mods/[atacms]R87_T62A_ejection	Atacms T-62A (casing ejection)
+khoai23/UML_test_downloader	mods/[atacms]R87_T62A_ejection.wotmod	Atacms T-62A (casing ejection)
 khoai23/UML_test_downloader	mods/UUP_A88_M53_55.wotmod	Atacms M53/55 (resting spade)
 
 Private, untested/unchecked.
