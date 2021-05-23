@@ -1,0 +1,27 @@
+[submodule "mods/UUP-USSR"]
+	path = mods/UUP-USSR
+	url = https://github.com/TheFalkonett/UUP-USSR.git
+[submodule "mods/UUP-UK"]
+	path = mods/UUP-UK
+	url = https://github.com/TheFalkonett/UUP-UK.git
+[submodule "mods/UUP-Germany"]
+	path = mods/UUP-Germany
+	url = https://github.com/TheFalkonett/UUP-Germany.git
+[submodule "mods/UUP-China"]
+	path = mods/UUP-China
+	url = https://github.com/TheFalkonett/UUP-China.git
+[submodule "mods/UUP-Japan"]
+	path = mods/UUP-Japan
+	url = https://github.com/TheFalkonett/UUP-Japan.git
+[submodule "mods/UUP-France"]
+	path = mods/UUP-France
+	url = https://github.com/TheFalkonett/UUP-France.git
+[submodule "mods/UUP-USA"]
+	path = mods/UUP-USA
+	url = https://github.com/TheFalkonett/UUP-USA.git
+[submodule "mods/UUP-CZ-SK"]
+	path = mods/UUP-CZ-SK
+	url = https://github.com/TheFalkonett/UUP-CZ-SK.git
+[submodule "mods/UUP-Sweden"]
+	path = mods/UUP-Sweden
+	url = https://github.com/TheFalkonett/UUP-Sweden.git
