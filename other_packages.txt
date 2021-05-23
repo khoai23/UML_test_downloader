@@ -1,0 +1,9 @@
+Falkonett's UUP
+TheFalkonett/UUP-Germany	UUP/German HTs/TheFalkonett's_UUP_Maus.wotmod	(UUP) Falkonett's Maus
+TheFalkonett/UUP-Germany	UUP/German LTs/TheFalkonett's_UUP_SP_I_C.wotmod	(UUP) Falkonett's Spähpanzer SP I.C.
+TheFalkonett/UUP-UK	UUP/British HTs/TheFalkonett's_UUP_Super_Conqueror.wotmod	(UUP) Falkonett's Super Conqueror
+
+External Sourced
+
+
+Private, untested/unchecked.
