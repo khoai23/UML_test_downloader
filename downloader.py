@@ -1,98 +1,11 @@
 import tkinter as tk
 from tkinter import filedialog, font
 import io, os, sys, time
-import shutil
-import errno
 import requests
-import zipfile36 as zipfile
-REQUIRED_FILES_LOCS = "required.txt"
 
-GITHUB_PATTERN = "https://raw.githubusercontent.com/{:s}/master/{:s}" # first is repo, second is 
-def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="src", outstream=sys.stdout):
-    # generate paths using the pattern specified above
-    with open(dfile, "w") as df:
-        filelist = []
-        for root, folders, files in os.walk(src_dir):
-            for f in files:
-                truepath = os.path.join(root, f)
-                onlinepath = GITHUB_PATTERN.format(repo, truepath.replace("\\", "/"))
-                filelist.append( (truepath, onlinepath) )
-        lines = ("\t".join(paths) for paths in filelist)
-        df.write("\n".join(lines))
-    outstream.write("{:d} Entries written to file {:s}.\n".format(len(filelist), dfile))
-
-def download(filepath, onlinefile, retry=3, wait=1.0, cacheloc=None, outstream=sys.stdout):
-    # download raw file and make directory if needed
-    if not os.path.exists(os.path.dirname(filepath)):
-        try:
-            os.makedirs(os.path.dirname(filepath))
-        except OSError as exc: # Guard against race condition
-            if exc.errno != errno.EEXIST:
-                raise exc
-                
-    # if the file already exist, skip
-    if(os.path.exists(filepath)):
-        outstream.write("Found file {:s} already in directory.\n".format(filepath))
-        return
-    
-    # if the file is found in cacheloc, copy over
-    if(cacheloc is not None and os.path.exists(os.path.join(cacheloc, os.path.basename(filepath)))):
-        cachepath = os.path.join(cacheloc, os.path.basename(filepath))
-        shutil.copyfile(cachepath, filepath)
-        outstream.write("Found file in cache directory, copying {:s} -> {:s}\n".format(cachepath, filepath))
-        return
-    
-    while(retry > 0):
-        try:
-            response = requests.get(onlinefile)
-            if(response.status_code == 200):
-                data = response.content # only this get out of the function and go to f.write
-                retry = 0
-            elif(response.status_code == 404):
-                # no file to download
-                outstream.write("Request received 404 code, please recheck the online path {:s}\n.".format(onlinefile))
-                return
-            else:
-                outstream.write("Request received unusual status code {:d}\n".format(response.status_code))
-                retry -= 1
-        except Exception as e:
-            retry -= 1
-            if(retry == 0): # if pass n-times retries, raise the exception
-                outstream.write("Out of retries for downloading {:s} -> {:s}, exiting.\n".format(onlinefile, filepath))
-                raise e
-            else:
-                outstream.write("The last attempt failed, retries left: {:d}, waiting {:.2f} before retrying.\n".format(retry, wait))
-                outstream.write(str(e) + "\n")
-                if(wait > 0.0):
-                    time.sleep(wait * 1000)
-    with open(filepath, "wb") as f:
-        f.write(data)
-    outstream.write("File {:s} downloaded to {:s}\n".format(onlinefile, filepath))
-
-def download_to_folder(required_file, location, outstream=sys.stdout):
-    # download all files specified to specific location
-    with io.open(required_file, "r") as rf:
-        filelist = [l.strip().split("\t") for l in rf.readlines()] # should be trueloc\tdownloc
-        #print(filelist)
-    for f, o in filelist:
-        truepath = os.path.join(location, f)
-        download(truepath, o, outstream=outstream)
-    outstream.write("Downloaded a total of {:d} files\n".format(len(filelist)))
-
-def extractZip(zf_path, extract_location, rollback=False, outstream=sys.stdout):
-    # attempt to record the files created; if encounter an error and enabled rollback, remove all files found in the namelist
-    with zipfile.ZipFile(zf_path, 'r') as zf:
-        namelist = zf.namelist()
-        try:
-            zf.extractall(path=extract_location)
-        except ValueError:
-            if(rollback):
-                [ os.path.exists(os.path.join(extract_location, f)) and os.remove(os.path.join(extract_location, f))
-                    for f in namelist] # might be a ridiculous one liner
-        #print(namelist)
-    outstream.write("Extracted file {:s} in directory {:s}\n".format(zf_path, extract_location))
-    return namelist
-
+import filehandler
+from filehandler import GITHUB_PATTERN
+ 
 def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid location..", outstream=sys.stdout):
     # open a filedialog and select a location
     if(failvar is None):
@@ -118,7 +31,57 @@ def check_location(strvar, failvar=None, cond=location_cond, failvalue="Select a
     else:
         return True
 
-def checkbox_frame(header, list_links, download_set=None, outstream=sys.stdout, **kwargs):
+def install(directoryvar, additional_set, cacheloc="./mods", wait=1.0, outstream=sys.stdout):
+    if(not check_location(directoryvar, outstream=outstream)):
+        return
+    directory = directoryvar.get()
+    # first, download and extract the UML base to correct location (res_mod/vernumber/)
+    resmod_folder = os.path.join(directory, "res_mod")
+    subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
+    valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
+    if(len(valid) > 0):
+        outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
+    UML_loc = os.path.join(resmod_folder, valid[0])
+    #zip_loc = os.path.join(UML_loc, "src.zip")
+    filehandler.download("./src.zip", GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
+    filehandler.extractZip("./src.zip", UML_loc)
+    # TODO: delete the file after extraction
+    # download all the data recorded in additional_set into the mods folder
+    for filename, link in additional_set:
+        fileloc = os.path.join(directory, "mods", valid[0], "UML", filename)
+        start = time.time()
+        filehandler.download(fileloc, link, cacheloc=cacheloc, wait=wait) # check for file in specific locations as well
+    outstream.write("Finish installation.\n")
+
+def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
+    # read a list of sections in a file. Sections have the first line being header and all next line entries.
+    # conform with checkbox_frame requirement (tuple of 3)
+    with io.open(filepath, "r", encoding="utf-8") as pkgs:
+        data = pkgs.read()
+        sections = data.split(section_delim) if section_delim in data else [data]
+        formed = [s.strip().split(entry_delim) for s in sections]
+        # return (header, formatted entries) for each section
+        formatted = [ (s[0], [l.strip().split(internal_delim) for l in s[1:]]) 
+            for s in formed]
+    return formatted
+    
+def control_frame(additional_set, master=None, outstream=sys.stdout, **kwargs):
+    # create a tk.Frame concerning configurations.
+    frame = tk.Frame(master=master, **kwargs)
+    location = tk.StringVar()
+    loclabel = tk.Label(master=frame, text="WoT directory: ")
+    # entry: Install location (WoT main directory). Check by res_mod folder
+    locentry = tk.Entry(master=frame, textvariable=location, validate="focusout", validatecommand=lambda: check_location(location, cond=location_cond) )
+    locbtn = tk.Button(master=frame, text="Browse", command=lambda: search_location(location, outstream=outstream))
+    loclabel.grid(column=0, row=0, sticky="w")
+    locentry.grid(column=1, row=0, sticky="w")
+    locbtn.grid(column=2, row=0, sticky="w")
+    # Install button, receive location and all the extra packages
+    instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, outstream=outstream))
+    instbtn.grid(column=0, row=2, columnspan=3)
+    return frame, location
+
+def checkbox_frame(header, list_links, download_set=None, frame_cols=2, outstream=sys.stdout, **kwargs):
     # create a tk.Frame allowing user to check the mod they want to download.
     frame = tk.Frame(highlightbackground="black", highlightthickness=1, **kwargs)
     framelabel = tk.Label(master=frame, text=header, font=font.Font(family='Helvetica', size=14))
@@ -134,83 +97,42 @@ def checkbox_frame(header, list_links, download_set=None, outstream=sys.stdout, 
         outstream.write("Handled set with trigger {:d}, link {:s}, set result {}\n".format(checkvar, entry[1], download_set))
     
     for i, (repo, filepath, description) in enumerate(list_links):
-        # build for every options
+        truerow, truecol = (i // frame_cols + 1, i % frame_cols)
+        #subframe = tk.Frame(master=frame)
+        #subframe.grid(column=truecol, row=truerow, sticky="w")
+        # build for every options, loaded into packs
         fileloc = GITHUB_PATTERN.format(repo, requests.utils.quote(filepath))
         filename = os.path.basename(filepath)
         checkvar = tk.IntVar()
-        checkbox = tk.Checkbutton(master=frame, variable=checkvar, onvalue=1, offvalue=0, command=lambda var=checkvar, entry=(filename, fileloc): update_set(var, entry=entry))
-        # checkvar.trace("w", lambda *args: update_set(checkvar.get(), fileloc)) # on change value, update/remove the download_set with the fileloc
-        desclabel = tk.Label(master=frame, anchor="w", text=description)
-        checkbox.grid(column=0, row=i+2)
-        desclabel.grid(column=1, row=i+2)
+        checkbox = tk.Checkbutton(master=frame, text=description, variable=checkvar, onvalue=1, offvalue=0, command=lambda var=checkvar, entry=(filename, fileloc): update_set(var, entry=entry))
+        checkbox.grid(column=truecol, row=truerow, sticky="w")
+        #desclabel = tk.Label(master=subframe, anchor="w", text=description)
+        #checkbox.pack(side="left")
+        #desclabel.pack(side="left")
     
     return frame
 
-def install(directoryvar, additional_set, wait=1.0, outstream=sys.stdout):
-    if(not check_location(directoryvar, outstream=outstream)):
-        return
-    directory = directoryvar.get()
-    # first, download and extract the UML base to correct location (res_mod/vernumber/)
-    resmod_folder = os.path.join(directory, "res_mod")
-    subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
-    valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
-    if(len(valid) > 0):
-        outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
-    UML_loc = os.path.join(resmod_folder, valid[0])
-    #zip_loc = os.path.join(UML_loc, "src.zip")
-    download("./src.zip", GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
-    extractZip("./src.zip", UML_loc)
-    # TODO: delete the file after extraction
-    # download all the data recorded in additional_set into the mods folder
-    for filename, link in additional_set:
-        fileloc = os.path.join(directory, "mods", valid[0], "UML", filename)
-        start = time.time()
-        download(fileloc, link, cacheloc="./mods", wait=wait) # for files already found, do not download
-    outstream.write("Finish installation.\n")
-
-def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
-    # read a list of sections in a file. Sections have the first line being header and all next line entries.
-    # conform with checkbox_frame
-    with io.open(filepath, "r", encoding="utf-8") as pkgs:
-        data = pkgs.read()
-        sections = data.split(section_delim) if section_delim in data else [data]
-        formed = [s.strip().split(entry_delim) for s in sections]
-        # return (header, formatted entries) for each section
-        formatted = [ (s[0], [l.strip().split(internal_delim) for l in s[1:]]) 
-            for s in formed]
-    return formatted
-
-def tk_interface(title="UML_downloader", outstream=sys.stdout):
+def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", outstream=sys.stdout):
     # create an installation interface to install mod
     window = tk.Tk()
     window.title(title) 
-    # entry: Install location (WoT main directory). Check by res_mod folder
-    location = tk.StringVar()
-    loclabel = tk.Label(master=window, text="WoT directory: ")
-    locentry = tk.Entry(master=window, textvariable=location, validate="focusout", validatecommand=lambda: check_location(location, cond=location_cond) )
-    locbtn = tk.Button(master=window, text="Browse", command=lambda: search_location(location, outstream=outstream))
-    loclabel.grid(column=0, row=0)
-    locentry.grid(column=1, row=0)
-    locbtn.grid(column=2, row=0)
-    # Additional mods from external source
-    sections = read_sections_from_pkg("other_packages.txt")
+    # Config frame, handle all the settings (original location, etc.)
     additional_set = set()
+    frame, location = control_frame(additional_set, master=window, padx=5, pady=2)
+    frame.grid(column=0, row=0, columnspan=2, sticky="w")
+    # Additional mods from external source
+    scrollsection = tk.Canvas(master=window)
+    scrollsection.grid(column=0, row=1)
+    sections = read_sections_from_pkg(pkg_path)
     for i,(header, entries) in enumerate(sections):
-        adtframe = checkbox_frame(header, entries, additional_set, outstream=outstream, master=window)
-        adtframe.grid(column=0, row=1+i, columnspan=4)
-    # start installation btn
-    instbtn = tk.Button(master=window, text="Install", command=lambda: install(location, additional_set))
-    instbtn.grid(column=0, row=1+len(sections), columnspan=4)
+        adtframe = checkbox_frame(header, entries, additional_set, outstream=outstream, master=scrollsection, frame_cols=3, padx=2, pady=2)
+        adtframe.grid(column=0, row=i, sticky="w")
+    scroller = tk.Scrollbar(master=scrollsection)
+    scroller.grid(column=1, row=0, rowspan=len(sections))
+    scrollsection.configure(width=50, height=50, yscrollcommand = scroller.set)
     return window
     
 
 if __name__ == "__main__":
-    #generate_download_links(REQUIRED_FILES_LOCS)
-    #download_to_folder(REQUIRED_FILES_LOCS, "test")
-    # download("./src.zip", GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
-    # extractZip("./src.zip", "test")
-    # make sure the online file is a link
-    onlinefile = requests.utils.quote("UUP/German HTs/TheFalkonett's_UUP_Maus.wotmod")
-    #download("./test.wotmod", GITHUB_PATTERN.format("TheFalkonett/UUP-Germany", onlinefile))
     window = tk_interface()
     window.mainloop()
