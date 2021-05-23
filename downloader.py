@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, font
 import io, os, sys, time
+import shutil
 import errno
 import requests
 import zipfile36 as zipfile
@@ -20,7 +21,7 @@ def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="
         df.write("\n".join(lines))
     outstream.write("{:d} Entries written to file {:s}.\n".format(len(filelist), dfile))
 
-def download(filename, onlinefile, retry=3, wait=1.0, outstream=sys.stdout):
+def download(filename, onlinefile, retry=3, wait=1.0, cacheloc=None, outstream=sys.stdout):
     # download raw file and make directory if needed
     if not os.path.exists(os.path.dirname(filename)):
         try:
@@ -28,6 +29,12 @@ def download(filename, onlinefile, retry=3, wait=1.0, outstream=sys.stdout):
         except OSError as exc: # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise exc
+                
+    # if the file is found in cacheloc, copy over
+    if(cacheloc is not None and os.path.exists(os.path.join(cacheloc, filename))):
+        shutil.copyfile(os.path.join(cacheloc, filename), filename)
+        outstream.write("Found file in cache directory, copying {:s} -> {:s}".format(os.path.join(cacheloc, filename), filename))
+    
     with open(filename, "wb") as f:
         while(retry > 0):
             try:
@@ -76,7 +83,7 @@ def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid l
         failvar = strvar
     directory = filedialog.askdirectory()
     if(directory is not None):
-        if(cond(directory)):
+        if(cond is None or cond(directory)):
             # both check passed
             strvar.set(directory)
         else:
@@ -128,20 +135,21 @@ def install(directoryvar, additional_set, wait=1.0, outstream=sys.stdout):
         return
     directory = directoryvar.get()
     # first, download and extract the UML base to correct location (res_mod/vernumber/)
-    # download("./src.zip", GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
     resmod_folder = os.path.join(directory, "res_mod")
     subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
     valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
     if(len(valid) > 0):
         outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
     UML_loc = os.path.join(resmod_folder, valid[0])
+    #zip_loc = os.path.join(UML_loc, "src.zip")
+    download("./src.zip", GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
     extractZip("./src.zip", UML_loc)
     # TODO: delete the file after extraction
     # download all the data recorded in additional_set into the mods folder
     for filename, link in additional_set:
         fileloc = os.path.join(directory, "mods", valid[0], "UML", filename)
         start = time.time()
-        download(fileloc, link, wait=wait)
+        download(fileloc, link, cacheloc="./mods", wait=wait) # for files already found, do not download
     outstream.write("Finish installation.\n")
 
 def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
@@ -164,7 +172,7 @@ def tk_interface(title="UML_downloader", outstream=sys.stdout):
     location = tk.StringVar()
     loclabel = tk.Label(master=window, text="WoT directory: ")
     locentry = tk.Entry(master=window, textvariable=location, validate="focusout", validatecommand=lambda: check_location(location, cond=location_cond) )
-    locbtn = tk.Button(master=window, text="Browse", command=lambda: search_location(location, cond=location_cond, outstream=outstream))
+    locbtn = tk.Button(master=window, text="Browse", command=lambda: search_location(location, outstream=outstream))
     loclabel.grid(column=0, row=0)
     locentry.grid(column=1, row=0)
     locbtn.grid(column=2, row=0)
