@@ -4,6 +4,7 @@ TheFalkonett/UUP-Germany	UUP/German LTs/TheFalkonett's_UUP_SP_I_C.wotmod	(UUP) F
 TheFalkonett/UUP-UK	UUP/British HTs/TheFalkonett's_UUP_Super_Conqueror.wotmod	(UUP) Falkonett's Super Conqueror
 
 External Sourced
-
+khoai23/UML_test_downloader	mods/[atacms]W14_T80U.wotmod	Atacms T-80U model
+khoai23/UML_test_downloader	mods/UML_A44.wotmod	A-44 turret animation
 
 Private, untested/unchecked.

@@ -83,13 +83,17 @@ def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid l
             failvar.set(failvalue)
             outstream.write("Selected directory is invalid.\n")
     
-def check_location(strvar, failvar=None, cond=None, failvalue="Select a valid location..", outstream=sys.stdout):
+location_cond = lambda path: os.path.isdir(os.path.join(path, "res_mod"))
+def check_location(strvar, failvar=None, cond=location_cond, failvalue="Select a valid location..", outstream=sys.stdout):
     # check if location is valid using condition. If fail, set the variable to failvalue
     if(failvar is None):
         failvar = strvar
     if(not cond(strvar.get())):
         failvar.set(failvalue)
         outstream.write("Selected directory is invalid.\n")
+        return False
+    else:
+        return True
 
 def checkbox_frame(header, list_links, download_set=None, outstream=sys.stdout, **kwargs):
     # create a tk.Frame allowing user to check the mod they want to download.
@@ -97,20 +101,21 @@ def checkbox_frame(header, list_links, download_set=None, outstream=sys.stdout, 
     framelabel = tk.Label(master=frame, text=header, font=font.Font(family='Helvetica', size=14))
     framelabel.grid(column=0, row=0, columnspan=2)
     # function to handle download_set changes
-    def update_set(checkvar, loc=None):
+    def update_set(checkvar, entry=None):
         # if checkvar is 0, remove the loc from download set; else add into the download set
         checkvar = checkvar.get()
         if(checkvar == 1):
-            download_set.add(loc)
+            download_set.add(entry)
         else:
-            download_set.discard(loc)
-        outstream.write("Handled set with trigger {:d}, link {:s}, set result {}\n".format(checkvar, loc, download_set))
+            download_set.discard(entry)
+        outstream.write("Handled set with trigger {:d}, link {:s}, set result {}\n".format(checkvar, entry[1], download_set))
     
     for i, (repo, filepath, description) in enumerate(list_links):
         # build for every options
         fileloc = GITHUB_PATTERN.format(repo, requests.utils.quote(filepath))
+        filename = os.path.basename(filepath)
         checkvar = tk.IntVar()
-        checkbox = tk.Checkbutton(master=frame, variable=checkvar, onvalue=1, offvalue=0, command=lambda var=checkvar, loc=fileloc: update_set(var, loc=loc))
+        checkbox = tk.Checkbutton(master=frame, variable=checkvar, onvalue=1, offvalue=0, command=lambda var=checkvar, entry=(filename, fileloc): update_set(var, entry=entry))
         # checkvar.trace("w", lambda *args: update_set(checkvar.get(), fileloc)) # on change value, update/remove the download_set with the fileloc
         desclabel = tk.Label(master=frame, anchor="w", text=description)
         checkbox.grid(column=0, row=i+2)
@@ -118,9 +123,26 @@ def checkbox_frame(header, list_links, download_set=None, outstream=sys.stdout, 
     
     return frame
 
-def install(directory, additional_set):
-    print(additional_set)
-    print("Yet to be coded")
+def install(directoryvar, additional_set, wait=1.0, outstream=sys.stdout):
+    if(not check_location(directoryvar, outstream=outstream)):
+        return
+    directory = directoryvar.get()
+    # first, download and extract the UML base to correct location (res_mod/vernumber/)
+    # download("./src.zip", GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
+    resmod_folder = os.path.join(directory, "res_mod")
+    subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
+    valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
+    if(len(valid) > 0):
+        outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
+    UML_loc = os.path.join(resmod_folder, valid[0])
+    extractZip("./src.zip", UML_loc)
+    # TODO: delete the file after extraction
+    # download all the data recorded in additional_set into the mods folder
+    for filename, link in additional_set:
+        fileloc = os.path.join(directory, "mods", valid[0], "UML", filename)
+        start = time.time()
+        download(fileloc, link, wait=wait)
+    outstream.write("Finish installation.\n")
 
 def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
     # read a list of sections in a file. Sections have the first line being header and all next line entries.
@@ -132,7 +154,6 @@ def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", int
         # return (header, formatted entries) for each section
         formatted = [ (s[0], [l.strip().split(internal_delim) for l in s[1:]]) 
             for s in formed]
-    print(formatted)
     return formatted
 
 def tk_interface(title="UML_downloader", outstream=sys.stdout):
@@ -141,7 +162,6 @@ def tk_interface(title="UML_downloader", outstream=sys.stdout):
     window.title(title) 
     # entry: Install location (WoT main directory). Check by res_mod folder
     location = tk.StringVar()
-    location_cond = lambda path: os.path.isdir(os.path.join(path, "res_mod"))
     loclabel = tk.Label(master=window, text="WoT directory: ")
     locentry = tk.Entry(master=window, textvariable=location, validate="focusout", validatecommand=lambda: check_location(location, cond=location_cond) )
     locbtn = tk.Button(master=window, text="Browse", command=lambda: search_location(location, cond=location_cond, outstream=outstream))
@@ -155,7 +175,7 @@ def tk_interface(title="UML_downloader", outstream=sys.stdout):
         adtframe = checkbox_frame(header, entries, additional_set, outstream=outstream, master=window)
         adtframe.grid(column=0, row=1+i, columnspan=4)
     # start installation btn
-    instbtn = tk.Button(master=window, text="Install", command=lambda: install(location.get(), additional_set))
+    instbtn = tk.Button(master=window, text="Install", command=lambda: install(location, additional_set))
     instbtn.grid(column=0, row=1+len(sections), columnspan=4)
     return window
     
