@@ -5,6 +5,7 @@ import requests
 
 import filehandler
 from filehandler import GITHUB_PATTERN
+import cache
  
 def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid location..", outstream=sys.stdout):
     # open a filedialog and select a location
@@ -31,7 +32,7 @@ def check_location(strvar, failvar=None, cond=location_cond, failvalue="Select a
     else:
         return True
 
-def install(directoryvar, additional_set, cacheloc="./mods", wait=1.0, outstream=sys.stdout):
+def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, wait=1.0, outstream=sys.stdout):
     if(not check_location(directoryvar, outstream=outstream)):
         return
     directory = directoryvar.get()
@@ -43,14 +44,19 @@ def install(directoryvar, additional_set, cacheloc="./mods", wait=1.0, outstream
         outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
     UML_loc = os.path.join(resmod_folder, valid[0])
     #zip_loc = os.path.join(UML_loc, "src.zip")
-    filehandler.download("./src.zip", GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
-    filehandler.extractZip("./src.zip", UML_loc)
+    uml_filepath = os.path.join(cache_loc, "src.zip")
+    filehandler.download(uml_filepath, GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
+    filehandler.extractZip(uml_filepath, UML_loc)
     # TODO: delete the file after extraction
     # download all the data recorded in additional_set into the mods folder
     for filename, link in additional_set:
         fileloc = os.path.join(directory, "mods", valid[0], "UML", filename)
         start = time.time()
-        filehandler.download(fileloc, link, cacheloc=cacheloc, wait=wait) # check for file in specific locations as well
+        filehandler.download(fileloc, link, cache_loc=cache_loc, wait=wait) # check for file in specific locations as well
+    # after finished installing, update the cache_obj and write it to disk
+    cache_obj["WOT_location"] = directory
+    cache.write_cache(cache_obj, cache_obj_path)
+    # done
     outstream.write("Finish installation.\n")
 
 def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
@@ -65,10 +71,12 @@ def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", int
             for s in formed]
     return formatted
     
-def control_frame(additional_set, master=None, outstream=sys.stdout, **kwargs):
+def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, master=None, outstream=sys.stdout, **kwargs):
     # create a tk.Frame concerning configurations.
     frame = tk.Frame(master=master, **kwargs)
+    # the location will persists between runs if properly used
     location = tk.StringVar()
+    location.set(cache_obj.get("WOT_location", ""))
     loclabel = tk.Label(master=frame, text="WoT directory: ")
     # entry: Install location (WoT main directory). Check by res_mod folder
     locentry = tk.Entry(master=frame, textvariable=location, validate="focusout", validatecommand=lambda: check_location(location, cond=location_cond) )
@@ -77,7 +85,7 @@ def control_frame(additional_set, master=None, outstream=sys.stdout, **kwargs):
     locentry.grid(column=1, row=0, sticky="w")
     locbtn.grid(column=2, row=0, sticky="w")
     # Install button, receive location and all the extra packages
-    instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, outstream=outstream))
+    instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream))
     instbtn.grid(column=0, row=2, columnspan=3)
     return frame, location
 
@@ -115,10 +123,14 @@ def checkbox_frame(header, list_links, download_set=None, frame_cols=2, outstrea
 def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", outstream=sys.stdout):
     # create an installation interface to install mod
     window = tk.Tk()
-    window.title(title) 
+    window.title(title)
+    # try to find cached infomation
+    cache_obj_path = cache.DEFAULT_CACHE
+    cache_loc = cache.DEFAULT_CACHE_LOC
+    cache_obj = cache.read_cache(location=cache_obj_path)
     # Config frame, handle all the settings (original location, etc.)
     additional_set = set()
-    frame, location = control_frame(additional_set, master=window, padx=5, pady=2)
+    frame, location = control_frame(cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, additional_set, master=window, padx=5, pady=2)
     frame.grid(column=0, row=0, columnspan=2, sticky="w")
     # Additional mods from external source
     scrollsection = tk.Canvas(master=window)
