@@ -8,6 +8,22 @@ else:
 DEFAULT_CACHE = os.path.join(os.getenv("APPDATA") if appdata_exist else "", "UML_downloader", "persistent.txt")
 DEFAULT_CACHE_LOC = os.path.join(os.getenv("APPDATA") if appdata_exist else "", "UML_downloader")
 
+def try_convert_value(rawvalue):
+    # attempt to reconvert values from cache back to original
+    if(rawvalue == "None"): # none
+        return None
+    elif(rawvalue in ("True", "False")): # bool
+        return rawvalue == "True"
+    else:
+        try:
+            value = int(rawvalue) # int
+        except ValueError:
+            try:
+                value = float(rawvalue) # float
+            except ValueError:
+                value = rawvalue
+        return value
+
 def read_cache(location=DEFAULT_CACHE, separator=":"):
     try:
         with io.open(location, "r", encoding="utf-8") as cache:
@@ -17,6 +33,7 @@ def read_cache(location=DEFAULT_CACHE, separator=":"):
     except FileNotFoundError:
         # cache do not exist, create blank
         data = {}
+    data = {k: try_convert_value(v) for k, v in data.items()}
     return data
 
 def write_cache(data, location=DEFAULT_CACHE, separator=":"):

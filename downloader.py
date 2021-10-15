@@ -84,6 +84,10 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     loclabel.grid(column=0, row=0, sticky="w")
     locentry.grid(column=1, row=0, sticky="w")
     locbtn.grid(column=2, row=0, sticky="w")
+    use_drive_var = tk.IntVar()
+    set_use_drive_cacheobj = lambda var=use_drive_var, **kwargs: cache_obj["use_drive_UML"] = var.get()
+    use_drive_checkbox = tk.Checkbutton(master=frame, text="Use inbuilt GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
+    use_drive_checkbox.grid(column=2, row=1, sticky="e")
     # Install button, receive location and all the extra packages
     instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream))
     instbtn.grid(column=0, row=2, columnspan=3)
