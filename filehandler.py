@@ -65,8 +65,13 @@ def download(filepath, onlinefile, retry=3, wait=1.0, cacheloc=None, outstream=s
                 outstream.write(str(e) + "\n")
                 if(wait > 0.0):
                     time.sleep(wait * 1000)
+    # write the received file
     with open(filepath, "wb") as f:
         f.write(data)
+    if(cacheloc is not None):
+        # attempt to write a cached copy as well
+        with open(os.path.join(cacheloc, os.path.basename(filepath)), "wb") as f:
+            f.write(data)
     outstream.write("File {:s} downloaded to {:s}\n".format(onlinefile, filepath))
 
 def download_to_folder(required_file, location, outstream=sys.stdout):

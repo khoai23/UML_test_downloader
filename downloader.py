@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import filedialog, font
+from tkinter import filedialog, font, messagebox
 import io, os, sys, time
 import requests
+import shutil
 
 import filehandler
 from filehandler import GITHUB_PATTERN, DRIVE_FILE_LOCATION
@@ -36,7 +37,7 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     # check the directory again for good measure
     directory = directoryvar.get()
     if(not check_location(directoryvar, outstream=outstream)):
-        tk.messagebox.showerror(title="Wrong directory", message="Directory {:s} is not a valid WOT instance. Try again. The directory to be used is one where you can see WorldOfTank.exe in the files.".format(directory))
+        messagebox.showerror(title="Wrong directory", message="Directory {:s} is not a valid WOT instance. Try again. The directory to be used is one where you can see WorldOfTank.exe in the files.".format(directory))
         return
     
     # Download and extract the UML base to correct location (res_mod/vernumber/)
@@ -46,7 +47,7 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     if(len(valid) > 1):
         outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
     elif(len(valid) == 0):
-        tk.messagebox.showerror(title="No version available", message="There is no version detected in the resmod folder (list of folder found: {}). Try play a battle or something, I dunno.".format(subfolders))
+        messagebox.showerror(title="No version available", message="There is no version detected in the resmod folder (list of folder found: {}). Try play a battle or something, I dunno.".format(subfolders))
         return
     # correct location to install, correct cache zip file
     UML_loc = os.path.join(resmod_folder, valid[0])
@@ -69,7 +70,40 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     cache_obj["WOT_location"] = directory
     cache.write_cache(cache_obj, cache_obj_path)
     # done
+    messagebox.showinfo(title="Done", message="Installation complete in {:s}".format(directory))
     outstream.write("Finish installation.\n")
+
+def remove(directoryvar, careful=False, outstream=sys.stdout):
+    # removing the installed mods from the WOT instance.
+    # check the directory again for good measure
+    directory = directoryvar.get()
+    if(not check_location(directoryvar, outstream=outstream)):
+        messagebox.showerror(title="Wrong directory", message="Directory {:s} is not a valid WOT instance. Try again. The directory to be used is one where you can see WorldOfTank.exe in the files.".format(directory))
+        return
+    resmod_folder = os.path.join(directory, "res_mod")
+    subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
+    valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
+    if(len(valid) > 1):
+        outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
+    elif(len(valid) == 0):
+        messagebox.showerror(title="No version available", message="There is no version detected in the resmod folder (list of folder found: {}). Try play a battle or something, I dunno.".format(subfolders))
+
+    # always remove the mods/UML folder content
+    mod_dir = os.path.join(directory, "mods", valid[0], "UML")
+    shutil.rmtree(mod_dir)
+    if(careful):
+        # remove all known injection files from `resmods`; folders are left empty
+        ownmodel_dir = os.path.join(resmod_folder, valid[0], "scripts", "client", "gui", "mods", "mod_ownmodel.py")
+        os.unlink(ownmodel_dir)
+    else:
+        # Remove every files and folder in the resmod. This may scrub other mods as well (e.g Aslain's)
+        for root, dirs, files in os.walk(os.path.join(resmod_folder, valid[0])):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
+    messagebox.showinfo(title="Cleaned", message="Cleaned {:s} files from {:s} and {:s}".format("specific UML" if careful else "all", mod_dir, resmod_dir))
+                
 
 def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
     # read a list of sections in a file. Sections have the first line being header and all next line entries.
@@ -102,8 +136,11 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     use_drive_checkbox = tk.Checkbutton(master=frame, text="Use inbuilt GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
     use_drive_checkbox.grid(column=2, row=1, sticky="e")
     # Install button, receive location and all the extra packages
-    instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
-    instbtn.grid(column=0, row=2, columnspan=3)
+    instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
+    instbtn.grid(column=0, row=2, columnspan=2)
+    # Remove button, removing UML and associating files
+    rmbtn = tk.Button(master=frame, text="Remove UML", command=lambda: remove(location, outstream=outstream) )
+    rmbtn.grid(column=2, row=2, columnspan=3)
     return frame, location
 
 def checkbox_frame(header, list_links, download_set=None, frame_cols=2, outstream=sys.stdout, **kwargs):
