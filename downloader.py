@@ -4,7 +4,7 @@ import io, os, sys, time
 import requests
 
 import filehandler
-from filehandler import GITHUB_PATTERN
+from filehandler import GITHUB_PATTERN, DRIVE_FILE_LOCATION
 import cache
  
 def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid location..", outstream=sys.stdout):
@@ -33,22 +33,34 @@ def check_location(strvar, failvar=None, cond=location_cond, failvalue="Select a
         return True
 
 def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, wait=1.0, outstream=sys.stdout):
-    if(not check_location(directoryvar, outstream=outstream)):
-        return
+    # check the directory again for good measure
     directory = directoryvar.get()
-    # first, download and extract the UML base to correct location (res_mod/vernumber/)
+    if(not check_location(directoryvar, outstream=outstream)):
+        tk.messagebox.showerror(title="Wrong directory", message="Directory {:s} is not a valid WOT instance. Try again. The directory to be used is one where you can see WorldOfTank.exe in the files.".format(directory))
+        return
+    
+    # Download and extract the UML base to correct location (res_mod/vernumber/)
     resmod_folder = os.path.join(directory, "res_mod")
     subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
     valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
-    if(len(valid) > 0):
+    if(len(valid) > 1):
         outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
+    elif(len(valid) == 0):
+        tk.messagebox.showerror(title="No version available", message="There is no version detected in the resmod folder (list of folder found: {}). Try play a battle or something, I dunno.".format(subfolders))
+        return
+    # correct location to install, correct cache zip file
     UML_loc = os.path.join(resmod_folder, valid[0])
-    #zip_loc = os.path.join(UML_loc, "src.zip")
     uml_filepath = os.path.join(cache_loc, "src.zip")
-    filehandler.download(uml_filepath, GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
-    filehandler.extractZip(uml_filepath, UML_loc)
-    # TODO: delete the file after extraction
-    # download all the data recorded in additional_set into the mods folder
+    if(cache_obj.get("use_drive_UML", 0) == 1): # Use inbuilt drive file 
+        filehandler.download(uml_filepath, DRIVE_FILE_LOCATION)
+    else: # use the github file
+        filehandler.download(uml_filepath, GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
+    filehandler.extractZip(uml_filepath, UML_loc) # extract the file to resmod
+    # delete the file after extraction. This prevent updates from being blocked by previous cached UML package
+    # TODO check hash or smth
+    os.remove(uml_filepath)
+
+    # download all the supplementary mods recorded in additional_set into the mods folder
     for filename, link in additional_set:
         fileloc = os.path.join(directory, "mods", valid[0], "UML", filename)
         start = time.time()
@@ -74,7 +86,7 @@ def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", int
 def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, master=None, outstream=sys.stdout, **kwargs):
     # create a tk.Frame concerning configurations.
     frame = tk.Frame(master=master, **kwargs)
-    # the location will persists between runs if properly used
+    # the location will persists between runs if properly cached
     location = tk.StringVar()
     location.set(cache_obj.get("WOT_location", ""))
     loclabel = tk.Label(master=frame, text="WoT directory: ")
@@ -84,12 +96,13 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     loclabel.grid(column=0, row=0, sticky="w")
     locentry.grid(column=1, row=0, sticky="w")
     locbtn.grid(column=2, row=0, sticky="w")
-    use_drive_var = tk.IntVar()
-    set_use_drive_cacheobj = lambda var=use_drive_var, **kwargs: cache_obj["use_drive_UML"] = var.get()
+    use_drive_var = tk.IntVar(cache_obj.get("use_drive_UML", 0))
+    def set_use_drive_cacheobj(var=use_drive_var, **kwargs): 
+        cache_obj["use_drive_UML"] = var.get()
     use_drive_checkbox = tk.Checkbutton(master=frame, text="Use inbuilt GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
     use_drive_checkbox.grid(column=2, row=1, sticky="e")
     # Install button, receive location and all the extra packages
-    instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream))
+    instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
     instbtn.grid(column=0, row=2, columnspan=3)
     return frame, location
 
@@ -134,7 +147,7 @@ def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", outstrea
     cache_obj = cache.read_cache(location=cache_obj_path)
     # Config frame, handle all the settings (original location, etc.)
     additional_set = set()
-    frame, location = control_frame(cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, additional_set, master=window, padx=5, pady=2)
+    frame, location = control_frame(cache_obj, additional_set, cache_obj_path=cache_obj_path, cache_loc=cache_loc, master=window, padx=5, pady=2)
     frame.grid(column=0, row=0, columnspan=2, sticky="w")
     # Additional mods from external source
     scrollsection = tk.Canvas(master=window)

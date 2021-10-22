@@ -8,7 +8,7 @@ TODO Added py2exe generation process
 ```
 
 Still lack a bunch of features:
-	[ ] Automatic detection of WG game location
-	[ ] Persistent mods between game version (new version will redownload mods from github)
+	[] Automatic detection of WG game location
+	[] Persistent mods between game version (new version will redownload mods from github)
 
 All credits goes to respective authors who published their own mod on github and made them compatible to UML.

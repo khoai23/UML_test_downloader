@@ -6,7 +6,7 @@ import requests
 
 GITHUB_PATTERN = "https://raw.githubusercontent.com/{:s}/master/{:s}" # first is repo, second is file location
 REQUIRED_FILES_LOCS = "required.txt"
-DRIVE_LOCATION = "https://drive.google.com/uc?export=download&id=1Tp7JTzelEQvlxO3KbICSO1yuEeIsriqj" # UML file on GoogleDrive.
+DRIVE_FILE_LOCATION = "https://drive.google.com/uc?export=download&id=1Tp7JTzelEQvlxO3KbICSO1yuEeIsriqj" # UML file on GoogleDrive.
 
 def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="src", outstream=sys.stdout):
     # generate paths using the pattern specified above
