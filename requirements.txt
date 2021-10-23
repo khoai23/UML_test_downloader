@@ -1,0 +1,4 @@
+requests
+zipfile36
+
+pyinstaller

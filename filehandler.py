@@ -10,7 +10,7 @@ DRIVE_FILE_LOCATION = "https://drive.google.com/uc?export=download&id=1Tp7JTzelE
 
 def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="src", outstream=sys.stdout):
     # generate paths using the pattern specified above
-    with open(dfile, "w") as df:
+    with io.open(dfile, "w") as df:
         filelist = []
         for root, folders, files in os.walk(src_dir):
             for f in files:
@@ -21,7 +21,7 @@ def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="
         df.write("\n".join(lines))
     outstream.write("{:d} Entries written to file {:s}.\n".format(len(filelist), dfile))
 
-def download(filepath, onlinefile, retry=3, wait=1.0, cacheloc=None, outstream=sys.stdout):
+def download(filepath, onlinefile, retry=3, wait=1.0, cache_loc=None, outstream=sys.stdout):
     # download raw file and make directory if needed
     if not os.path.exists(os.path.dirname(filepath)):
         try:
@@ -35,9 +35,9 @@ def download(filepath, onlinefile, retry=3, wait=1.0, cacheloc=None, outstream=s
         outstream.write("Found file {:s} already in directory.\n".format(filepath))
         return
     
-    # if the file is found in cacheloc, copy over
-    if(cacheloc is not None and os.path.exists(os.path.join(cacheloc, os.path.basename(filepath)))):
-        cachepath = os.path.join(cacheloc, os.path.basename(filepath))
+    # if the file is found in cache_loc, copy over
+    if(cache_loc is not None and os.path.exists(os.path.join(cache_loc, os.path.basename(filepath)))):
+        cachepath = os.path.join(cache_loc, os.path.basename(filepath))
         shutil.copyfile(cachepath, filepath)
         outstream.write("Found file in cache directory, copying {:s} -> {:s}\n".format(cachepath, filepath))
         return
@@ -66,11 +66,11 @@ def download(filepath, onlinefile, retry=3, wait=1.0, cacheloc=None, outstream=s
                 if(wait > 0.0):
                     time.sleep(wait * 1000)
     # write the received file
-    with open(filepath, "wb") as f:
+    with io.open(filepath, "wb") as f:
         f.write(data)
-    if(cacheloc is not None):
+    if(cache_loc is not None):
         # attempt to write a cached copy as well
-        with open(os.path.join(cacheloc, os.path.basename(filepath)), "wb") as f:
+        with io.open(os.path.join(cache_loc, os.path.basename(filepath)), "wb") as f:
             f.write(data)
     outstream.write("File {:s} downloaded to {:s}\n".format(onlinefile, filepath))
 

@@ -3,6 +3,7 @@ from tkinter import filedialog, font, messagebox
 import io, os, sys, time
 import requests
 import shutil
+import threading
 
 import filehandler
 from filehandler import GITHUB_PATTERN, DRIVE_FILE_LOCATION
@@ -173,6 +174,21 @@ def checkbox_frame(header, list_links, download_set=None, frame_cols=2, outstrea
         #desclabel.pack(side="left")
     
     return frame
+
+def progressbar_download(master, install_fn, fn_args, fn_kwargs):
+    # create customized dialog that will run install function, while receiving state update
+    # thread to install
+    install_thread = threading.Thread(target=install_fn, args=fn_args, kwargs=fn_kwargs)
+    # toplevel with progressbar and a finish button
+    progress_dialog = tk.Toplevel(master=master, title="Downloading...")
+    tip = tk.Label(master=progress_dialog, text="Hint: Progress bars are like women. They stall when already late,\nmaddeningly slow most of the time, and are full of lies anyway.")
+    tip.grid(row=0, column=0)
+    progressbar = tk.ttk.Progressbar(master=progress_dialog)
+    progressbar.grid(row=1, column=0)
+    finishbtn = tk.Button(master=progress_dialog, text="Finish", command=progress_dialog.exit)
+    finishbtn["state"] = tk.DISABLED
+    finishbtn.grid(row=2, column=0)
+    # bind progressbar to self-updating function, receiving installation data from install_fn, and make finish button to clickable when done
 
 def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", outstream=sys.stdout):
     # create an installation interface to install mod
