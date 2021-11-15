@@ -63,6 +63,23 @@
 			<gunStyle> G56_E-100_3Dst </gunStyle>
 		</e75ts_hybrid>
 
+<!--	use a 3D style with specific progression stage.
+			the optional node <styleProgression> accepts integer 1~4. Without this node, the default stage will be 4.
+			do not use this node on a non-progression style.
+-->
+		<GB86_Centurion_Action_X_style>
+			<enabled> true </enabled>
+			<swapNPC> false </swapNPC>
+			<useWhitelist> true </useWhitelist>
+			<whitelist> F28_105_leFH18B2,
+				dummyTankName2 </whitelist>
+			<parent> GB86_Centurion_Action_X </parent>
+			<styleSet> GB86_Centurion_Action_X_3DSt_BVI </styleSet>
+			<styleProgression> 2 </styleProgression>
+			<camouflageID> 0 </camouflageID>
+		</GB86_Centurion_Action_X_style>
+
+
 
 	</models>
 </root>

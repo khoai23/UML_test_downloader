@@ -22,14 +22,15 @@ def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid l
             failvar.set(failvalue)
             outstream.write("Selected directory is invalid.\n")
     
-location_cond = lambda path: os.path.isdir(os.path.join(path, "res_mod"))
+location_cond = lambda path: os.path.isdir(os.path.join(path, "res_mods"))
 def check_location(strvar, failvar=None, cond=location_cond, failvalue="Select a valid location..", outstream=sys.stdout):
     # check if location is valid using condition. If fail, set the variable to failvalue
     if(failvar is None):
         failvar = strvar
     if(not cond(strvar.get())):
+        failedvalue = strvar.get()
         failvar.set(failvalue)
-        outstream.write("Selected directory is invalid.\n")
+        outstream.write("Selected directory {:s} is invalid.\n".format(failedvalue))
         return False
     else:
         return True
@@ -41,8 +42,8 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
         messagebox.showerror(title="Wrong directory", message="Directory {:s} is not a valid WOT instance. Try again. The directory to be used is one where you can see WorldOfTank.exe in the files.".format(directory))
         return
     
-    # Download and extract the UML base to correct location (res_mod/vernumber/)
-    resmod_folder = os.path.join(directory, "res_mod")
+    # Download and extract the UML base to correct location (res_mods/vernumber/)
+    resmod_folder = os.path.join(directory, "res_mods")
     subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
     valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
     if(len(valid) > 1):
@@ -81,7 +82,7 @@ def remove(directoryvar, careful=False, outstream=sys.stdout):
     if(not check_location(directoryvar, outstream=outstream)):
         messagebox.showerror(title="Wrong directory", message="Directory {:s} is not a valid WOT instance. Try again. The directory to be used is one where you can see WorldOfTank.exe in the files.".format(directory))
         return
-    resmod_folder = os.path.join(directory, "res_mod")
+    resmod_folder = os.path.join(directory, "res_mods")
     subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
     valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
     if(len(valid) > 1):
@@ -103,7 +104,7 @@ def remove(directoryvar, careful=False, outstream=sys.stdout):
                 os.unlink(os.path.join(root, f))
             for d in dirs:
                 shutil.rmtree(os.path.join(root, d))
-    messagebox.showinfo(title="Cleaned", message="Cleaned {:s} files from {:s} and {:s}".format("specific UML" if careful else "all", mod_dir, resmod_dir))
+    messagebox.showinfo(title="Cleaned", message="Cleaned {:s} files from {:s} and {:s}".format("specific UML" if careful else "all", mod_dir, resmod_folder))
                 
 
 def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
@@ -125,7 +126,7 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     location = tk.StringVar()
     location.set(cache_obj.get("WOT_location", ""))
     loclabel = tk.Label(master=frame, text="WoT directory: ")
-    # entry: Install location (WoT main directory). Check by res_mod folder
+    # entry: Install location (WoT main directory). Check by res_mods folder
     locentry = tk.Entry(master=frame, textvariable=location, validate="focusout", validatecommand=lambda: check_location(location, cond=location_cond) )
     locbtn = tk.Button(master=frame, text="Browse", command=lambda: search_location(location, outstream=outstream))
     loclabel.grid(column=0, row=0, sticky="w")
@@ -164,10 +165,10 @@ def checkbox_frame(master, header, list_links, download_set=None, frame_cols=2, 
         #subframe = tk.Frame(master=frame)
         #subframe.grid(column=truecol, row=truerow, sticky="w")
         # build for every options, loaded into packs
-        fileloc = GITHUB_PATTERN.format(repo, requests.utils.quote(filepath))
+        link = GITHUB_PATTERN.format(repo, requests.utils.quote(filepath))
         filename = os.path.basename(filepath)
         checkvar = tk.IntVar()
-        checkbox = tk.Checkbutton(master=frame, text=description, variable=checkvar, onvalue=1, offvalue=0, command=lambda var=checkvar, entry=(filename, fileloc): update_set(var, entry=entry))
+        checkbox = tk.Checkbutton(master=frame, text=description, variable=checkvar, onvalue=1, offvalue=0, command=lambda var=checkvar, entry=(filename, link): update_set(var, entry=entry))
         checkbox.grid(column=truecol, row=truerow, sticky="w")
         #desclabel = tk.Label(master=subframe, anchor="w", text=description)
         #checkbox.pack(side="left")
@@ -200,7 +201,9 @@ def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, **
             item_str = "{:s}.item_{:d}".format(section_str, i)
             tree.hlist.add(item_str, text=description)
             tree.setstatus(item_str, "off")
-            indicesDict[item_str] = (repo, filepath)
+            link = GITHUB_PATTERN.format(repo, requests.utils.quote(filepath))
+            filename = os.path.basename(filepath)
+            indicesDict[item_str] = (filename, link)
     tree.pack()
     # tree.autosetmode()
     # ideally the widget would handle the selection update using selectItemFn above; TODO populate entries using cache

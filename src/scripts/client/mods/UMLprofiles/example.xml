@@ -12,27 +12,202 @@
 	<chassis>
         <undamaged>vehicles/american/A30_M10_Wolverine/normal/lod0/Chassis.model</undamaged>
         <destroyed>vehicles/american/A30_M10_Wolverine/crash/lod0/Chassis.model</destroyed>
-		<traces>
-{'textureSet': 'usa_02', 'lodDist': 120.0, 'bufferPrefs': 'mediumTank', 'centerOffset': 1.0518699884414673, 'size': (0.4, 0.47)}
-		</traces>
-		<tracks>
-{'leftMaterial': 'track_mat_L_skinned', 'rightMaterial': 'track_mat_R_skinned', 'lodDist': 90.0, 'textureScale': -3.0999999046325684}
-		</tracks>
-		<wheels>
-{'groups': [WheelGroup(isLeft=False, template='WD_R', count=3, startIndex=1, radius=0.12745000422000885), WheelGroup(isLeft=False, template='W_R', count=6, startIndex=0, radius=0.2654559910297394), WheelGroup(isLeft=True, template='WD_L', count=3, startIndex=1, radius=0.12744900584220886), WheelGroup(isLeft=True, template='W_L', count=6, startIndex=0, radius=0.2654559910297394)], 'wheels': [Wheel(isLeft=False, radius=0.3668679893016815, nodeName='WD_R0', isLeading=True, leadingSyncAngle=27.69230079650879), Wheel(isLeft=False, radius=0.28860199451446533, nodeName='WD_R4', isLeading=True, leadingSyncAngle=27.69230079650879), Wheel(isLeft=True, radius=0.3668670058250427, nodeName='WD_L0', isLeading=True, leadingSyncAngle=27.69230079650879), Wheel(isLeft=True, radius=0.2886179983615875, nodeName='WD_L4', isLeading=True, leadingSyncAngle=27.69230079650879)], 'lodDist': 70.0, 'leadingWheelSyncAngle': 60.0}
-		</wheels>
-		<groundNodes>
-{'nodes': [], 'groups': [GroundNodeGroup(isLeft=True, minOffset=-0.07999999821186066, maxOffset=0.05999999865889549, template='Track_L', count=6, startIndex=0), GroundNodeGroup(isLeft=False, minOffset=-0.07999999821186066, maxOffset=0.05999999865889549, template='Track_R', count=6, startIndex=0)]}
-		</groundNodes>
-		<trackNodes>
-{'nodes': [TrackNode(name='Track_VD_L0', isLeft=True, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=0.699999988079071, backwardElasticityCoeff=2.0199999809265137), TrackNode(name='Track_VD_R0', isLeft=False, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=0.699999988079071, backwardElasticityCoeff=2.0199999809265137), TrackNode(name='Track_VD_L1', isLeft=True, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=2.0299999713897705, backwardElasticityCoeff=0.699999988079071), TrackNode(name='Track_VD_R1', isLeft=False, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=2.0299999713897705, backwardElasticityCoeff=0.699999988079071), TrackNode(name='Track_VT_L0', isLeft=True, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=2.009999990463257, backwardElasticityCoeff=0.8999999761581421), TrackNode(name='Track_VT_L1', isLeft=True, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=1.600000023841858, backwardElasticityCoeff=0.8999999761581421), TrackNode(name='Track_VT_L2', isLeft=True, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=1.2999999523162842, backwardElasticityCoeff=0.8999999761581421), TrackNode(name='Track_VT_L3', isLeft=True, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=1.0, backwardElasticityCoeff=1.0), TrackNode(name='Track_VT_R0', isLeft=False, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=2.009999990463257, backwardElasticityCoeff=0.8999999761581421), TrackNode(name='Track_VT_R1', isLeft=False, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=1.600000023841858, backwardElasticityCoeff=0.8999999761581421), TrackNode(name='Track_VT_R2', isLeft=False, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=1.2999999523162842, backwardElasticityCoeff=0.8999999761581421), TrackNode(name='Track_VT_R3', isLeft=False, initialOffset=-0.03200000151991844, leftNodeName=None, rightNodeName=None, damping=2.0, elasticity=1038.0, forwardElasticityCoeff=1.0, backwardElasticityCoeff=1.0)], 'groups': []}
-		</trackNodes>
-		<splineDesc>
-{'segmentModelLeft': 'vehicles/american/A30_M10_Wolverine/track/segment.model', 'segmentModelRight': 'vehicles/american/A30_M10_Wolverine/track/segment.model', 'segmentOffset': 0.026000000536441803, 'segment2Offset': 0.07500000298023224, 'segmentLength': 0.14499999582767487, 'atlasVTiles': 1, 'rightDesc': 'vehicles/american/A30_M10_Wolverine/track/right.track', 'lodDist': 70.0, 'segment2ModelLeft': 'vehicles/american/A30_M10_Wolverine/track/segment2.model', 'atlasUTiles': 1, 'leftDesc': 'vehicles/american/A30_M10_Wolverine/track/left.track', 'segment2ModelRight': 'vehicles/american/A30_M10_Wolverine/track/segment2.model'}
-		</splineDesc>
-		<trackParams>
-{'maxAmplitude': 0.05000000074505806, 'maxOffset': 0.05000000074505806, 'gravity': -8.800000190734863, 'thickness': -0.0015999999595806003}
-		</trackParams>
+
+      <traces>
+        <lodDist>FAR</lodDist>
+        <bufferPrefs>mediumTank</bufferPrefs>
+        <textureSet>usa_02</textureSet>
+        <size>0.4 0.47</size>
+      </traces>
+      <tracks>
+        <lodDist>MEDIUM_TRACK</lodDist>
+        <leftMaterial>track_mat_L_skinned</leftMaterial>
+        <rightMaterial>track_mat_R_skinned</rightMaterial>
+        <textureScale>-3.1</textureScale>
+      </tracks>
+      <wheels>
+        <lodDist>MEDIUM</lodDist>
+        <wheel>
+          <isLeft>	false	</isLeft>
+          <isLeading>	true	</isLeading>
+          <name>WD_R0</name>
+          <radius>	0.366868	</radius>
+          <syncAngle>27.6923</syncAngle>
+        </wheel>
+        <group>
+          <isLeft>	false	</isLeft>
+          <template>WD_R</template>
+          <radius>0.12745</radius>
+          <startIndex>	1	</startIndex>
+          <count>	3	</count>
+        </group>
+        <wheel>
+          <isLeft>	false	</isLeft>
+          <isLeading>	true	</isLeading>
+          <name>WD_R4</name>
+          <radius>	0.288602	</radius>
+          <syncAngle>27.6923</syncAngle>
+        </wheel>
+        <group>
+          <isLeft>	false	</isLeft>
+          <template>W_R</template>
+          <radius>	0.265456	</radius>
+          <startIndex>	0	</startIndex>
+          <count>	6	</count>
+        </group>
+        <wheel>
+          <isLeft>	true	</isLeft>
+          <isLeading>	true	</isLeading>
+          <name>WD_L0</name>
+          <radius>	0.366867	</radius>
+          <syncAngle>27.6923</syncAngle>
+        </wheel>
+        <group>
+          <isLeft>	true	</isLeft>
+          <template>WD_L</template>
+          <radius>	0.127449	</radius>
+          <startIndex>	1	</startIndex>
+          <count>	3	</count>
+        </group>
+        <wheel>
+          <isLeft>	true	</isLeft>
+          <isLeading>	true	</isLeading>
+          <name>WD_L4</name>
+          <radius>	0.288618	</radius>
+          <syncAngle>27.6923</syncAngle>
+        </wheel>
+        <group>
+          <isLeft>	true	</isLeft>
+          <template>W_L</template>
+          <radius>	0.265456	</radius>
+          <startIndex>	0	</startIndex>
+          <count>	6	</count>
+        </group>
+      </wheels>
+      <groundNodes>
+        <group>
+          <template>Track_L</template>
+          <startIndex>	0	</startIndex>
+          <count>	6	</count>
+          <isLeft>	true	</isLeft>
+          <minOffset>-0.08</minOffset>
+          <maxOffset>0.06</maxOffset>
+        </group>
+        <group>
+          <template>Track_R</template>
+          <startIndex>	0	</startIndex>
+          <count>	6	</count>
+          <isLeft>	false	</isLeft>
+          <minOffset>-0.08</minOffset>
+          <maxOffset>0.06</maxOffset>
+        </group>
+      </groundNodes>
+      <splineDesc>
+        <segmentModelLeft>vehicles/american/A30_M10_Wolverine/track/segment.model</segmentModelLeft>
+        <segmentModelRight>vehicles/american/A30_M10_Wolverine/track/segment.model</segmentModelRight>
+        <segment2ModelLeft>vehicles/american/A30_M10_Wolverine/track/segment2.model</segment2ModelLeft>
+        <segment2ModelRight>vehicles/american/A30_M10_Wolverine/track/segment2.model</segment2ModelRight>
+        <left>vehicles/american/A30_M10_Wolverine/track/left.track</left>
+        <right>vehicles/american/A30_M10_Wolverine/track/right.track</right>
+        <segmentLength>0.145</segmentLength>
+        <segmentOffset>0.026</segmentOffset>
+        <segment2Offset>0.075</segment2Offset>
+        <lodDist>SPLINE_TRACK</lodDist>
+        <atlas>
+          <UTiles>	1	</UTiles>
+          <VTiles>	1	</VTiles>
+        </atlas>
+      </splineDesc>
+      <trackThickness>-0.0016</trackThickness>
+      <trackNodes>
+        <enable>	true	</enable>
+        <linkBones>	false	</linkBones>
+        <maxAmplitude>0.05</maxAmplitude>
+        <maxOffset>0.05</maxOffset>
+        <gravity>-8.8</gravity>
+        <elasticity>	1038	</elasticity>
+        <damping>	2	</damping>
+        <node>
+          <isLeft>	true	</isLeft>
+          <name>Track_VD_L0</name>
+          <forwardElastK>0.7</forwardElastK>
+          <backwardElastK>2.02</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	false	</isLeft>
+          <name>Track_VD_R0</name>
+          <forwardElastK>0.7</forwardElastK>
+          <backwardElastK>2.02</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	true	</isLeft>
+          <name>Track_VD_L1</name>
+          <forwardElastK>2.03</forwardElastK>
+          <backwardElastK>0.7</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	false	</isLeft>
+          <name>Track_VD_R1</name>
+          <forwardElastK>2.03</forwardElastK>
+          <backwardElastK>0.7</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	true	</isLeft>
+          <name>Track_VT_L0</name>
+          <forwardElastK>2.01</forwardElastK>
+          <backwardElastK>0.9</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	true	</isLeft>
+          <name>Track_VT_L1</name>
+          <forwardElastK>1.6</forwardElastK>
+          <backwardElastK>0.9</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	true	</isLeft>
+          <name>Track_VT_L2</name>
+          <forwardElastK>1.3</forwardElastK>
+          <backwardElastK>0.9</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	true	</isLeft>
+          <name>Track_VT_L3</name>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	false	</isLeft>
+          <name>Track_VT_R0</name>
+          <forwardElastK>2.01</forwardElastK>
+          <backwardElastK>0.9</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	false	</isLeft>
+          <name>Track_VT_R1</name>
+          <forwardElastK>1.6</forwardElastK>
+          <backwardElastK>0.9</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	false	</isLeft>
+          <name>Track_VT_R2</name>
+          <forwardElastK>1.3</forwardElastK>
+          <backwardElastK>0.9</backwardElastK>
+          <offset>-0.032</offset>
+        </node>
+        <node>
+          <isLeft>	false	</isLeft>
+          <name>Track_VT_R3</name>
+          <offset>-0.032</offset>
+        </node>
+      </trackNodes>
       <physicalTracks>
         <left>
           <segmentsCount>	170	</segmentsCount>
@@ -705,7 +880,9 @@
           </sourceCollisionHullPoints>
         </right>
       </physicalTracks>
+      <drivingWheels>WD_L0 WD_L4</drivingWheels>
       <hullPosition>	0.000000 0.947403 0.000000	</hullPosition>
+      <topRightCarryingPoint>1.05187 1.89241</topRightCarryingPoint>
       <AODecals>
         <decal>
           <transform>
@@ -745,7 +922,7 @@
           <rayStart>	0.0 0.695508 1.752308	</rayStart>
           <rayEnd>	0.0 0.531096 1.636676	</rayEnd>
           <rayUp>0.000000 1 0.000000</rayUp>
-          <emblemId>	2	</emblemId>	<!-- 2901-->
+          <emblemId>	15503	</emblemId>	<!-- 2901-->
           <size>0.001</size>
           <hideIfDamaged>	True	</hideIfDamaged>
       </fixedEmblem>
@@ -753,7 +930,7 @@
           <rayStart>	0.471195 0.638167 -3.066867	</rayStart>
           <rayEnd>	0.471195 0.513251 -2.909393	</rayEnd>
           <rayUp>0.000000 1 0.000000</rayUp>
-          <emblemId>	2	</emblemId>	<!-- 2901-->
+          <emblemId>	15503	</emblemId>	<!-- 2901-->
           <size>0.38</size>
           <hideIfDamaged>	True	</hideIfDamaged>
       </fixedEmblem>
@@ -789,7 +966,7 @@
           <rayStart>	-0.93454 0.439231 0.155218	</rayStart>
           <rayEnd>	-0.753998 0.368316 0.102513	</rayEnd>
           <rayUp>0.000000 1 0.000000</rayUp>
-          <emblemId>	2	</emblemId>	<!-- 2901-->
+          <emblemId>	15503	</emblemId>	<!-- 2901-->
           <size>0.38</size>
           <hideIfDamaged>	True	</hideIfDamaged>
         </fixedEmblem>
@@ -797,7 +974,7 @@
           <rayStart>	0.934564 0.43939 0.155166	</rayStart>
           <rayEnd>	0.754117 0.368157 0.102566	</rayEnd>
           <rayUp>0.000000 1 0.000000</rayUp>
-          <emblemId>	2	</emblemId>	<!-- 2901-->
+          <emblemId>	15503	</emblemId>	<!-- 2901-->
           <size>0.38</size>
           <hideIfDamaged>	True	</hideIfDamaged>
         </fixedEmblem>
@@ -806,7 +983,7 @@
         <exclusionMask></exclusionMask>
         <tiling>0.73 0.73 0.000000 0.18</tiling>
         <density>100 100</density>
-        <aoTextureSize>1024 512</aoTextureSize>
+        <aoTextureSize>1024 1024 </aoTextureSize>
       </camouflage>
 	</turret>
 	<gun>
@@ -829,7 +1006,8 @@
 	<camouflage>
     <tiling>1 1 0 0</tiling>
     <exclusionMask></exclusionMask>
-  </camouflage>
+    <density>1 1</density>
+    <aoTextureSize>1024 1024 </aoTextureSize>  </camouflage>
 	</profileName_placeholder>
 
 <!-- insert more profiles here -->
