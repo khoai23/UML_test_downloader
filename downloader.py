@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, font, messagebox
+from tkinter import filedialog, font, messagebox, tix
 import io, os, sys, time
 import requests
 import shutil
@@ -144,9 +144,9 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     rmbtn.grid(column=2, row=2, columnspan=3)
     return frame, location
 
-def checkbox_frame(header, list_links, download_set=None, frame_cols=2, outstream=sys.stdout, **kwargs):
+def checkbox_frame(master, header, list_links, download_set=None, frame_cols=2, outstream=sys.stdout, **kwargs):
     # create a tk.Frame allowing user to check the mod they want to download.
-    frame = tk.Frame(highlightbackground="black", highlightthickness=1, **kwargs)
+    frame = tk.Frame(master=master, highlightbackground="black", highlightthickness=1, **kwargs)
     framelabel = tk.Label(master=frame, text=header, font=font.Font(family='Helvetica', size=14))
     framelabel.grid(column=0, row=0, columnspan=2)
     # function to handle download_set changes
@@ -175,6 +175,37 @@ def checkbox_frame(header, list_links, download_set=None, frame_cols=2, outstrea
     
     return frame
 
+def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, **kwargs):
+    # create a tix.CheckList nested in a frame; this should allow scrolls/selections much easier
+    frame = tk.Frame(master=master, highlightbackground="red", highlightthickness=1, **kwargs)
+    indicesDict = dict()
+    def selectItemFn(item, idsDict=indicesDict):
+        # on selection: update download_set with the item
+        if(idsDict[None].getstatus(item) == "on"): # tree obj is put in key None, since I'm too lazy for writing a new class
+            # add item to download_set
+            download_set.add(indicesDict[item])
+        else:
+            download_set.discard(indicesDict[item])
+        outstream.write("Handled set with trigger {:s}, link {:s}, set result {}\n".format(item, indicesDict[item][1], download_set))
+        
+    tree = tix.CheckList(master=frame, browsecmd=selectItemFn, width=400, height=240)
+    indicesDict[None] = tree # weird hack to access the tree obj
+    # adding each sections
+    for section_idx, (header, entries) in enumerate(sections):
+        # parent row
+        section_str = "section_{:d}".format(section_idx)
+        tree.hlist.add(section_str, text=header)
+        # children sub rows
+        for i, (repo, filepath, description) in enumerate(entries):
+            item_str = "{:s}.item_{:d}".format(section_str, i)
+            tree.hlist.add(item_str, text=description)
+            tree.setstatus(item_str, "off")
+            indicesDict[item_str] = (repo, filepath)
+    tree.pack()
+    # tree.autosetmode()
+    # ideally the widget would handle the selection update using selectItemFn above; TODO populate entries using cache
+    return frame
+
 def progressbar_download(master, install_fn, fn_args, fn_kwargs):
     # create customized dialog that will run install function, while receiving state update
     # thread to install
@@ -190,9 +221,9 @@ def progressbar_download(master, install_fn, fn_args, fn_kwargs):
     finishbtn.grid(row=2, column=0)
     # bind progressbar to self-updating function, receiving installation data from install_fn, and make finish button to clickable when done
 
-def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", outstream=sys.stdout):
+def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", use_tree=True, outstream=sys.stdout):
     # create an installation interface to install mod
-    window = tk.Tk()
+    window = tix.Tk()
     window.title(title)
     # try to find cached infomation
     cache_obj_path = cache.DEFAULT_CACHE
@@ -203,15 +234,19 @@ def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", outstrea
     frame, location = control_frame(cache_obj, additional_set, cache_obj_path=cache_obj_path, cache_loc=cache_loc, master=window, padx=5, pady=2)
     frame.grid(column=0, row=0, columnspan=2, sticky="w")
     # Additional mods from external source
-    scrollsection = tk.Canvas(master=window)
-    scrollsection.grid(column=0, row=1)
     sections = read_sections_from_pkg(pkg_path)
-    for i,(header, entries) in enumerate(sections):
-        adtframe = checkbox_frame(header, entries, additional_set, outstream=outstream, master=scrollsection, frame_cols=3, padx=2, pady=2)
-        adtframe.grid(column=0, row=i, sticky="w")
-    scroller = tk.Scrollbar(master=scrollsection)
-    scroller.grid(column=1, row=0, rowspan=len(sections))
-    scrollsection.configure(width=50, height=50, yscrollcommand = scroller.set)
+    if(use_tree):
+        adtframe = treeview_frame(window, sections, additional_set, outstream=outstream)
+        adtframe.grid(column=0, row=2, columnspan=2)
+    else:
+        scrollsection = tk.Canvas(master=window)
+        scrollsection.grid(column=0, row=1)
+        for i,(header, entries) in enumerate(sections):
+            adtframe = checkbox_frame(scrollsection, header, entries, additional_set, outstream=outstream, frame_cols=3, padx=2, pady=2)
+            adtframe.grid(column=0, row=i, sticky="w")
+        scroller = tk.Scrollbar(master=scrollsection)
+        scroller.grid(column=1, row=0, rowspan=len(sections))
+        scrollsection.configure(width=50, height=50, yscrollcommand = scroller.set)
     return window
     
 

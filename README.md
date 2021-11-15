@@ -14,7 +14,9 @@ Still lack a bunch of features:
 - [x] Persistent mods between game version ~~(new version will redownload mods from github)~~ new version now keep copies in APPDATA
 - [ ] Persistent mods selection between installs
 - [ ] Persistent mods checking and update for outdated contents
-- [ ] PyInstaller to create standalone exe
+- [ ] Failed download handling (currently leaving half-streamed file around)
+- [ ] PyInstaller to create standalone exe (Check on Windows)
+- [X] TreeView style of catalog
 - [ ] Progressbar and Threading
 
 All credits goes to respective authors who published their own mod on github and made them compatible to UML.
