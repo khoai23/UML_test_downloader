@@ -1743,10 +1743,7 @@ None
       </AODecals>
 	</chassis>
 	<hull>
-      <undamaged>vehicles/german/G81_Pz_IV_AusfH/normal/lod0/Hull.model</undamaged>
-<!--
 		<undamaged>vehicles/german/AG07_Pz_Bfw_IV/normal/lod0/Hull.model</undamaged>
--->
 		<exhaust>
       <pixie>gas_medium</pixie>
       <nodes>HP_Track_Exhaus_1 HP_Track_Exhaus_2</nodes>
