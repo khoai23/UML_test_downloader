@@ -15,6 +15,6 @@ Still lack a bunch of features:
 - [ ] Persistent mods selection between installs
 - [ ] Persistent mods checking and update for outdated contents
 - [ ] PyInstaller to create standalone exe
-- [ ] Progressbar and Threading
+- [ ] Progressbar and Threading; Accurate progressbar relative to sizes of mods instead of by package
 
 All credits goes to respective authors who published their own mod on github and made them compatible to UML.

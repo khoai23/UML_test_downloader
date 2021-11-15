@@ -21,7 +21,7 @@ def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="
         df.write("\n".join(lines))
     outstream.write("{:d} Entries written to file {:s}.\n".format(len(filelist), dfile))
 
-def download(filepath, onlinefile, retry=3, wait=1.0, cache_loc=None, outstream=sys.stdout):
+def download(filepath, onlinefile, stream=True, retry=3, wait=1.0, cache_loc=None, outstream=sys.stdout):
     # download raw file and make directory if needed
     if not os.path.exists(os.path.dirname(filepath)):
         try:
@@ -44,9 +44,9 @@ def download(filepath, onlinefile, retry=3, wait=1.0, cache_loc=None, outstream=
     
     while(retry > 0):
         try:
-            response = requests.get(onlinefile)
+            response = requests.get(onlinefile, stream=stream)
             if(response.status_code == 200):
-                data = response.content # only this get out of the function and go to f.write
+                data = response.iter_content() if stream else response.content # only this get out of the function and go to f.write
                 retry = 0
             elif(response.status_code == 404):
                 # no file to download
@@ -67,11 +67,15 @@ def download(filepath, onlinefile, retry=3, wait=1.0, cache_loc=None, outstream=
                     time.sleep(wait * 1000)
     # write the received file
     with io.open(filepath, "wb") as f:
-        f.write(data)
+        if(stream):
+            for chunk in data: # stream writing
+                f.write(chunk) 
+        else:
+            f.write(data) # wholesale writing
     if(cache_loc is not None):
         # attempt to write a cached copy as well
-        with io.open(os.path.join(cache_loc, os.path.basename(filepath)), "wb") as f:
-            f.write(data)
+        shutil.copyfile(filepath, cachepath)
+        
     outstream.write("File {:s} downloaded to {:s}\n".format(onlinefile, filepath))
 
 def download_to_folder(required_file, location, outstream=sys.stdout):
