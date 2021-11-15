@@ -222,7 +222,7 @@ def progressbar_download(master, install_fn, fn_args, fn_kwargs):
     # bind progressbar to self-updating function, receiving installation data from install_fn, and make finish button to clickable when done
 
 def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", use_tree=True, outstream=sys.stdout):
-    # create an installation interface to install mod
+    # create an installation interface to install mod.
     window = tix.Tk()
     window.title(title)
     # try to find cached infomation
@@ -251,5 +251,15 @@ def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", use_tree
     
 
 if __name__ == "__main__":
+    if getattr(sys, 'frozen', False):
+        application_path = sys._MEIPASS
+    else:
+        application_path = os.path.dirname(__file__)
+    print("Application path:", application_path)
+    # Attempt to load the TIX_LIBRARY to os.environ if applicable. Hardcoded atm
+    tix_location_pyinstaller = os.path.join(application_path, 'tix8.4.3')
+    #if(os.path.isdir(tix_location_pyinstaller)): # location found in spec
+    #    print("Updating TIX location: {:s}".format(tix_location_pyinstaller))
+    #    os.environ["TIX_LIBRARY"] = tix_location_pyinstaller
     window = tk_interface()
     window.mainloop()
