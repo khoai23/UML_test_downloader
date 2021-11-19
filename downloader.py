@@ -1,13 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, font, messagebox, tix
+from tkinter.constants import *
 import io, os, sys, time
 import requests
 import shutil
 import threading
 
 import filehandler
-from filehandler import GITHUB_PATTERN, DRIVE_FILE_LOCATION
+from filehandler import GITHUB_PATTERN_DEFAULT, DRIVE_FILE_LOCATION
 import cache
  
 def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid location..", outstream=sys.stdout):
@@ -41,17 +42,18 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     directory = directoryvar.get()
     if(not check_location(directoryvar, outstream=outstream)):
         messagebox.showerror(title="Wrong directory", message="Directory {:s} is not a valid WOT instance. Try again. The directory to be used is one where you can see WorldOfTank.exe in the files.".format(directory))
-        if(progressbar or progress_labelvar):
-            finish_trigger_fn()
+        if(progressbar or progress_labelvar): # if wrong directory, immediately enable exit
+            progress_labelvar.set("Error found. Exit, and try again or check your version.")
+            finish_trigger_fn(False)
         return
     # progressbar, progress label and finish trigger is checked
     start = time.time()
-    if(progressbar):
-        progressbar.start(100) # 100ms interval
-        step_size = 400 / (len(additional_set) + 1)
+    #if(progressbar):
+        #progressbar.start(100) # 100ms interval
+        # step_size = 400 / (len(additional_set) + 1)
 
     # Download and extract the UML base to correct location (res_mod/vernumber/)
-    resmod_folder = os.path.join(directory, "res_mod")
+    resmod_folder = os.path.join(directory, "res_mods")
     subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
     valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
     if(len(valid) > 1):
@@ -65,33 +67,31 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     if(progress_labelvar):
         progress_labelvar.set("Downloading and extracting main UML file...")
     if(cache_obj.get("use_drive_UML", 0) == 1): # Use inbuilt drive file 
-        filehandler.download(uml_filepath, DRIVE_FILE_LOCATION)
+        filehandler.download(uml_filepath, DRIVE_FILE_LOCATION, progressbar=progressbar)
     else: # use the github file
-        filehandler.download(uml_filepath, GITHUB_PATTERN.format("khoai23/UML_test_downloader", "src.zip"))
+        filehandler.download(uml_filepath, GITHUB_PATTERN_DEFAULT.format("khoai23/UML_test_downloader", "src.zip"), progressbar=progressbar)
     filehandler.extractZip(uml_filepath, UML_loc) # extract the file to resmod
     # delete the file after extraction. This prevent updates from being blocked by previous cached UML package
-    # TODO check hash or smth
-    os.remove(uml_filepath)
+    # not needed this time as we check filesize
+    # os.remove(uml_filepath)
     outstream.write("Base UML installed to {:s}\n".format(UML_loc))
-    if(progressbar):
-        progressbar["value"] = step_size 
 
     # download all the supplementary mods recorded in additional_set into the mods folder
     for i, (filename, link) in enumerate(additional_set):
         fileloc = os.path.join(directory, "mods", valid[0], "UML", filename)
         if(progress_labelvar):
-            progress_labelvar.set("Downloading {:s} from {:s} to location {:s}...".format(filename, link, fileloc))
-        filehandler.download(fileloc, link, cache_loc=cache_loc, wait=wait) # check for file in specific locations as well
-        if(progressbar):
-            progressbar["value"] = step_size * (i+1)
+            progress_labelvar.set("Downloading {:s} from {} to location {:s}...".format(filename, link, fileloc))
+        filehandler.download(fileloc, link, stream=True, cache_loc=cache_loc, wait=wait, progressbar=progressbar) # check for file in specific locations as well
         outstream.write("Installed mod {:s} to {:s}.\n".format(filename, fileloc))
     # after finished installing, update the cache_obj and write it to disk
     cache_obj["WOT_location"] = directory
+    cache_obj["mods"] = [name for name, link in additional_set]
     cache.write_cache(cache_obj, cache_obj_path)
     # done
     if(progressbar or progress_labelvar): # if there are a progressbar in another thread, run its complete 
         if(callable(finish_trigger_fn)):
-            finish_trigger_fn()
+            progress_labelvar.set("Everything finished.")
+            finish_trigger_fn(True)
     else: # create a simple infobox
         messagebox.showinfo(title="Done", message="Installation complete in {:s}".format(directory))
     outstream.write("Finish installation.\n")
@@ -156,7 +156,7 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     loclabel.grid(column=0, row=0, sticky="w")
     locentry.grid(column=1, row=0, sticky="w")
     locbtn.grid(column=2, row=0, sticky="w")
-    use_drive_var = tk.IntVar(cache_obj.get("use_drive_UML", 0))
+    use_drive_var = tk.IntVar(master=frame, value=cache_obj.get("use_drive_UML", 0))
     def set_use_drive_cacheobj(var=use_drive_var, **kwargs): 
         cache_obj["use_drive_UML"] = var.get()
     use_drive_checkbox = tk.Checkbutton(master=frame, text="Use inbuilt GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
@@ -183,14 +183,14 @@ def checkbox_frame(master, header, list_links, download_set=None, frame_cols=2, 
             download_set.add(entry)
         else:
             download_set.discard(entry)
-        outstream.write("Handled set with trigger {:d}, link {:s}, set result {}\n".format(checkvar, entry[1], download_set))
+        outstream.write("Handled set with trigger {:d}, link {}, set result {}\n".format(checkvar, entry[1], download_set))
     
     for i, (repo, filepath, description) in enumerate(list_links):
         truerow, truecol = (i // frame_cols + 1, i % frame_cols)
         #subframe = tk.Frame(master=frame)
         #subframe.grid(column=truecol, row=truerow, sticky="w")
         # build for every options, loaded into packs
-        link = GITHUB_PATTERN.format(repo, requests.utils.quote(filepath))
+        link = (repo, requests.utils.quote(filepath))
         filename = os.path.basename(filepath)
         checkvar = tk.IntVar()
         checkbox = tk.Checkbutton(master=frame, text=description, variable=checkvar, onvalue=1, offvalue=0, command=lambda var=checkvar, entry=(filename, link): update_set(var, entry=entry))
@@ -201,7 +201,7 @@ def checkbox_frame(master, header, list_links, download_set=None, frame_cols=2, 
     
     return frame
 
-def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, **kwargs):
+def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, cache_obj=None, **kwargs):
     # create a tix.CheckList nested in a frame; this should allow scrolls/selections much easier
     frame = tk.Frame(master=master, highlightbackground="red", highlightthickness=1, **kwargs)
     indicesDict = dict()
@@ -212,7 +212,7 @@ def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, **
             download_set.add(indicesDict[item])
         else:
             download_set.discard(indicesDict[item])
-        outstream.write("Handled set with trigger {:s}, link {:s}, set result {}\n".format(item, indicesDict[item][1], download_set))
+        outstream.write("Handled set with trigger {:s}, link {}, set result {}\n".format(item, indicesDict[item][1], download_set))
         
     tree = tix.CheckList(master=frame, browsecmd=selectItemFn, width=400, height=240)
     indicesDict[None] = tree # weird hack to access the tree obj
@@ -223,42 +223,50 @@ def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, **
         tree.hlist.add(section_str, text=header)
         # children sub rows
         for i, (repo, filepath, description) in enumerate(entries):
+            filename = os.path.basename(filepath)
+            link = (repo, requests.utils.quote(filepath))
             item_str = "{:s}.item_{:d}".format(section_str, i)
             tree.hlist.add(item_str, text=description)
-            tree.setstatus(item_str, "off")
-            link = GITHUB_PATTERN.format(repo, requests.utils.quote(filepath))
-            filename = os.path.basename(filepath)
+            if(filename in cache_obj.get("mods", set())):
+                itemcheck_status = "on" # if downloaded in the past, should have a name in cache set
+                download_set.add((filename, link)) # also add to the set
+            else:
+                itemcheck_status = "off"
+            tree.setstatus(item_str, itemcheck_status)
             indicesDict[item_str] = (filename, link)
     tree.pack()
     # tree.autosetmode()
     # ideally the widget would handle the selection update using selectItemFn above; TODO populate entries using cache
     return frame
 
-def progressbar_download(master, install_fn, fn_args, fn_kwargs):
+def progressbar_download(master, install_fn, *fn_args, **fn_kwargs):
     # create customized dialog that will run install function, while receiving state update
     # thread to install
-    install_thread = threading.Thread(target=install_fn, args=fn_args, kwargs=fn_kwargs)
+    # install_thread = threading.Thread(target=install_fn, args=fn_args, kwargs=fn_kwargs)
     # toplevel with progressbar and a finish button
     progress_dialog = tk.Toplevel(master=master)
     progress_dialog.title("Downloading...")
     tip = tk.Label(master=progress_dialog, text="Hint: Progress bars are like women. They stall when already late,\nmaddeningly slow most of the time, and are full of lies anyway.")
     tip.grid(row=0, column=0)
-    progressbar = tk.ttk.Progressbar(master=progress_dialog, length=400)
+    progressbar = tk.ttk.Progressbar(master=progress_dialog, length=400.0, mode='determinate')
     progressbar.grid(row=1, column=0)
     progress_labelvar = tk.StringVar(progress_dialog, value="Starting...")
-    progress_label = tk.Label(master=progress_dialog, textvariable=progress_labelvar)
+    progress_label = tk.Label(master=progress_dialog, textvariable=progress_labelvar, wraplength=400.0)
     progress_label.grid(row=2, column=0)
     finishbtn = tk.Button(master=progress_dialog, text="Finish", command=lambda: progress_dialog.destroy())
-    finishbtn["state"] = tk.DISABLED
+    finishbtn["state"] = DISABLED
     finishbtn.grid(row=3, column=0)
-    def enable_finish_btn():
-        finishbtn["state"] = tk.ENABLED
+    def enable_finish_btn(state=True):
+        finishbtn["state"] = NORMAL
+        if(not state):
+            # premature exit (error), immediately close down the dialog as well
+            progress_dialog.destroy()
     # create customized dialog that will run install function, while receiving state update
     # thread to install
     fn_kwargs["progressbar"] = progressbar
     fn_kwargs["progress_labelvar"] = progress_labelvar
     fn_kwargs["finish_trigger_fn"] = enable_finish_btn
-    install_thread = threading.Thread(target=install_fn, args=fn_args, kwargs=fn_kwargs)
+    install_thread = threading.Thread(target=install_fn, daemon=True, args=fn_args, kwargs=fn_kwargs)
     # bind progressbar to self-updating function, receiving installation data from install_fn, and make finish button to clickable when done
     def progressbar_repeat(next_fn=None):
         # add a certain amount of progress to the progressbar
@@ -268,12 +276,12 @@ def progressbar_download(master, install_fn, fn_args, fn_kwargs):
             return
         time.sleep(0.5 * 1000)
         callable(next_fn) and next_fn()
-    repeat_thread = threading.Thread(target=progressbar_repeat, kwargs={"next_fn": progressbar_repeat})
+    # repeat_thread = threading.Thread(target=progressbar_repeat, kwargs={"next_fn": progressbar_repeat})
     # get going
     install_thread.start()
-    repeat_thread.start()
+    # repeat_thread.start()
 
-def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", use_tree=True, outstream=sys.stdout):
+def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt", use_tree=True, outstream=sys.stdout):
     # create an installation interface to install mod.
     window = tix.Tk()
     window.title(title)
@@ -281,6 +289,7 @@ def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", use_tree
     cache_obj_path = cache.DEFAULT_CACHE
     cache_loc = cache.DEFAULT_CACHE_LOC
     cache_obj = cache.read_cache(location=cache_obj_path)
+    # print("Cache: ", cache_obj)
     # Config frame, handle all the settings (original location, etc.)
     additional_set = set()
     frame, location = control_frame(cache_obj, additional_set, cache_obj_path=cache_obj_path, cache_loc=cache_loc, master=window, padx=5, pady=2)
@@ -288,7 +297,7 @@ def tk_interface(title="UML_downloader", pkg_path="other_packages.txt", use_tree
     # Additional mods from external source
     sections = read_sections_from_pkg(pkg_path)
     if(use_tree):
-        adtframe = treeview_frame(window, sections, additional_set, outstream=outstream)
+        adtframe = treeview_frame(window, sections, additional_set, cache_obj=cache_obj, outstream=outstream)
         adtframe.grid(column=0, row=2, columnspan=2)
     else:
         scrollsection = tk.Canvas(master=window)
@@ -308,8 +317,10 @@ if __name__ == "__main__":
     else:
         application_path = os.path.dirname(__file__)
     print("Application path:", application_path)
+    packages_path = os.path.join(application_path, "packages", "other_packages.txt")
     #if(os.path.isdir(tix_location_pyinstaller)): # location found in spec
     #    print("Updating TIX location: {:s}".format(tix_location_pyinstaller))
     #    os.environ["TIX_LIBRARY"] = tix_location_pyinstaller
-    window = tk_interface()
+    window = tk_interface(pkg_path=packages_path)
     window.mainloop()
+    

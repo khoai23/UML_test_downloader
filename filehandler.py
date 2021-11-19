@@ -3,8 +3,10 @@ import zipfile36 as zipfile
 import shutil
 import errno
 import requests
+import subprocess
 
-GITHUB_PATTERN = "https://raw.githubusercontent.com/{:s}/master/{:s}" # first is repo, second is file location
+GITHUB_PATTERN_DEFAULT = "https://raw.githubusercontent.com/{:s}/master/{:s}" # first is repo, second is file location
+GITHUB_PATTERN_LFS = "https://media.githubusercontent.com/media/{:s}/master/{:s}"
 REQUIRED_FILES_LOCS = "required.txt"
 DRIVE_FILE_LOCATION = "https://drive.google.com/uc?export=download&id=1Tp7JTzelEQvlxO3KbICSO1yuEeIsriqj" # UML file on GoogleDrive.
 
@@ -15,14 +17,14 @@ def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="
         for root, folders, files in os.walk(src_dir):
             for f in files:
                 truepath = os.path.join(root, f)
-                onlinepath = GITHUB_PATTERN.format(repo, truepath.replace("\\", "/"))
+                onlinepath = (GITHUB_PATTERN_DEFAULT if truepath not in lfs_filelist else GITHUB_PATTERN_LFS).format(repo, truepath.replace("\\", "/"))
                 filelist.append( (truepath, onlinepath) )
         lines = ("\t".join(paths) for paths in filelist)
         df.write("\n".join(lines))
     outstream.write("{:d} Entries written to file {:s}.\n".format(len(filelist), dfile))
 
-def download(filepath, onlinefile, stream=True, retry=3, wait=1.0, cache_loc=None, outstream=sys.stdout):
-    # download raw file and make directory if needed
+def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1.0, cache_loc=None, progressbar=None, outstream=sys.stdout):
+    # make directory if needed
     if not os.path.exists(os.path.dirname(filepath)):
         try:
             os.makedirs(os.path.dirname(filepath))
@@ -30,23 +32,45 @@ def download(filepath, onlinefile, stream=True, retry=3, wait=1.0, cache_loc=Non
             if exc.errno != errno.EEXIST:
                 raise exc
                 
-    # if the file already exist, skip
-    if(os.path.exists(filepath)):
-        outstream.write("Found file {:s} already in directory.\n".format(filepath))
-        return
-    
-    # if the file is found in cache_loc, copy over
-    if(cache_loc is not None and os.path.exists(os.path.join(cache_loc, os.path.basename(filepath)))):
-        cachepath = os.path.join(cache_loc, os.path.basename(filepath))
-        shutil.copyfile(cachepath, filepath)
-        outstream.write("Found file in cache directory, copying {:s} -> {:s}\n".format(cachepath, filepath))
-        return
+    # print(onlinefile, type(onlinefile), isinstance(onlinefile, tuple))
+    if(isinstance(onlinefile, tuple)):
+        # onlinefile can be a string or a tuple of {repo} {filepath}
+        # try the lfs format first
+        lfs_path = GITHUB_PATTERN_LFS.format(*onlinefile)
+        response = requests.get(lfs_path, allow_redirects=True, stream=stream)
+        if(response.status_code == 404):
+            # not lfs, use the other format
+            onlinefile = GITHUB_PATTERN_DEFAULT.format(*onlinefile)
+        else:
+            onlinefile = lfs_path
+        response.close()
+        print("Chosen web path generated: {:s}".format(onlinefile))
     
     while(retry > 0):
         try:
-            response = requests.get(onlinefile, stream=stream)
+            response = requests.get(onlinefile, allow_redirects=True, stream=stream)
+                
+            if(stream):
+                # if not stream, the response already contain the file anyway; why bother
+                # get filesize
+                correct_filesize = int(response.headers['content-length'])
+                # if the file already exist, skip
+                if(os.path.exists(filepath) and os.stat(filepath).st_size == correct_filesize):
+                    outstream.write("Found file {:s} already in directory with correct size, ignoring.\n".format(filepath))
+                    return
+                
+                # if the file is found in cache_loc, copy over
+                if(cache_loc is not None and os.path.exists(os.path.join(cache_loc, os.path.basename(filepath)))):
+                    cachepath = os.path.join(cache_loc, os.path.basename(filepath))
+                    if(os.stat(cachepath).st_size == correct_filesize):
+                        shutil.copyfile(cachepath, filepath)
+                        outstream.write("Found file in cache directory with correct size, copying {:s} -> {:s}\n".format(cachepath, filepath))
+                        return
+                    
+            # check header for content length
             if(response.status_code == 200):
-                data = response.iter_content() if stream else response.content # only this get out of the function and go to f.write
+                data = response.iter_content(chunk_size=chunk_size) if stream else response.content # only this get out of the function and go to f.write
+                # print(response.content)
                 retry = 0
             elif(response.status_code == 404):
                 # no file to download
@@ -68,13 +92,21 @@ def download(filepath, onlinefile, stream=True, retry=3, wait=1.0, cache_loc=Non
     # write the received file
     with io.open(filepath, "wb") as f:
         if(stream):
+            if(progressbar):
+                progressbar["value"] = 0
             for chunk in data: # stream writing
-                f.write(chunk) 
+                f.write(chunk)
+                if(progressbar): # attempt to add % to progress value basing on the chunks downloaded
+                    # print(len(chunk))
+                    progressbar["value"] += (len(chunk) / correct_filesize)
         else:
             f.write(data) # wholesale writing
     if(cache_loc is not None):
         # attempt to write a cached copy as well
+        cachepath = os.path.join(cache_loc, os.path.basename(filepath))
         shutil.copyfile(filepath, cachepath)
+    # close down the request once everything is verified.
+    response.close()
         
     outstream.write("File {:s} downloaded to {:s}\n".format(onlinefile, filepath))
 

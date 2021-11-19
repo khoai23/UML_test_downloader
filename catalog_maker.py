@@ -67,8 +67,21 @@ def export_sections_to_txt(data, txtfile="other_packages.txt"):
         A_text_section = A_desc + "\n" + "\n".join(["\t".join(tpl) for tpl in A_sections])
         other_text_section = other_desc + "\n" + "\n".join(["\t".join(tpl) for tpl in other_sections])
         tf.write("\n\n".join([UUP_text_section, A_text_section, other_text_section]))
+    
+def description_maker_func(path, remove_phrases=[], descformat="{:s}"):
+    # get last basename
+    basename = path.split("/")[-1]
+    for phr in remove_phrases:
+        basename = basename.replace(phr, "")
+    cleanname = basename.replace(".wotmod", "").replace("_", " ").strip()
+    return descformat.format(cleanname)
+    
+def export_sections_to_json(data, jsonfile="packages.json")
+    data = {}
+    uup = data["UUP"]
+    
 
 if __name__ == "__main__":
     subdict = read_submodules()
     data = walk_folder("./mods", substitute=subdict)
-    export_sections_to_txt(data, "test/other_packages.txt")
+    export_sections_to_txt(data, os.path.join("packages", "other_packages.txt"))
