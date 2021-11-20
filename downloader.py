@@ -10,6 +10,7 @@ import threading
 import filehandler
 from filehandler import GITHUB_PATTERN_DEFAULT, DRIVE_FILE_LOCATION
 import cache
+from catalog_maker import read_sections_from_pkg
  
 def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid location..", outstream=sys.stdout):
     # open a filedialog and select a location
@@ -130,18 +131,6 @@ def remove(directoryvar, cache_loc=cache.DEFAULT_CACHE_LOC, careful=False, outst
     # message
     messagebox.showinfo(title="Cleaned", message="Cleaned {:s} files from {:s} and {:s}".format("specific UML" if careful else "all", mod_dir, resmod_folder))
                 
-
-def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
-    # read a list of sections in a file. Sections have the first line being header and all next line entries.
-    # conform with checkbox_frame requirement (tuple of 3)
-    with io.open(filepath, "r", encoding="utf-8") as pkgs:
-        data = pkgs.read()
-        sections = data.split(section_delim) if section_delim in data else [data]
-        formed = [s.strip().split(entry_delim) for s in sections]
-        # return (header, formatted entries) for each section
-        formatted = [ (s[0], [l.strip().split(internal_delim) for l in s[1:]]) 
-            for s in formed]
-    return formatted
     
 def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, master=None, outstream=sys.stdout, **kwargs):
     # create a tk.Frame concerning configurations.
@@ -159,7 +148,7 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     use_drive_var = tk.IntVar(master=frame, value=cache_obj.get("use_drive_UML", 0))
     def set_use_drive_cacheobj(var=use_drive_var, **kwargs): 
         cache_obj["use_drive_UML"] = var.get()
-    use_drive_checkbox = tk.Checkbutton(master=frame, text="Use inbuilt GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
+    use_drive_checkbox = tk.Checkbutton(master=frame, text="Use GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
     use_drive_checkbox.grid(column=2, row=1, sticky="e")
     # Install button, receive location and all the extra packages
     # instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
@@ -185,7 +174,7 @@ def checkbox_frame(master, header, list_links, download_set=None, frame_cols=2, 
             download_set.discard(entry)
         outstream.write("Handled set with trigger {:d}, link {}, set result {}\n".format(checkvar, entry[1], download_set))
     
-    for i, (repo, filepath, description) in enumerate(list_links):
+    for i, (description, repo, filepath) in enumerate(list_links):
         truerow, truecol = (i // frame_cols + 1, i % frame_cols)
         #subframe = tk.Frame(master=frame)
         #subframe.grid(column=truecol, row=truerow, sticky="w")
@@ -222,7 +211,7 @@ def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, ca
         section_str = "section_{:d}".format(section_idx)
         tree.hlist.add(section_str, text=header)
         # children sub rows
-        for i, (repo, filepath, description) in enumerate(entries):
+        for i, (description, repo, filepath) in enumerate(entries):
             filename = os.path.basename(filepath)
             link = (repo, requests.utils.quote(filepath))
             item_str = "{:s}.item_{:d}".format(section_str, i)
@@ -317,7 +306,7 @@ if __name__ == "__main__":
     else:
         application_path = os.path.dirname(__file__)
     print("Application path:", application_path)
-    packages_path = os.path.join(application_path, "packages", "other_packages.txt")
+    packages_path = os.path.join(application_path, "packages", "packages.json")
     #if(os.path.isdir(tix_location_pyinstaller)): # location found in spec
     #    print("Updating TIX location: {:s}".format(tix_location_pyinstaller))
     #    os.environ["TIX_LIBRARY"] = tix_location_pyinstaller

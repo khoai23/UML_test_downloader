@@ -1,4 +1,5 @@
 import re, io, os
+import json
 
 repo_regex = re.compile(r"https://github.com/(.+).git")
 
@@ -48,19 +49,19 @@ def export_sections_to_txt(data, txtfile="other_packages.txt"):
     data = [entry for entry in data if entry not in UUP_sections] 
     # generate description: [UUP] {vehicle name}
     descmaker = lambda path: "[UUP] {:s}".format( path.split("/")[-1].replace(".wotmod", "").replace("_", " ").replace("TheFalkonett's UUP ", "").strip() )
-    UUP_sections = [(repo, path, descmaker(path)) for repo, path in UUP_sections ]
+    UUP_sections = [(descmaker(path), repo, path) for repo, path in UUP_sections ]
     
     A_desc = "Atacms's UML Addon/Standalone" # Atacms models
     A_sections = [entry for entry in data if "Atacms" in entry[1]] 
     data = [entry for entry in data if entry not in A_sections] 
     # generate description: [Atacms] {vehicle name}
     descmaker = lambda path: "[Atacms] {:s}".format( path.split("/")[-1].replace(".wotmod", "").replace("[atacms]", "").replace("_", " ").strip() )
-    A_sections = [(repo, path, descmaker(path)) for repo, path in A_sections ]
+    A_sections = [(descmaker(path), repo, path) for repo, path in A_sections ]
     
     other_desc = "Private, Unverified, etc." # all the other
     other_sections = data 
     descmaker = lambda path: "[Private] {:s}".format( path.split("/")[-1].replace(".wotmod", "").replace("_", " ").strip() )
-    other_sections = [(repo, path, descmaker(path)) for repo, path in other_sections ]
+    other_sections = [(descmaker(path), repo, path) for repo, path in other_sections ]
     
     with io.open(txtfile, "w", encoding="utf-8") as tf:
         UUP_text_section = UUP_desc + "\n" + "\n".join(["\t".join(tpl) for tpl in UUP_sections])
@@ -68,20 +69,64 @@ def export_sections_to_txt(data, txtfile="other_packages.txt"):
         other_text_section = other_desc + "\n" + "\n".join(["\t".join(tpl) for tpl in other_sections])
         tf.write("\n\n".join([UUP_text_section, A_text_section, other_text_section]))
     
-def description_maker_func(path, remove_phrases=[], descformat="{:s}"):
+def description_maker_func(path, override_dict=None, remove_phrases=[], descformat="{:s}"):
+    if(override_dict and path in override_dict):
+        # found override, using its description and kick it out of the dict
+        return override_dict.pop(path)
     # get last basename
-    basename = path.split("/")[-1]
+    basename = os.path.basename(path)
     for phr in remove_phrases:
         basename = basename.replace(phr, "")
     cleanname = basename.replace(".wotmod", "").replace("_", " ").strip()
     return descformat.format(cleanname)
     
-def export_sections_to_json(data, jsonfile="packages.json")
-    data = {}
-    uup = data["UUP"]
-    
+def export_sections_to_json(data, override_datafile=None, jsonfile="packages.json"):
+    # create override_dict from file. This dict should be formatted "path": "custom description" or "link": "description". 
+    # The first override found paths in the data; The second create new entries from links outside github.
+    override_dict = None
+    if(override_datafile):
+        with io.open(override_datafile, "r", encoding="utf-8") as jf:
+            override_dict = json.load(jf)
+    sections = {}
+    uup = sections["Falkonett UUP Project"] = {}
+    UUP_sections = [entry for entry in data if "UUP" in entry[0]] 
+    for repo, path in UUP_sections:
+        uup[description_maker_func(path, override_dict=override_dict, remove_phrases=["TheFalkonett's_UUP_"])] = (repo, path)
+    atacms = sections["Atacms's UML Addon/Standalone"] = {}
+    A_sections = [entry for entry in data if "Atacms" in entry[1]] 
+    for repo, path in A_sections:
+        atacms[description_maker_func(path, override_dict=override_dict, remove_phrases=["[atacms]"])] = (repo, path)
+    local = sections["Private, Unverified, etc."] = {}
+    other_sections = [entry for entry in data if entry not in UUP_sections and entry not in A_sections]
+    for repo, path in other_sections:
+        local[description_maker_func(path, override_dict=override_dict)] = (repo, path)
+    # print(data, uup, atacms, local)
+    with io.open(jsonfile, "w", encoding="utf-8") as jf:
+        json.dump(sections, jf)
+
+def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
+    if(filepath[-4:] == ".txt"):
+        # read a list of sections in a file. Sections have the first line being header and all next line entries.
+        # conform with checkbox_frame requirement (tuple of 3)
+        with io.open(filepath, "r", encoding="utf-8") as pkgs:
+            data = pkgs.read()
+            sections = data.split(section_delim) if section_delim in data else [data]
+            formed = [s.strip().split(entry_delim) for s in sections]
+            # return (header, formatted entries) for each section
+            formatted = [ (s[0], [l.strip().split(internal_delim) for l in s[1:]]) 
+                for s in formed]
+    elif(filepath[-5:] == ".json"):
+        with io.open(filepath, "r", encoding="utf-8") as jf:
+            data = json.load(jf)
+            # format
+            formatted = [(section_key, [(item_desc, repo_name, file_path) for item_desc, (repo_name, file_path) in item_dict.items()]) 
+                            for section_key, item_dict in data.items()]
+    else:
+        raise ValueError("Unknown filepath type, please check: {:s}".format(filepath))
+    return formatted
 
 if __name__ == "__main__":
     subdict = read_submodules()
     data = walk_folder("./mods", substitute=subdict)
     export_sections_to_txt(data, os.path.join("packages", "other_packages.txt"))
+    export_sections_to_json(data, override_datafile=os.path.join("packages", "override.json"), jsonfile=os.path.join("packages", "packages.json"))

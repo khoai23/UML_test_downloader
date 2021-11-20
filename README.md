@@ -1,7 +1,6 @@
 A little program to make installing sir [atacms's UML mod](http://forum.worldoftanks.eu/index.php?/topic/457839-11000universal-model-loader-uml-change-only-the-appearance-of-your-own-tank/) a bit simpler. To compile your own version, run this from the base directory:
 
 ```
-# you need git-lfs if you have LFS files in the directory
 # install needed packages (tkinter might need additional apt-get or smth)
 pip install -r requirements.txt
 # generating catalog file
@@ -20,6 +19,10 @@ Still lack a bunch of features:
 - [x] Failed download handling (check file size enabled)
 - [x] PyInstaller to create standalone exe (Check on Windows)
 - [x] TreeView style of catalog
-- [ ] ~~Progressbar and Threading;~~ Accurate progressbar relative to sizes of mods instead of by package
+- [x] ~~Progressbar and Threading~~ 
+- [ ] Accurate progressbar relative to sizes of mods instead of by package
+- [ ] Better `catalog_maker`, tooltip or image for each package.
+- [ ] Query list of downloadable packages from online
+- [ ] Separate the "wipe mod" option from "wipe cache" option
 
 All credits goes to respective authors who published their own mod on github and made them compatible to UML.
