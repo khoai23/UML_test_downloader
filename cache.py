@@ -1,5 +1,6 @@
 import os, io
 import json
+import contextlib
 
 if( os.getenv("APPDATA") is None or os.getenv("APPDATA") == ""):
     print("Warning: APPDATA variable is null; the cache will be written to local folder and may not persist between runs.")
@@ -37,7 +38,8 @@ def read_cache(location=DEFAULT_CACHE, separator=SEPARATOR, sanitize=True):
         if(sanitize):
             print(e)
             # silently remove the file after outputing the error
-            os.remove(location)
+            with contextlib.suppress(FileNotFoundError):
+                os.remove(location)
         # cache do not exist / error while reading, create blank
         data = {}
     # data = {k: try_convert_value(v) for k, v in data.items()}
