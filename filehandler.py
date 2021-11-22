@@ -23,6 +23,12 @@ def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="
         df.write("\n".join(lines))
     outstream.write("{:d} Entries written to file {:s}.\n".format(len(filelist), dfile))
 
+def check_googledrive_cookie(cookies):
+    for k, v in cookies.items():
+        if k.startswith('download_warning'):
+            return v
+    return None
+    
 def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1.0, cache_loc=None, progressbar=None, outstream=sys.stdout):
     # make directory if needed
     if not os.path.exists(os.path.dirname(filepath)):
@@ -45,7 +51,7 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
             onlinefile = lfs_path
         response.close()
         print("Chosen web path generated: {:s}".format(onlinefile))
-    
+
     while(retry > 0):
         try:
             response = requests.get(onlinefile, allow_redirects=True, stream=stream)
@@ -66,7 +72,16 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
                         shutil.copyfile(cachepath, filepath)
                         outstream.write("Found file in cache directory with correct size, copying {:s} -> {:s}\n".format(cachepath, filepath))
                         return
-                    
+            
+            if("drive.google.com" in onlinefile):
+                # perform check, replacing the response with the correct token if needed
+                token = check_googledrive_cookie(response.cookies)
+                if(token):
+                    onlinefile = "{:s}&confirm={:s}".format(onlinefile, token)
+                    outstream.write("GoogleDrive large file link detected; using token {:s}(becoming {:s})".format(token, onlinefile))
+                    response.close()
+                    response = requests.get(onlinefile, allow_redirects=True, stream=stream)
+
             # check header for content length
             if(response.status_code == 200):
                 data = response.iter_content(chunk_size=chunk_size) if stream else response.content # only this get out of the function and go to f.write
@@ -98,14 +113,14 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
                 f.write(chunk)
                 if(progressbar): # attempt to add % to progress value basing on the chunks downloaded
                     # print(len(chunk))
-                    progressbar["value"] += (len(chunk) / correct_filesize)
+                    progressbar["value"] += float(chunk_size) / correct_filesize
         else:
             f.write(data) # wholesale writing
     if(cache_loc is not None):
         # attempt to write a cached copy as well
         cachepath = os.path.join(cache_loc, os.path.basename(filepath))
         shutil.copyfile(filepath, cachepath)
-    # close down the request once everything is verified.
+    # close down the request once everything is done and verified.
     response.close()
         
     outstream.write("File {:s} downloaded to {:s}\n".format(onlinefile, filepath))

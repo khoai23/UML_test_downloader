@@ -10,6 +10,7 @@ import threading
 import filehandler
 from filehandler import GITHUB_PATTERN_DEFAULT, DRIVE_FILE_LOCATION
 import cache
+from cache import SEPARATOR
 from catalog_maker import read_sections_from_pkg
  
 def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid location..", outstream=sys.stdout):
@@ -114,7 +115,7 @@ def remove(directoryvar, cache_loc=cache.DEFAULT_CACHE_LOC, careful=False, outst
 
     # always remove the mods/UML folder content
     mod_dir = os.path.join(directory, "mods", valid[0], "UML")
-    shutil.rmtree(mod_dir)
+    shutil.rmtree(mod_dir, ignore_errors=True)
     if(careful):
         # remove all known injection files from `resmods`; folders are left empty
         ownmodel_dir = os.path.join(resmod_folder, valid[0], "scripts", "client", "gui", "mods", "mod_ownmodel.py")
@@ -159,37 +160,6 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     rmbtn.grid(column=2, row=2, columnspan=3)
     return frame, location
 
-def checkbox_frame(master, header, list_links, download_set=None, frame_cols=2, outstream=sys.stdout, **kwargs):
-    # create a tk.Frame allowing user to check the mod they want to download.
-    frame = tk.Frame(master=master, highlightbackground="black", highlightthickness=1, **kwargs)
-    framelabel = tk.Label(master=frame, text=header, font=font.Font(family='Helvetica', size=14))
-    framelabel.grid(column=0, row=0, columnspan=2)
-    # function to handle download_set changes
-    def update_set(checkvar, entry=None):
-        # if checkvar is 0, remove the loc from download set; else add into the download set
-        checkvar = checkvar.get()
-        if(checkvar == 1):
-            download_set.add(entry)
-        else:
-            download_set.discard(entry)
-        outstream.write("Handled set with trigger {:d}, link {}, set result {}\n".format(checkvar, entry[1], download_set))
-    
-    for i, (description, repo, filepath) in enumerate(list_links):
-        truerow, truecol = (i // frame_cols + 1, i % frame_cols)
-        #subframe = tk.Frame(master=frame)
-        #subframe.grid(column=truecol, row=truerow, sticky="w")
-        # build for every options, loaded into packs
-        link = (repo, requests.utils.quote(filepath))
-        filename = os.path.basename(filepath)
-        checkvar = tk.IntVar()
-        checkbox = tk.Checkbutton(master=frame, text=description, variable=checkvar, onvalue=1, offvalue=0, command=lambda var=checkvar, entry=(filename, link): update_set(var, entry=entry))
-        checkbox.grid(column=truecol, row=truerow, sticky="w")
-        #desclabel = tk.Label(master=subframe, anchor="w", text=description)
-        #checkbox.pack(side="left")
-        #desclabel.pack(side="left")
-    
-    return frame
-
 def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, cache_obj=None, **kwargs):
     # create a tix.CheckList nested in a frame; this should allow scrolls/selections much easier
     frame = tk.Frame(master=master, highlightbackground="red", highlightthickness=1, **kwargs)
@@ -212,8 +182,11 @@ def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, ca
         tree.hlist.add(section_str, text=header)
         # children sub rows
         for i, (description, repo, filepath) in enumerate(entries):
-            filename = os.path.basename(filepath)
-            link = (repo, requests.utils.quote(filepath))
+            if(repo is not None): # github format which is (repo, filepath)
+                filename = os.path.basename(filepath)
+                link = (repo, requests.utils.quote(filepath))
+            else: # googledrive format which is (None, filename{cache.SEPARATOR}link)
+                filename, link = filepath.split(SEPARATOR)
             item_str = "{:s}.item_{:d}".format(section_str, i)
             tree.hlist.add(item_str, text=description)
             if(filename in cache_obj.get("mods", set())):
@@ -235,7 +208,7 @@ def progressbar_download(master, install_fn, *fn_args, **fn_kwargs):
     # toplevel with progressbar and a finish button
     progress_dialog = tk.Toplevel(master=master)
     progress_dialog.title("Downloading...")
-    tip = tk.Label(master=progress_dialog, text="Hint: Progress bars are like women. They stall when already late,\nmaddeningly slow most of the time, and are full of lies anyway.")
+    tip = tk.Label(master=progress_dialog, text="Hint: Progress bars are like women. They stall when already late, maddeningly slow most of the time, and are full of lies anyway.", wraplength=400.0)
     tip.grid(row=0, column=0)
     progressbar = tk.ttk.Progressbar(master=progress_dialog, length=400.0, mode='determinate')
     progressbar.grid(row=1, column=0)
@@ -289,14 +262,7 @@ def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt",
         adtframe = treeview_frame(window, sections, additional_set, cache_obj=cache_obj, outstream=outstream)
         adtframe.grid(column=0, row=2, columnspan=2)
     else:
-        scrollsection = tk.Canvas(master=window)
-        scrollsection.grid(column=0, row=1)
-        for i,(header, entries) in enumerate(sections):
-            adtframe = checkbox_frame(scrollsection, header, entries, additional_set, outstream=outstream, frame_cols=3, padx=2, pady=2)
-            adtframe.grid(column=0, row=i, sticky="w")
-        scroller = tk.Scrollbar(master=scrollsection)
-        scroller.grid(column=1, row=0, rowspan=len(sections))
-        scrollsection.configure(width=50, height=50, yscrollcommand = scroller.set)
+        raise NotImplementedError
     return window
     
 

@@ -1,5 +1,6 @@
 import re, io, os
 import json
+from cache import SEPARATOR
 
 repo_regex = re.compile(r"https://github.com/(.+).git")
 
@@ -80,26 +81,44 @@ def description_maker_func(path, override_dict=None, remove_phrases=[], descform
     cleanname = basename.replace(".wotmod", "").replace("_", " ").strip()
     return descformat.format(cleanname)
     
-def export_sections_to_json(data, override_datafile=None, jsonfile="packages.json"):
-    # create override_dict from file. This dict should be formatted "path": "custom description" or "link": "description". 
-    # The first override found paths in the data; The second create new entries from links outside github.
+def export_sections_to_json(data, override_datafile=None, additional_datafile=None, ignore_datafile=None, jsonfile="packages.json"):
+    # create override_dict from file. This dict should be formatted "path": "custom description" 
+    # This will override found paths in the data with the custom descriptor
     override_dict = None
     if(override_datafile):
         with io.open(override_datafile, "r", encoding="utf-8") as jf:
             override_dict = json.load(jf)
+    ignore_list = None
+    if(ignore_datafile):
+        with io.open(ignore_datafile, "r", encoding="utf-8") as jf:
+            ignore_list = json.load(jf)
+    # create ignore_dict from file. This dict should contain "path" that should be ignored
+    # This will stop adding entries with specific paths into the sections.
     sections = {}
     uup = sections["Falkonett UUP Project"] = {}
     UUP_sections = [entry for entry in data if "UUP" in entry[0]] 
     for repo, path in UUP_sections:
+        if(ignore_list and path in ignore_list):
+            continue
         uup[description_maker_func(path, override_dict=override_dict, remove_phrases=["TheFalkonett's_UUP_"])] = (repo, path)
     atacms = sections["Atacms's UML Addon/Standalone"] = {}
     A_sections = [entry for entry in data if "Atacms" in entry[1]] 
     for repo, path in A_sections:
+        if(ignore_list and path in ignore_list):
+            continue
         atacms[description_maker_func(path, override_dict=override_dict, remove_phrases=["[atacms]"])] = (repo, path)
     local = sections["Private, Unverified, etc."] = {}
     other_sections = [entry for entry in data if entry not in UUP_sections and entry not in A_sections]
     for repo, path in other_sections:
+        if(ignore_list and path in ignore_list):
+            continue
         local[description_maker_func(path, override_dict=override_dict)] = (repo, path)
+    # create additional dict from file. Entries will be added directly to `other_sections`; with every entry being "mod_description": [None, "mod_filename{cache.SEPARATOR}mod_download_link"]. GoogleDrive is only certain to work with <100MB files, as the extra bit isn't tested atm.
+    # TODO updating other section e.g Atacms using keywords
+    if(additional_datafile):
+        with io.open(additional_datafile, "r", encoding="utf-8") as jf:
+            additional_dict = json.load(jf)
+            local.update(additional_dict)
     # print(data, uup, atacms, local)
     with io.open(jsonfile, "w", encoding="utf-8") as jf:
         json.dump(sections, jf)

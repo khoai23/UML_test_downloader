@@ -23,6 +23,7 @@ Still lack a bunch of features:
 - [ ] Accurate progressbar relative to sizes of mods instead of by package
 - [ ] Better `catalog_maker`, tooltip or image for each package.
 - [ ] Query list of downloadable packages from online
-- [ ] Separate the "wipe mod" option from "wipe cache" option
+- [ ] Separate the "wipe mod" option from "wipe cache" option (currently all in `Remove` button)
+- [ ] Crediting proper authors
 
 All credits goes to respective authors who published their own mod on github and made them compatible to UML.
