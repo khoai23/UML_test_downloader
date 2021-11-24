@@ -77,6 +77,20 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     # not needed this time as we check filesize
     # os.remove(uml_filepath)
     outstream.write("Base UML installed to {:s}\n".format(UML_loc))
+    
+    # if selected, attempt to find and copy old ownModel.xml from other valid directoryvar
+    if(cache_obj.get("copy_ownModel", 0) == 1):
+        new_ownmodel_filepath = os.path.join(UML_loc, "scripts", "client", "mods", "ownModel.xml")
+        copied = False
+        for oldversion in valid[1:]: # go back from the latest version
+            ownmodel_filepath = os.path.join(resmod_folder, oldversion, "scripts", "client", "mods", "ownModel.xml")
+            if(os.path.isfile(ownmodel_filepath)):
+                shutil.copyfile(ownmodel_filepath, new_ownmodel_filepath)
+                outstream.write("Found ownModel.xml at {:s}, copied to {:s}".format(oldversion, ownmodel_filepath))
+                copied = True
+                break
+        if(not copied):
+            outstream.write("Did not find any ownModel.xml on older directories. Continuing.")
 
     # download all the supplementary mods recorded in additional_set into the mods folder
     for i, (filename, link) in enumerate(additional_set):
@@ -146,11 +160,17 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     loclabel.grid(column=0, row=0, sticky="w")
     locentry.grid(column=1, row=0, sticky="w")
     locbtn.grid(column=2, row=0, sticky="w")
+    
+    copy_ownModel_var = tk.IntVar(master=frame, value=cache_obj.get("copy_ownModel", 0))
+    def set_copy_ownModel_cacheobj(var=copy_ownModel_var, **kwargs): 
+        cache_obj["copy_ownModel"] = var.get()
+    copy_ownModel_checkbox = tk.Checkbutton(master=frame, text="Copy old ownModel.xml", variable=copy_ownModel_var, onvalue=1, offvalue=0, command=set_copy_ownModel_cacheobj)
+    copy_ownModel_checkbox.grid(column=0, row=1, columnspan=2, sticky="e")
     use_drive_var = tk.IntVar(master=frame, value=cache_obj.get("use_drive_UML", 0))
     def set_use_drive_cacheobj(var=use_drive_var, **kwargs): 
         cache_obj["use_drive_UML"] = var.get()
     use_drive_checkbox = tk.Checkbutton(master=frame, text="Use GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
-    use_drive_checkbox.grid(column=2, row=1, sticky="e")
+    use_drive_checkbox.grid(column=2, row=1, sticky="w")
     # Install button, receive location and all the extra packages
     # instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
     instbtn = tk.Button(master=frame, text="Install", command=lambda: progressbar_download(master, install, location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
@@ -158,6 +178,7 @@ def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE,
     # Remove button, removing UML and associating files
     rmbtn = tk.Button(master=frame, text="Remove UML", command=lambda: remove(location, cache_loc=cache_loc, outstream=outstream) )
     rmbtn.grid(column=2, row=2, columnspan=3)
+    
     return frame, location
 
 def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, cache_obj=None, **kwargs):

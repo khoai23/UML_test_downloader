@@ -21,6 +21,7 @@ Still lack a bunch of features:
 - [x] TreeView style of catalog
 - [x] ~~Progressbar and Threading~~ 
 - [ ] Accurate progressbar relative to sizes of mods instead of by package
+- [ ] Copying old ownModel.xml from old directory
 - [ ] Better `catalog_maker`, tooltip or image for each package.
 - [ ] Query list of downloadable packages from online
 - [ ] Separate the "wipe mod" option from "wipe cache" option (currently all in `Remove` button)

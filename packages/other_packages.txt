@@ -86,6 +86,7 @@ Falkonett UUP Project
 
 Atacms's UML Addon/Standalone
 [Atacms] UUP A88 M53 55	khoai23/UML_test_downloader	mods/Atacms/UUP_A88_M53_55.wotmod
+[Atacms] GB95 Ekins Firefly M4A4	khoai23/UML_test_downloader	mods/Atacms/[atacms]GB95_Ekins_Firefly_M4A4.wotmod
 [Atacms] It14 P44 Pantera animation	khoai23/UML_test_downloader	mods/Atacms/[atacms]It14_P44_Pantera_animation.wotmod
 [Atacms] R87 T62A ejection	khoai23/UML_test_downloader	mods/Atacms/[atacms]R87_T62A_ejection.wotmod
 [Atacms] W14 T80U	khoai23/UML_test_downloader	mods/Atacms/[atacms]W14_T80U.wotmod
