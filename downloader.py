@@ -8,7 +8,7 @@ import shutil
 import threading
 
 import filehandler
-from filehandler import GITHUB_PATTERN_DEFAULT, DRIVE_FILE_LOCATION
+from filehandler import GITHUB_PATTERN_DEFAULT, DRIVE_FILE_LOCATION, DEFAULT_REPO
 import cache
 from cache import SEPARATOR
 from catalog_maker import read_sections_from_pkg
@@ -17,8 +17,8 @@ def search_location(strvar, failvar=None, cond=None, failvalue="Select a valid l
     # open a filedialog and select a location
     if(failvar is None):
         failvar = strvar
-    directory = filedialog.askdirectory()
-    if(directory is not None):
+    directory = filedialog.askdirectory(initialdir=None if not os.path.isdir(strvar.get()) else strvar.get())
+    if(directory is not None and directory != ""):
         if(cond is None or cond(directory)):
             # both check passed
             strvar.set(directory)
@@ -48,6 +48,9 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
             progress_labelvar.set("Error found. Exit, and try again or check your version.")
             finish_trigger_fn(False)
         return
+    # make certain cache_loc
+    if(isinstance(cache_loc, tk.StringVar)):
+        cache_loc = cache_loc.get()
     # progressbar, progress label and finish trigger is checked
     start = time.time()
     #if(progressbar):
@@ -112,7 +115,7 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
         messagebox.showinfo(title="Done", message="Installation complete in {:s}".format(directory))
     outstream.write("Finish installation.\n")
 
-def remove(directoryvar, cache_loc=cache.DEFAULT_CACHE_LOC, careful=False, outstream=sys.stdout):
+def remove(directoryvar, careful=False, outstream=sys.stdout):
     # removing the installed mods from the WOT instance.
     # check the directory again for good measure
     directory = directoryvar.get()
@@ -141,43 +144,68 @@ def remove(directoryvar, cache_loc=cache.DEFAULT_CACHE_LOC, careful=False, outst
                 os.unlink(os.path.join(root, f))
             for d in dirs:
                 shutil.rmtree(os.path.join(root, d))
-    # wipe the cache. TODO selectively
-    cache.remove_cache(cache_loc)
     # message
     messagebox.showinfo(title="Cleaned", message="Cleaned {:s} files from {:s} and {:s}".format("specific UML" if careful else "all", mod_dir, resmod_folder))
                 
     
-def control_frame(cache_obj, additional_set, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, master=None, outstream=sys.stdout, **kwargs):
+def control_frame(cache_obj, additional_set, update_sections_fn=None, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, master=None, outstream=sys.stdout, **kwargs):
     # create a tk.Frame concerning configurations.
     frame = tk.Frame(master=master, **kwargs)
+    
     # the location will persists between runs if properly cached
     location = tk.StringVar()
     location.set(cache_obj.get("WOT_location", ""))
     loclabel = tk.Label(master=frame, text="WoT directory: ")
     # entry: Install location (WoT main directory). Check by res_mods folder
     locentry = tk.Entry(master=frame, textvariable=location, validate="focusout", validatecommand=lambda: check_location(location, cond=location_cond) )
-    locbtn = tk.Button(master=frame, text="Browse", command=lambda: search_location(location, outstream=outstream))
+    locbtn = tk.Button(master=frame, text="Browse", command=lambda: search_location(location, cond=location_cond, outstream=outstream))
     loclabel.grid(column=0, row=0, sticky="w")
     locentry.grid(column=1, row=0, sticky="w")
-    locbtn.grid(column=2, row=0, sticky="w")
+    locbtn.grid(column=2, row=0)
+    
+    # mod filecache can also be modified here. Cache obj path is NOT changed; as it must persist between runs
+    cachelocation = tk.StringVar()
+    cachelabel = tk.Label(master=frame, text="Cache location: ")
+    cache_obj["cache_dir"] = cache_obj.get("cache_dir", cache_loc)
+    cachelocation.set(cache_obj["cache_dir"])
+    def set_cachelocation(location_str):
+        cache_obj["cache_dir"] = location_str
+        return True
+    def verify_cache_clear():
+        message = "You are about to delete all cached wotmod file. {:s} Proceed?".format("This will also delete all saved settings if you do not install." if cache_obj["cache_dir"] == os.path.dirname(cache_obj_path) else "")
+        result = messagebox.askyesnocancel(title="Wipe cache", message=message)
+        if(result):
+            # proceed with clearance
+            cache.remove_cache(cache_obj["cache_dir"])
+    cacheentry = tk.Entry(master=frame, textvariable=cachelocation, validate="focusout", validatecommand=lambda: os.path.isdir(cachelocation.get()))
+    cachebtn = tk.Button(master=frame, text="Change", command=lambda: search_location(cachelocation, cond=set_cachelocation, outstream=outstream))
+    clearcachebtn = tk.Button(master=frame, text="Wipe cache", command=verify_cache_clear)
+    cachelabel.grid(column=0, row=1, sticky="w")
+    cacheentry.grid(column=1, row=1, sticky="w")
+    cachebtn.grid(column=2, row=1)
+    clearcachebtn.grid(column=3, row=1, sticky="e")
     
     copy_ownModel_var = tk.IntVar(master=frame, value=cache_obj.get("copy_ownModel", 0))
     def set_copy_ownModel_cacheobj(var=copy_ownModel_var, **kwargs): 
         cache_obj["copy_ownModel"] = var.get()
     copy_ownModel_checkbox = tk.Checkbutton(master=frame, text="Copy old ownModel.xml", variable=copy_ownModel_var, onvalue=1, offvalue=0, command=set_copy_ownModel_cacheobj)
-    copy_ownModel_checkbox.grid(column=0, row=1, columnspan=2, sticky="e")
+    copy_ownModel_checkbox.grid(column=0, row=2, columnspan=2, sticky="e")
     use_drive_var = tk.IntVar(master=frame, value=cache_obj.get("use_drive_UML", 0))
     def set_use_drive_cacheobj(var=use_drive_var, **kwargs): 
         cache_obj["use_drive_UML"] = var.get()
     use_drive_checkbox = tk.Checkbutton(master=frame, text="Use GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
-    use_drive_checkbox.grid(column=2, row=1, sticky="w")
+    use_drive_checkbox.grid(column=2, row=2, sticky="w")
     # Install button, receive location and all the extra packages
     # instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
-    instbtn = tk.Button(master=frame, text="Install", command=lambda: progressbar_download(master, install, location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
-    instbtn.grid(column=0, row=2, columnspan=2)
+    instbtn = tk.Button(master=frame, text="Install", command=lambda: progressbar_download(master, install, location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cachelocation, outstream=outstream) )
+    instbtn.grid(column=0, row=3)
+    upstbtn = tk.Button(master=frame, text="Update Sections", command=update_sections_fn)
+    upstbtn.grid(column=1, row=3)
     # Remove button, removing UML and associating files
-    rmbtn = tk.Button(master=frame, text="Remove UML", command=lambda: remove(location, cache_loc=cache_loc, outstream=outstream) )
-    rmbtn.grid(column=2, row=2, columnspan=3)
+    rmbtn = tk.Button(master=frame, text="Remove UML", command=lambda: remove(location, outstream=outstream) )
+    rmbtn.grid(column=2, row=3, columnspan=3)
+    
+    
     
     return frame, location
 
@@ -262,41 +290,50 @@ def progressbar_download(master, install_fn, *fn_args, **fn_kwargs):
     # repeat_thread = threading.Thread(target=progressbar_repeat, kwargs={"next_fn": progressbar_repeat})
     # get going
     install_thread.start()
+    # disable root window interaction during install
+    master.wait_window(progress_dialog)
     # repeat_thread.start()
 
-def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt", use_tree=True, outstream=sys.stdout):
+def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt", outstream=sys.stdout):
     # create an installation interface to install mod.
     window = tix.Tk()
     window.title(title)
-    # try to find cached infomation
-    cache_obj_path = cache.DEFAULT_CACHE
-    cache_loc = cache.DEFAULT_CACHE_LOC
-    cache_obj = cache.read_cache(location=cache_obj_path)
-    # print("Cache: ", cache_obj)
-    # Config frame, handle all the settings (original location, etc.)
-    additional_set = set()
-    frame, location = control_frame(cache_obj, additional_set, cache_obj_path=cache_obj_path, cache_loc=cache_loc, master=window, padx=5, pady=2)
-    frame.grid(column=0, row=0, columnspan=2, sticky="w")
-    # Additional mods from external source
-    sections = read_sections_from_pkg(pkg_path)
-    if(use_tree):
-        adtframe = treeview_frame(window, sections, additional_set, cache_obj=cache_obj, outstream=outstream)
-        adtframe.grid(column=0, row=2, columnspan=2)
-    else:
-        raise NotImplementedError
-    return window
-    
-
-if __name__ == "__main__":
+    # create the correct pkg_path depending on pyinstaller mode
     if getattr(sys, 'frozen', False):
         application_path = sys._MEIPASS
     else:
         application_path = os.path.dirname(__file__)
-    print("Application path:", application_path)
-    packages_path = os.path.join(application_path, "packages", "packages.json")
-    #if(os.path.isdir(tix_location_pyinstaller)): # location found in spec
-    #    print("Updating TIX location: {:s}".format(tix_location_pyinstaller))
-    #    os.environ["TIX_LIBRARY"] = tix_location_pyinstaller
-    window = tk_interface(pkg_path=packages_path)
+    local_pkg_path = os.path.join(application_path, pkg_path)
+    # try to find cached infomation
+    cache_obj_path = cache.DEFAULT_CACHE
+    cache_loc = cache.DEFAULT_CACHE_LOC
+    cache_obj = cache.read_cache(location=cache_obj_path)
+    cached_pkg_path = os.path.join(cache_obj.get("cache_dir", cache_loc), pkg_path)
+    # the set used to update data
+    additional_set = set()
+    keeper = {"updated": False}
+    # update section function
+    def update_sections():
+        if(not keeper["updated"]):
+            link = GITHUB_PATTERN_DEFAULT.format(DEFAULT_REPO, pkg_path)
+            filehandler.download(cached_pkg_path, link, stream=False, outstream=outstream)
+            keeper["updated"] = True
+        sections = read_sections_from_pkg(cached_pkg_path)
+        keeper["adtframe"].destroy()
+        keeper["adtframe"] = adtframe = treeview_frame(window, sections, additional_set, cache_obj=cache_obj, outstream=outstream)
+        adtframe.grid(column=0, row=2, columnspan=2)
+    # Config frame, handle all the settings (original location, etc.)
+    frame, location = control_frame(cache_obj, additional_set, update_sections_fn=update_sections, cache_obj_path=cache_obj_path, cache_loc=cache_loc, master=window, padx=5, pady=2)
+    frame.grid(column=0, row=0, columnspan=2, sticky="w")
+    # Additional mods from external source
+    sections = read_sections_from_pkg(cached_pkg_path if os.path.isfile(cached_pkg_path) else local_pkg_path)
+    keeper["adtframe"] = adtframe = treeview_frame(window, sections, additional_set, cache_obj=cache_obj, outstream=outstream)
+    adtframe.grid(column=0, row=2, columnspan=2)
+    return window
+    
+
+if __name__ == "__main__":
+    # print("Application path:", application_path)
+    window = tk_interface(pkg_path="packages/packages.json")
     window.mainloop()
     

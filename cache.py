@@ -1,5 +1,6 @@
 import os, io
 import json
+import shutil
 import contextlib
 
 if( os.getenv("APPDATA") is None or os.getenv("APPDATA") == ""):
@@ -54,8 +55,8 @@ def write_cache(data, location=DEFAULT_CACHE, separator=SEPARATOR):
         json.dump(data, cache)
         
 def remove_cache(location=DEFAULT_CACHE):
-    os.remove(location)
-    os.removedirs(os.path.split(location)[0])
+    shutil.rmtree(location)
+    #os.removedirs(os.path.split(location)[0])
     
 
 if __name__ == "__main__":

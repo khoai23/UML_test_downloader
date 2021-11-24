@@ -9,8 +9,9 @@ GITHUB_PATTERN_DEFAULT = "https://raw.githubusercontent.com/{:s}/master/{:s}" # 
 GITHUB_PATTERN_LFS = "https://media.githubusercontent.com/media/{:s}/master/{:s}"
 REQUIRED_FILES_LOCS = "required.txt"
 DRIVE_FILE_LOCATION = "https://drive.google.com/uc?export=download&id=1Tp7JTzelEQvlxO3KbICSO1yuEeIsriqj" # UML file on GoogleDrive.
+DEFAULT_REPO = "khoai23/UML_test_downloader"
 
-def generate_download_links(dfile, repo="khoai23/UML_test_downloader", src_dir="src", outstream=sys.stdout):
+def generate_download_links(dfile, repo=DEFAULT_REPO, src_dir="src", outstream=sys.stdout):
     # generate paths using the pattern specified above
     with io.open(dfile, "w") as df:
         filelist = []

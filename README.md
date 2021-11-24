@@ -19,9 +19,9 @@ Still lack a bunch of features:
 - [x] Failed download handling (check file size enabled)
 - [x] PyInstaller to create standalone exe (Check on Windows)
 - [x] TreeView style of catalog
-- [x] ~~Progressbar and Threading~~ 
+- [x] Progressbar and Threading, preventing complete freeze of main window on progressbar
 - [ ] Accurate progressbar relative to sizes of mods instead of by package
-- [ ] Copying old ownModel.xml from old directory
+- [x] Copying old ownModel.xml from old directory
 - [ ] Better `catalog_maker`, tooltip or image for each package.
 - [ ] Query list of downloadable packages from online
 - [ ] Separate the "wipe mod" option from "wipe cache" option (currently all in `Remove` button)
