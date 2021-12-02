@@ -1,5 +1,6 @@
 import re, io, os
 import json
+
 from cache import SEPARATOR
 
 repo_regex = re.compile(r"https://github.com/(.+).git")
@@ -92,7 +93,7 @@ def export_sections_to_json(data, override_datafile=None, additional_datafile=No
     if(ignore_datafile):
         with io.open(ignore_datafile, "r", encoding="utf-8") as jf:
             ignore_list = json.load(jf)
-    # create ignore_dict from file. This dict should contain "path" that should be ignored
+    # create ignore_list from file. This list should contain "path" that should be ignored
     # This will stop adding entries with specific paths into the sections.
     sections = {}
     uup = sections["Falkonett UUP Project"] = {}
@@ -113,12 +114,13 @@ def export_sections_to_json(data, override_datafile=None, additional_datafile=No
         if(ignore_list and path in ignore_list):
             continue
         local[description_maker_func(path, override_dict=override_dict)] = (repo, path)
-    # create additional dict from file. Entries will be added directly to `other_sections`; with every entry being "mod_description": [None, "mod_filename{cache.SEPARATOR}mod_download_link"]. GoogleDrive is only certain to work with <100MB files, as the extra bit isn't tested atm.
-    # TODO updating other section e.g Atacms using keywords
+    # create additional dict from file. Entries will be added directly to `other_sections`; with every entry going from "filename": ["mod_description", "mod_download_link"] to "mod_description": [None, "mod_filename{cache.SEPARATOR}mod_download_link"] so the downloader can differentiate.
+    # TODO updating to other section e.g Atacms using keywords
     if(additional_datafile):
         with io.open(additional_datafile, "r", encoding="utf-8") as jf:
             additional_dict = json.load(jf)
-            local.update(additional_dict)
+            formatted_additional = {desc: (None, "{:s}{:s}{:s}".format(name, SEPARATOR, dlink)) for name, (desc, dlink) in additional_dict.items()}
+            local.update(formatted_additional)
     # print(data, uup, atacms, local)
     with io.open(jsonfile, "w", encoding="utf-8") as jf:
         json.dump(sections, jf)
@@ -148,4 +150,7 @@ if __name__ == "__main__":
     subdict = read_submodules()
     data = walk_folder("./mods", substitute=subdict)
     export_sections_to_txt(data, os.path.join("packages", "other_packages.txt"))
-    export_sections_to_json(data, override_datafile=os.path.join("packages", "override.json"), jsonfile=os.path.join("packages", "packages.json"))
+    export_sections_to_json(data, override_datafile=os.path.join("packages", "override.json"),
+                                ignore_datafile=os.path.join("packages", "ignore.json"),
+                                additional_datafile=os.path.join("packages", "additional.json"),
+                                jsonfile=os.path.join("packages", "packages.json"))

@@ -3,11 +3,11 @@ import zipfile36 as zipfile
 import shutil
 import errno
 import requests
-import subprocess
 
 GITHUB_PATTERN_DEFAULT = "https://raw.githubusercontent.com/{:s}/master/{:s}" # first is repo, second is file location
 GITHUB_PATTERN_LFS = "https://media.githubusercontent.com/media/{:s}/master/{:s}"
 REQUIRED_FILES_LOCS = "required.txt"
+DRIVE_FILE_PATTERN = "https://drive.google.com/uc?export=download&id={:s}"
 DRIVE_FILE_LOCATION = "https://drive.google.com/uc?export=download&id=1Tp7JTzelEQvlxO3KbICSO1yuEeIsriqj" # UML file on GoogleDrive.
 DEFAULT_REPO = "khoai23/UML_test_downloader"
 
@@ -30,7 +30,7 @@ def check_googledrive_cookie(cookies):
             return v
     return None
     
-def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1.0, cache_loc=None, progressbar=None, outstream=sys.stdout):
+def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1.0, cache_loc=None, progressbar=None, outstream=sys.stdout, session=None):
     # make directory if needed
     if not os.path.exists(os.path.dirname(filepath)):
         try:
@@ -38,13 +38,15 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
         except OSError as exc: # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise exc
+    # if specified, use session; if not, use requests
+    session = session or requests
                 
     # print(onlinefile, type(onlinefile), isinstance(onlinefile, tuple))
     if(isinstance(onlinefile, tuple)):
         # onlinefile can be a string or a tuple of {repo} {filepath}
         # try the lfs format first
         lfs_path = GITHUB_PATTERN_LFS.format(*onlinefile)
-        response = requests.get(lfs_path, allow_redirects=True, stream=stream)
+        response = session.get(lfs_path, allow_redirects=True, stream=stream)
         if(response.status_code == 404):
             # not lfs, use the other format
             onlinefile = GITHUB_PATTERN_DEFAULT.format(*onlinefile)
@@ -55,8 +57,17 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
 
     while(retry > 0):
         try:
-            response = requests.get(onlinefile, allow_redirects=True, stream=stream)
+            response = session.get(onlinefile, allow_redirects=True, stream=stream)
                 
+            if("drive.google.com" in onlinefile):
+                # perform check, replacing the response with the correct token if needed
+                token = check_googledrive_cookie(response.cookies)
+                if(token):
+                    newonlinefile = "{:s}&confirm={:s}".format(onlinefile, token)
+                    outstream.write("GoogleDrive large file link detected; using token {:s}(becoming {:s})\n".format(token, newonlinefile))
+                    response.close()
+                    response = session.get(newonlinefile, allow_redirects=True, stream=stream)
+                    
             if(stream):
                 # if not stream, the response already contain the file anyway; why bother
                 # get filesize
@@ -73,15 +84,6 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
                         shutil.copyfile(cachepath, filepath)
                         outstream.write("Found file in cache directory with correct size, copying {:s} -> {:s}\n".format(cachepath, filepath))
                         return
-            
-            if("drive.google.com" in onlinefile):
-                # perform check, replacing the response with the correct token if needed
-                token = check_googledrive_cookie(response.cookies)
-                if(token):
-                    onlinefile = "{:s}&confirm={:s}".format(onlinefile, token)
-                    outstream.write("GoogleDrive large file link detected; using token {:s}(becoming {:s})".format(token, onlinefile))
-                    response.close()
-                    response = requests.get(onlinefile, allow_redirects=True, stream=stream)
 
             # check header for content length
             if(response.status_code == 200):
@@ -102,9 +104,9 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
                 raise e
             else:
                 outstream.write("The last attempt failed, retries left: {:d}, waiting {:.2f} before retrying.\n".format(retry, wait))
-                outstream.write(str(e) + "\n")
+                outstream.write(str(type(e)) + ":" + str(e) + "\n")
                 if(wait > 0.0):
-                    time.sleep(wait * 1000)
+                    time.sleep(wait)
     # write the received file
     with io.open(filepath, "wb") as f:
         if(stream):

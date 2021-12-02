@@ -57,6 +57,7 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
         #progressbar.start(100) # 100ms interval
         # step_size = 400 / (len(additional_set) + 1)
 
+    session = requests.Session()
     # Download and extract the UML base to correct location (res_mod/vernumber/)
     resmod_folder = os.path.join(directory, "res_mods")
     subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
@@ -72,7 +73,7 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     if(progress_labelvar):
         progress_labelvar.set("Downloading and extracting main UML file...")
     if(cache_obj.get("use_drive_UML", 0) == 1): # Use inbuilt drive file 
-        filehandler.download(uml_filepath, DRIVE_FILE_LOCATION, progressbar=progressbar)
+        filehandler.download(uml_filepath, DRIVE_FILE_LOCATION, progressbar=progressbar, session=session)
     else: # use the github file
         filehandler.download(uml_filepath, GITHUB_PATTERN_DEFAULT.format("khoai23/UML_test_downloader", "src.zip"), progressbar=progressbar)
     filehandler.extractZip(uml_filepath, UML_loc) # extract the file to resmod
@@ -100,19 +101,21 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
         fileloc = os.path.join(directory, "mods", valid[0], "UML", filename)
         if(progress_labelvar):
             progress_labelvar.set("Downloading {:s} from {} to location {:s}...".format(filename, link, fileloc))
-        filehandler.download(fileloc, link, stream=True, cache_loc=cache_loc, wait=wait, progressbar=progressbar) # check for file in specific locations as well
+        filehandler.download(fileloc, link, stream=True, cache_loc=cache_loc, wait=wait, progressbar=progressbar, session=session) # check for file in specific locations as well
         outstream.write("Installed mod {:s} to {:s}.\n".format(filename, fileloc))
     # after finished installing, update the cache_obj and write it to disk
     cache_obj["WOT_location"] = directory
     cache_obj["mods"] = [name for name, link in additional_set]
     cache.write_cache(cache_obj, cache_obj_path)
     # done
+    session.close()
     if(progressbar or progress_labelvar): # if there are a progressbar in another thread, run its complete 
         if(callable(finish_trigger_fn)):
             progress_labelvar.set("Everything finished.")
             finish_trigger_fn(True)
     else: # create a simple infobox
         messagebox.showinfo(title="Done", message="Installation complete in {:s}".format(directory))
+    
     outstream.write("Finish installation.\n")
 
 def remove(directoryvar, careful=False, outstream=sys.stdout):
@@ -122,6 +125,8 @@ def remove(directoryvar, careful=False, outstream=sys.stdout):
     if(not check_location(directoryvar, outstream=outstream)):
         messagebox.showerror(title="Wrong directory", message="Directory {:s} is not a valid WOT instance. Try again. The directory to be used is one where you can see WorldOfTank.exe in the files.".format(directory))
         return
+    if(isinstance(careful, tk.IntVar())):
+        careful = careful.get() == 1
     resmod_folder = os.path.join(directory, "res_mods")
     subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
     valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
@@ -134,7 +139,7 @@ def remove(directoryvar, careful=False, outstream=sys.stdout):
     mod_dir = os.path.join(directory, "mods", valid[0], "UML")
     shutil.rmtree(mod_dir, ignore_errors=True)
     if(careful):
-        # remove all known injection files from `resmods`; folders are left empty
+        # remove all known injection files from `resmods`; additional resources are left as-is
         ownmodel_dir = os.path.join(resmod_folder, valid[0], "scripts", "client", "gui", "mods", "mod_ownmodel.py")
         os.unlink(ownmodel_dir)
     else:
@@ -205,8 +210,6 @@ def control_frame(cache_obj, additional_set, update_sections_fn=None, cache_obj_
     rmbtn = tk.Button(master=frame, text="Remove UML", command=lambda: remove(location, outstream=outstream) )
     rmbtn.grid(column=2, row=3, columnspan=3)
     
-    
-    
     return frame, location
 
 def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, cache_obj=None, **kwargs):
@@ -218,8 +221,11 @@ def treeview_frame(master, sections, download_set=None, outstream=sys.stdout, ca
         if(idsDict[None].getstatus(item) == "on"): # tree obj is put in key None, since I'm too lazy for writing a new class
             # add item to download_set
             download_set.add(indicesDict[item])
-        else:
+        elif(idsDict[None].getstatus(item) == "off"):
             download_set.discard(indicesDict[item])
+        else: # none state when clicking parents
+            # print(idsDict[None].getstatus(item))
+            return
         outstream.write("Handled set with trigger {:s}, link {}, set result {}\n".format(item, indicesDict[item][1], download_set))
         
     tree = tix.CheckList(master=frame, browsecmd=selectItemFn, width=400, height=240)
@@ -314,10 +320,12 @@ def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt",
     keeper = {"updated": False}
     # update section function
     def update_sections():
-        if(not keeper["updated"]):
+        if(not keeper["updated"]): # this to prevent redundant multiple download. TODO disable the button instead
             link = GITHUB_PATTERN_DEFAULT.format(DEFAULT_REPO, pkg_path)
             filehandler.download(cached_pkg_path, link, stream=False, outstream=outstream)
             keeper["updated"] = True
+        else:
+            return
         sections = read_sections_from_pkg(cached_pkg_path)
         keeper["adtframe"].destroy()
         keeper["adtframe"] = adtframe = treeview_frame(window, sections, additional_set, cache_obj=cache_obj, outstream=outstream)
