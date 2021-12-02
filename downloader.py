@@ -4,8 +4,10 @@ from tkinter import filedialog, font, messagebox, tix
 from tkinter.constants import *
 import io, os, sys, time
 import requests
+import webbrowser
 import shutil
 import threading
+import json
 
 import filehandler
 from filehandler import GITHUB_PATTERN_DEFAULT, DRIVE_FILE_LOCATION, DEFAULT_REPO
@@ -164,8 +166,8 @@ def control_frame(cache_obj, additional_set, update_sections_fn=None, cache_obj_
     # entry: Install location (WoT main directory). Check by res_mods folder
     locentry = tk.Entry(master=frame, textvariable=location, validate="focusout", validatecommand=lambda: check_location(location, cond=location_cond) )
     locbtn = tk.Button(master=frame, text="Browse", command=lambda: search_location(location, cond=location_cond, outstream=outstream))
-    loclabel.grid(column=0, row=0, sticky="w")
-    locentry.grid(column=1, row=0, sticky="w")
+    loclabel.grid(column=0, row=0, sticky=tk.WEST)
+    locentry.grid(column=1, row=0, sticky=tk.WEST)
     locbtn.grid(column=2, row=0)
     
     # mod filecache can also be modified here. Cache obj path is NOT changed; as it must persist between runs
@@ -185,8 +187,8 @@ def control_frame(cache_obj, additional_set, update_sections_fn=None, cache_obj_
     cacheentry = tk.Entry(master=frame, textvariable=cachelocation, validate="focusout", validatecommand=lambda: os.path.isdir(cachelocation.get()))
     cachebtn = tk.Button(master=frame, text="Change", command=lambda: search_location(cachelocation, cond=set_cachelocation, outstream=outstream))
     clearcachebtn = tk.Button(master=frame, text="Wipe cache", command=verify_cache_clear)
-    cachelabel.grid(column=0, row=1, sticky="w")
-    cacheentry.grid(column=1, row=1, sticky="w")
+    cachelabel.grid(column=0, row=1, sticky=tk.WEST)
+    cacheentry.grid(column=1, row=1, sticky=tk.WEST)
     cachebtn.grid(column=2, row=1)
     clearcachebtn.grid(column=3, row=1, sticky="e")
     
@@ -199,7 +201,7 @@ def control_frame(cache_obj, additional_set, update_sections_fn=None, cache_obj_
     def set_use_drive_cacheobj(var=use_drive_var, **kwargs): 
         cache_obj["use_drive_UML"] = var.get()
     use_drive_checkbox = tk.Checkbutton(master=frame, text="Use GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
-    use_drive_checkbox.grid(column=2, row=2, sticky="w")
+    use_drive_checkbox.grid(column=2, row=2, sticky=tk.WEST)
     # Install button, receive location and all the extra packages
     # instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
     instbtn = tk.Button(master=frame, text="Install", command=lambda: progressbar_download(master, install, location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cachelocation, outstream=outstream) )
@@ -332,13 +334,54 @@ def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt",
         adtframe.grid(column=0, row=2, columnspan=2)
     # Config frame, handle all the settings (original location, etc.)
     frame, location = control_frame(cache_obj, additional_set, update_sections_fn=update_sections, cache_obj_path=cache_obj_path, cache_loc=cache_loc, master=window, padx=5, pady=2)
-    frame.grid(column=0, row=0, columnspan=2, sticky="w")
+    frame.grid(column=0, row=0, columnspan=2, sticky=tk.WEST)
     # Additional mods from external source
     sections = read_sections_from_pkg(cached_pkg_path if os.path.isfile(cached_pkg_path) else local_pkg_path)
     keeper["adtframe"] = adtframe = treeview_frame(window, sections, additional_set, cache_obj=cache_obj, outstream=outstream)
     adtframe.grid(column=0, row=2, columnspan=2)
     return window
     
+def _check_credit(download_tuple, data, check_fn=lambda key, line: line.startswith(key) ):
+    # download_tuple should be (filename, link)
+    # data should be {sign: credit_line}
+    filename, link = download_tuple
+    for key in data.keys():
+        # sign is checked by check_fn. By default, only true when key is start of any piece
+        if(check_fn(key, filename) or check_fn(key, link)):
+            return key
+    # if not found, return None
+    return None
+
+def credit_dialog(download_set, credit_path, master=None, **kwargs):
+    # open the credit data and search along download set by priority
+    with io.open(credit_path, "r") as cf:
+        all_credit = json.load(cf)
+    credit_keys = set(_check_credit(dl, all_data) for dl in download_set)
+    credit_keys.remove(None)
+    # Credit should be (linkname, link, rest of credit)
+    credits = {all_credit[k] for k in credit_keys}
+    main_dialog = tk.Dialog(master=master, **kwargs)
+    front = tk.Label(master=main_dialog, text="You have installed mods from:")
+    front.grid(row=0, column=0)
+    i, gridrowpref = 0, 1
+    for i, (lname, link, crd) in enumerate(credits):
+        lineframe = tk.Frame(master=main_dialog)
+        lineframe.grid(row=i+gridrowpref, column=0, sticky=tk.WEST)
+        # clickable link
+        linklabel = tk.Label(lname, fg="blue", cursor="hand2")
+        linkfont = tk.font.Font(linklabel, linklabel.cget("font"))
+        linkfont.configure(underline=True)
+        linklabel.configure(font=linkfont)
+        linklabel.bind("<Button-1>", lambda event: webbrowser.open(link))
+        linklabel.pack()
+        # the rest. TODO support multi-line
+        textlabel = tk.Label(crd)
+        textlabel.pack(side=tk.LEFT, pady=2)
+    back = tk.Label(master=main_dialog, text="Please consider supporting them.")
+    back.grid(row=i+gridrowpref+1, column=0, sticky=tk.WEST)
+    exitbtn = tk.Button(master=main_dialog, text="OK", command=main_dialog.destroy)
+    exitbtn.grid(row=i+gridrowpref+2, column=0, sticky=tk.CENTER)
+    return main_dialog
 
 if __name__ == "__main__":
     # print("Application path:", application_path)
