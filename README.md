@@ -13,18 +13,15 @@ pyinstaller UML_Installer.spec
 
 Still lack a bunch of features:
 - [ ] Automatic detection of WG game location
-- [x] Persistent mods between game version ~~(new version will redownload mods from github)~~ new version now keep copies in APPDATA
-- [x] Persistent mods selection between installs (check file size enabled)
-- [x] Persistent mods checking and update for outdated contents (check file size enabled)
-- [x] Failed download handling (check file size enabled)
+- [x] Filecheck (size), which decide when to cache and when to download new files from internet
 - [x] PyInstaller to create standalone exe (Check on Windows)
 - [x] TreeView style of catalog
 - [x] Progressbar and Threading, preventing complete freeze of main window on progressbar
 - [ ] Accurate progressbar relative to sizes of mods instead of by package
-- [x] Copying old ownModel.xml from old directory
+- [x] Copying/Symlinking old ownModel.xml from old directory
 - [ ] Better `catalog_maker`, tooltip or image for each package.
-- [ ] Query list of downloadable packages from online
-- [ ] Separate the "wipe mod" option from "wipe cache" option (currently all in `Remove` button)
-- [ ] Crediting proper authors
+- [x] Query list of downloadable packages from online
+- [x] Separate the "wipe mod" option from "wipe cache" option (currently all in `Remove` button)
+- [x] Crediting proper authors
 
 All credits goes to respective authors who published their own mod on github and made them compatible to UML.

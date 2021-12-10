@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import filedialog, font, messagebox, tix
+from tkinter import filedialog, commondialog, font, messagebox, tix
 from tkinter.constants import *
 import io, os, sys, time
 import requests
@@ -41,7 +41,8 @@ def check_location(strvar, failvar=None, cond=location_cond, failvalue="Select a
     else:
         return True
 
-def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, progressbar=None, progress_labelvar=None, finish_trigger_fn=None, wait=1.0, outstream=sys.stdout):
+def install(directoryvar, download_set, cache_obj, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, 
+            progressbar=None, progress_labelvar=None, finish_trigger_fn=None, credit_path=None, wait=1.0, outstream=sys.stdout):
     # check the directory again for good measure
     directory = directoryvar.get()
     if(not check_location(directoryvar, outstream=outstream)):
@@ -57,7 +58,7 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     start = time.time()
     #if(progressbar):
         #progressbar.start(100) # 100ms interval
-        # step_size = 400 / (len(additional_set) + 1)
+        # step_size = 400 / (len(download_set) + 1)
 
     session = requests.Session()
     # Download and extract the UML base to correct location (res_mod/vernumber/)
@@ -77,7 +78,7 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     if(cache_obj.get("use_drive_UML", 0) == 1): # Use inbuilt drive file 
         filehandler.download(uml_filepath, DRIVE_FILE_LOCATION, progressbar=progressbar, session=session)
     else: # use the github file
-        filehandler.download(uml_filepath, GITHUB_PATTERN_DEFAULT.format("khoai23/UML_test_downloader", "src.zip"), progressbar=progressbar)
+        filehandler.download(uml_filepath, GITHUB_PATTERN_DEFAULT.format(DEFAULT_REPO, "src.zip"), progressbar=progressbar)
     filehandler.extractZip(uml_filepath, UML_loc) # extract the file to resmod
     # delete the file after extraction. This prevent updates from being blocked by previous cached UML package
     # not needed this time as we check filesize
@@ -85,36 +86,72 @@ def install(directoryvar, additional_set, cache_obj, cache_obj_path=cache.DEFAUL
     outstream.write("Base UML installed to {:s}\n".format(UML_loc))
     
     # if selected, attempt to find and copy old ownModel.xml from other valid directoryvar
-    if(cache_obj.get("copy_ownModel", 0) == 1):
-        new_ownmodel_filepath = os.path.join(UML_loc, "scripts", "client", "mods", "ownModel.xml")
+    copy_ownModel, symlink_ownModel = cache_obj.get("copy_ownModel", 0) == 1, cache_obj.get("symlink_ownModel", 0) == 1
+    if(copy_ownModel or symlink_ownModel):
+        # filepath is new location (copy) or the cached location (symlink)
+        if(symlink_ownModel):
+            new_ownmodel_filepath = os.path.join(cache_loc, "ownModel.xml")
+        else:
+            new_ownmodel_filepath = os.path.join(UML_loc, "scripts", "client", "mods", "ownModel.xml")
+        
         copied = False
-        for oldversion in valid[1:]: # go back from the latest version
+        for oldversion in (valid[1:] if copy_ownModel else valid): # go back from the latest version; copy to correct location
             ownmodel_filepath = os.path.join(resmod_folder, oldversion, "scripts", "client", "mods", "ownModel.xml")
-            if(os.path.isfile(ownmodel_filepath)):
+            if(os.path.isfile(ownmodel_filepath) and not os.path.islink(ownmodel_filepath)):
                 shutil.copyfile(ownmodel_filepath, new_ownmodel_filepath)
                 outstream.write("Found ownModel.xml at {:s}, copied to {:s}".format(oldversion, ownmodel_filepath))
                 copied = True
                 break
         if(not copied):
-            outstream.write("Did not find any ownModel.xml on older directories. Continuing.")
+            outstream.write("Did not find any ownModel.xml on older directories. Continuing.\n")
+            
+        if(symlink_ownModel):
+            symlink_destination = os.path.join(UML_loc, "scripts", "client", "mods", "ownModel.xml")
+            if(os.path.islink(symlink_destination)):
+                # already symlinked, nothing to do
+                outstream.write("Symlink already created, continuing.\n")
+            else:
+                if(not os.path.isfile(new_ownmodel_filepath)):
+                    # make sure new_ownmodel_filepath have a file
+                    with io.open(new_ownmodel_filepath, "w") as temp:
+                        pass
+                if(os.path.isfile(symlink_destination)):
+                    # existing ownModel.xml; this should already been copied by the oldversion section above
+                    os.remove(symlink_destination) 
+                # attenpting symlink
+                try:
+                    os.symlink(new_ownmodel_filepath, symlink_destination)
+                except OSError as e:
+                    # insufficient privilege
+                    outstream.write("OSError caught: " + str(e) + "\n")
+                    messagebox.showerror(title="Insufficient privilege", 
+                        message="The process do not have enough privilege to create a symlink. Falling back to common copying.\n")
+                    shutil.copyfile(new_ownmodel_filepath, symlink_destination)
 
-    # download all the supplementary mods recorded in additional_set into the mods folder
-    for i, (filename, link) in enumerate(additional_set):
+    # download all the supplementary mods recorded in download_set into the mods folder
+    for i, (filename, link) in enumerate(download_set):
         fileloc = os.path.join(directory, "mods", valid[0], "UML", filename)
         if(progress_labelvar):
             progress_labelvar.set("Downloading {:s} from {} to location {:s}...".format(filename, link, fileloc))
         filehandler.download(fileloc, link, stream=True, cache_loc=cache_loc, wait=wait, progressbar=progressbar, session=session) # check for file in specific locations as well
         outstream.write("Installed mod {:s} to {:s}.\n".format(filename, fileloc))
+    # check the cache if the credit is already shown for this version (subsequent runs on the same version will no longer show the credit)
+    show_credit = cache_obj.get("installed_version", "") != valid[0] and credit_path is not None
+    if(show_credit):
+        cache_obj["installed_version"] = valid[0]
     # after finished installing, update the cache_obj and write it to disk
     cache_obj["WOT_location"] = directory
-    cache_obj["mods"] = [name for name, link in additional_set]
+    cache_obj["mods"] = [name for name, link in download_set]
     cache.write_cache(cache_obj, cache_obj_path)
     # done
     session.close()
     if(progressbar or progress_labelvar): # if there are a progressbar in another thread, run its complete 
         if(callable(finish_trigger_fn)):
             progress_labelvar.set("Everything finished.")
-            finish_trigger_fn(True)
+            if(show_credit):
+                credit_dialog(download_set, credit_path, callback_fn=lambda: finish_trigger_fn(True))
+            else:
+                finish_trigger_fn(True)
     else: # create a simple infobox
         messagebox.showinfo(title="Done", message="Installation complete in {:s}".format(directory))
     
@@ -155,7 +192,7 @@ def remove(directoryvar, careful=False, outstream=sys.stdout):
     messagebox.showinfo(title="Cleaned", message="Cleaned {:s} files from {:s} and {:s}".format("specific UML" if careful else "all", mod_dir, resmod_folder))
                 
     
-def control_frame(cache_obj, additional_set, update_sections_fn=None, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, master=None, outstream=sys.stdout, **kwargs):
+def control_frame(cache_obj, additional_set, update_sections_fn=None, cache_obj_path=cache.DEFAULT_CACHE, cache_loc=cache.DEFAULT_CACHE_LOC, credit_path=None, master=None, outstream=sys.stdout, **kwargs):
     # create a tk.Frame concerning configurations.
     frame = tk.Frame(master=master, **kwargs)
     
@@ -166,8 +203,8 @@ def control_frame(cache_obj, additional_set, update_sections_fn=None, cache_obj_
     # entry: Install location (WoT main directory). Check by res_mods folder
     locentry = tk.Entry(master=frame, textvariable=location, validate="focusout", validatecommand=lambda: check_location(location, cond=location_cond) )
     locbtn = tk.Button(master=frame, text="Browse", command=lambda: search_location(location, cond=location_cond, outstream=outstream))
-    loclabel.grid(column=0, row=0, sticky=tk.WEST)
-    locentry.grid(column=1, row=0, sticky=tk.WEST)
+    loclabel.grid(column=0, row=0, sticky="w")
+    locentry.grid(column=1, row=0, sticky="w")
     locbtn.grid(column=2, row=0)
     
     # mod filecache can also be modified here. Cache obj path is NOT changed; as it must persist between runs
@@ -187,30 +224,43 @@ def control_frame(cache_obj, additional_set, update_sections_fn=None, cache_obj_
     cacheentry = tk.Entry(master=frame, textvariable=cachelocation, validate="focusout", validatecommand=lambda: os.path.isdir(cachelocation.get()))
     cachebtn = tk.Button(master=frame, text="Change", command=lambda: search_location(cachelocation, cond=set_cachelocation, outstream=outstream))
     clearcachebtn = tk.Button(master=frame, text="Wipe cache", command=verify_cache_clear)
-    cachelabel.grid(column=0, row=1, sticky=tk.WEST)
-    cacheentry.grid(column=1, row=1, sticky=tk.WEST)
+    cachelabel.grid(column=0, row=1, sticky="w")
+    cacheentry.grid(column=1, row=1, sticky="w")
     cachebtn.grid(column=2, row=1)
     clearcachebtn.grid(column=3, row=1, sticky="e")
     
+    
+    # attempt to copy old ownModel. note that this won't work after installers that wipe mod folder (e.g Aslain)
+    first_checkbox_row = 2
     copy_ownModel_var = tk.IntVar(master=frame, value=cache_obj.get("copy_ownModel", 0))
     def set_copy_ownModel_cacheobj(var=copy_ownModel_var, **kwargs): 
         cache_obj["copy_ownModel"] = var.get()
     copy_ownModel_checkbox = tk.Checkbutton(master=frame, text="Copy old ownModel.xml", variable=copy_ownModel_var, onvalue=1, offvalue=0, command=set_copy_ownModel_cacheobj)
-    copy_ownModel_checkbox.grid(column=0, row=2, columnspan=2, sticky="e")
+    copy_ownModel_checkbox.grid(column=0, row=first_checkbox_row, columnspan=2, sticky="e")
+    # use drive file instead of github file.
     use_drive_var = tk.IntVar(master=frame, value=cache_obj.get("use_drive_UML", 0))
     def set_use_drive_cacheobj(var=use_drive_var, **kwargs): 
         cache_obj["use_drive_UML"] = var.get()
     use_drive_checkbox = tk.Checkbutton(master=frame, text="Use GoogleDrive file.", variable=use_drive_var, onvalue=1, offvalue=0, command=set_use_drive_cacheobj)
-    use_drive_checkbox.grid(column=2, row=2, sticky=tk.WEST)
+    use_drive_checkbox.grid(column=2, row=first_checkbox_row, sticky="w")
+    # the ownModel.xml will use a symlink to a cached version; thus settings persist between run
+    second_checkbox_row = 3
+    use_drive_var = tk.IntVar(master=frame, value=cache_obj.get("symlink_ownModel", 0))
+    def set_symlink_ownModel_cacheobj(var=use_drive_var, **kwargs): 
+        cache_obj["symlink_ownModel"] = var.get()
+    symlink_ownModel_checkbox = tk.Checkbutton(master=frame, text="Create symlink ownModel.xml (NOTE: requires administrator privilege)", variable=use_drive_var, onvalue=1, offvalue=0, command=set_symlink_ownModel_cacheobj)
+    symlink_ownModel_checkbox.grid(column=0, row=second_checkbox_row, columnspan=4, sticky="w")
+    
+    buttonrow = 4
     # Install button, receive location and all the extra packages
     # instbtn = tk.Button(master=frame, text="Install", command=lambda: install(location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cache_loc, outstream=outstream) )
-    instbtn = tk.Button(master=frame, text="Install", command=lambda: progressbar_download(master, install, location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cachelocation, outstream=outstream) )
-    instbtn.grid(column=0, row=3)
+    instbtn = tk.Button(master=frame, text="Install", command=lambda: progressbar_download(master, install, location, additional_set, cache_obj, cache_obj_path=cache_obj_path, cache_loc=cachelocation, credit_path=credit_path, outstream=outstream) )
+    instbtn.grid(column=0, row=buttonrow)
     upstbtn = tk.Button(master=frame, text="Update Sections", command=update_sections_fn)
-    upstbtn.grid(column=1, row=3)
+    upstbtn.grid(column=1, row=buttonrow)
     # Remove button, removing UML and associating files
     rmbtn = tk.Button(master=frame, text="Remove UML", command=lambda: remove(location, outstream=outstream) )
-    rmbtn.grid(column=2, row=3, columnspan=3)
+    rmbtn.grid(column=2, row=buttonrow, columnspan=3)
     
     return frame, location
 
@@ -302,7 +352,7 @@ def progressbar_download(master, install_fn, *fn_args, **fn_kwargs):
     master.wait_window(progress_dialog)
     # repeat_thread.start()
 
-def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt", outstream=sys.stdout):
+def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt", credit_path="packages/credits.json", outstream=sys.stdout):
     # create an installation interface to install mod.
     window = tix.Tk()
     window.title(title)
@@ -312,6 +362,7 @@ def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt",
     else:
         application_path = os.path.dirname(__file__)
     local_pkg_path = os.path.join(application_path, pkg_path)
+    local_credit_path = os.path.join(application_path, credit_path) if credit_path else credit_path
     # try to find cached infomation
     cache_obj_path = cache.DEFAULT_CACHE
     cache_loc = cache.DEFAULT_CACHE_LOC
@@ -333,58 +384,67 @@ def tk_interface(title="UML_downloader", pkg_path="packages/other_packages.txt",
         keeper["adtframe"] = adtframe = treeview_frame(window, sections, additional_set, cache_obj=cache_obj, outstream=outstream)
         adtframe.grid(column=0, row=2, columnspan=2)
     # Config frame, handle all the settings (original location, etc.)
-    frame, location = control_frame(cache_obj, additional_set, update_sections_fn=update_sections, cache_obj_path=cache_obj_path, cache_loc=cache_loc, master=window, padx=5, pady=2)
-    frame.grid(column=0, row=0, columnspan=2, sticky=tk.WEST)
+    frame, location = control_frame(cache_obj, additional_set, update_sections_fn=update_sections, cache_obj_path=cache_obj_path, cache_loc=cache_loc, credit_path=local_credit_path, master=window, padx=5, pady=2)
+    frame.grid(column=0, row=0, columnspan=2, sticky="w")
     # Additional mods from external source
     sections = read_sections_from_pkg(cached_pkg_path if os.path.isfile(cached_pkg_path) else local_pkg_path)
     keeper["adtframe"] = adtframe = treeview_frame(window, sections, additional_set, cache_obj=cache_obj, outstream=outstream)
     adtframe.grid(column=0, row=2, columnspan=2)
     return window
     
-def _check_credit(download_tuple, data, check_fn=lambda key, line: line.startswith(key) ):
+def _check_credit(download_tuple, data, check_fn=lambda key, line: line.lower().startswith(key.lower()) ):
     # download_tuple should be (filename, link)
     # data should be {sign: credit_line}
     filename, link = download_tuple
+    # link is possible to be a tuple or string, so we attempt to split and check independently
+    link_part_1, link_part_2 = link if isinstance(link, tuple) else (link, "")
     for key in data.keys():
         # sign is checked by check_fn. By default, only true when key is start of any piece
-        if(check_fn(key, filename) or check_fn(key, link)):
+        if(check_fn(key, filename) or check_fn(key, link_part_1) or check_fn(key, link_part_2)):
+            print(key)
             return key
     # if not found, return None
     return None
 
-def credit_dialog(download_set, credit_path, master=None, **kwargs):
+def credit_dialog(download_set, credit_path, master=None, callback_fn=None, defaultkey="[atacms]", **kwargs):
     # open the credit data and search along download set by priority
     with io.open(credit_path, "r") as cf:
         all_credit = json.load(cf)
-    credit_keys = set(_check_credit(dl, all_data) for dl in download_set)
+    credit_keys = set(_check_credit(dl, all_credit) for dl in download_set)
     credit_keys.remove(None)
+    if(defaultkey): # always add the key for UML
+        credit_keys.add(defaultkey)
     # Credit should be (linkname, link, rest of credit)
-    credits = {all_credit[k] for k in credit_keys}
-    main_dialog = tk.Dialog(master=master, **kwargs)
+    credits = [all_credit[k] for k in credit_keys]
+    main_dialog = tk.Toplevel(master=master, **kwargs)
     front = tk.Label(master=main_dialog, text="You have installed mods from:")
     front.grid(row=0, column=0)
     i, gridrowpref = 0, 1
     for i, (lname, link, crd) in enumerate(credits):
         lineframe = tk.Frame(master=main_dialog)
-        lineframe.grid(row=i+gridrowpref, column=0, sticky=tk.WEST)
+        lineframe.grid(row=i+gridrowpref, column=0, sticky="w")
         # clickable link
-        linklabel = tk.Label(lname, fg="blue", cursor="hand2")
+        linklabel = tk.Label(master=lineframe, text=lname, fg="blue", cursor="hand2")
         linkfont = tk.font.Font(linklabel, linklabel.cget("font"))
         linkfont.configure(underline=True)
         linklabel.configure(font=linkfont)
         linklabel.bind("<Button-1>", lambda event: webbrowser.open(link))
-        linklabel.pack()
+        linklabel.pack(side=tk.LEFT)
         # the rest. TODO support multi-line
-        textlabel = tk.Label(crd)
-        textlabel.pack(side=tk.LEFT, pady=2)
-    back = tk.Label(master=main_dialog, text="Please consider supporting them.")
-    back.grid(row=i+gridrowpref+1, column=0, sticky=tk.WEST)
-    exitbtn = tk.Button(master=main_dialog, text="OK", command=main_dialog.destroy)
-    exitbtn.grid(row=i+gridrowpref+2, column=0, sticky=tk.CENTER)
+        textlabel = tk.Label(master=lineframe, text=crd)
+        textlabel.pack(side=tk.RIGHT, pady=2)
+    back = tk.Label(master=main_dialog, text="Please consider supporting them by paying a visit or even donating.")
+    back.grid(row=i+gridrowpref+1, column=0, sticky="w")
+    def exit_fn(): # run the callback before exiting.
+        if(callable(callback_fn)):
+            callback_fn()
+        main_dialog.destroy()
+    exitbtn = tk.Button(master=main_dialog, text="OK", command=exit_fn)
+    exitbtn.grid(row=i+gridrowpref+2, column=0, sticky="s")
     return main_dialog
 
 if __name__ == "__main__":
     # print("Application path:", application_path)
-    window = tk_interface(pkg_path="packages/packages.json")
+    window = tk_interface(pkg_path="packages/packages.json", credit_path="packages/credits.json")
     window.mainloop()
     
