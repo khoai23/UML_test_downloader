@@ -8,6 +8,7 @@ import webbrowser
 import shutil
 import threading
 import json
+from packaging import version
 
 import filehandler
 from filehandler import GITHUB_PATTERN_DEFAULT, DRIVE_FILE_LOCATION, DEFAULT_REPO
@@ -64,7 +65,7 @@ def install(directoryvar, download_set, cache_obj, cache_obj_path=cache.DEFAULT_
     # Download and extract the UML base to correct location (res_mod/vernumber/)
     resmod_folder = os.path.join(directory, "res_mods")
     subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
-    valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
+    valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], key=lambda x: version.parse(x), reverse=True) # hack to search for game version
     if(len(valid) > 1):
         outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
     elif(len(valid) == 0):
@@ -168,7 +169,7 @@ def remove(directoryvar, careful=False, outstream=sys.stdout):
         careful = careful.get() == 1
     resmod_folder = os.path.join(directory, "res_mods")
     subfolders = [ os.path.basename(os.path.normpath(f.path)) for f in os.scandir(resmod_folder) if f.is_dir()]
-    valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], reverse=True) # hack to search for game version
+    valid = sorted([pth for pth in subfolders if all(c in "1234567890." for c in pth)], key=lambda x: version.parse(x), reverse=True) # hack to search for game version
     if(len(valid) > 1):
         outstream.write("Multiple game versions found, using the highest({:s} in {})\n".format(valid[0], valid))
     elif(len(valid) == 0):
