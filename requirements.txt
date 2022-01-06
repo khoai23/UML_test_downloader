@@ -1,5 +1,0 @@
-requests
-zipfile36
-packaging
-
-pyinstaller
