@@ -1,0 +1,16 @@
+Falkonett's UUP
+TheFalkonett/UUP-Germany	UUP/German HTs/TheFalkonett's_UUP_Maus.wotmod	(UUP) Falkonett's Maus
+TheFalkonett/UUP-Germany	UUP/German LTs/TheFalkonett's_UUP_SP_I_C.wotmod	(UUP) Falkonett's Spähpanzer SP I.C.
+TheFalkonett/UUP-UK	UUP/British HTs/TheFalkonett's_UUP_Super_Conqueror.wotmod	(UUP) Falkonett's Super Conqueror
+
+Atacms's models
+khoai23/UML_test_downloader	mods/[atacms]W14_T80U.wotmod	Atacms T-80U model
+khoai23/UML_test_downloader	mods/[atacms]R87_T62A_ejection.wotmod	Atacms T-62A (casing ejection)
+khoai23/UML_test_downloader	mods/UUP_A88_M53_55.wotmod	Atacms M53/55 (resting spade)
+
+Private, untested/unchecked.
+khoai23/UML_test_downloader	mods/UML_A44.wotmod	A-44 animated turrets
+khoai23/UML_test_downloader	mods/UML_IS-3.wotmod	IS-3 animated turrets+hull
+khoai23/UML_test_downloader	mods/UML_T-54.wotmod	T-54 animated turrets
+khoai23/UML_test_downloader	mods/UML_T-34-85VD.wotmod	T-34-85 Victory_Day working AO mapping
+khoai23/UML_test_downloader	mods/UML_Type59D_numbered.wotmod	[Private] ASaltyFish's Type 59 with AO

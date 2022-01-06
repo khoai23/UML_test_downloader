@@ -38,16 +38,6 @@
 			<styleSet> WH </styleSet>
 		</BDR_G1B_warHammer40k>
 
-<!-- alternatively, you can use index in styleSet node so that one don't have to look up the styleName -->
-		<BDR_G1B_warHammer40k>
-			<enabled> True </enabled>
-			<swapNPC> False </swapNPC>
-			<useWhitelist> True </useWhitelist>
-			<whitelist> dummyTankName1, It11_P43, </whitelist>
-			<parent> F05_BDR_G1B </parent>
-			<configString> 2111 </configString>
-			<styleSet> 1 </styleSet>
-		</BDR_G1B_warHammer40k>
 
 
 
@@ -55,7 +45,7 @@
 		each component can be assigned a 3Dstyle variant if applicable 
 		
 		Components from a mod model can not be invoked this way. 
-		For that purpose, a dedicated profile must be created under res_mods/x.x.x.x/scripts/client/mods/UMLprofiles/ as if building a new remodel mod.
+		For this purpose, a dedicated profile must be created under res_mods/x.x.x.x/scripts/client/mods/UMLprofiles/ as if building a new remodel mod.
 -->
 		<e75ts_hybrid>
 			<enabled> true </enabled>
@@ -66,12 +56,29 @@
 			<parent> G143_E75_TS </parent>
 			<configString> 1119 </configString>
 			<hull> G73_E50_Ausf_M </hull>
-			<hullStyle> 2 </hullStyle>
+			<hullStyle> Halloween_3Dst </hullStyle>
 			<turret> G56_E-100 </turret>
-			<turretStyle> 1 </turretStyle>
+			<turretStyle> G56_E-100_3Dst </turretStyle>
 			<gun> G56_E-100 </gun>
-			<gunStyle> 1 </gunStyle>
+			<gunStyle> G56_E-100_3Dst </gunStyle>
 		</e75ts_hybrid>
+
+<!--	use a 3D style with specific progression stage.
+			the optional node <styleProgression> accepts integer 1~4. Without this node, the default stage will be 4.
+			do not use this node on a non-progression style.
+-->
+		<GB86_Centurion_Action_X_style>
+			<enabled> true </enabled>
+			<swapNPC> false </swapNPC>
+			<useWhitelist> true </useWhitelist>
+			<whitelist> F28_105_leFH18B2,
+				dummyTankName2 </whitelist>
+			<parent> GB86_Centurion_Action_X </parent>
+			<styleSet> GB86_Centurion_Action_X_3DSt_BVI </styleSet>
+			<styleProgression> 2 </styleProgression>
+			<camouflageID> 0 </camouflageID>
+		</GB86_Centurion_Action_X_style>
+
 
 
 	</models>

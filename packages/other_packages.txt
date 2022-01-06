@@ -1,0 +1,101 @@
+Falkonett UUP Project
+[UUP] Type 62	TheFalkonett/UUP-China	UUP/Chinese LTs/TheFalkonett's_UUP_Type_62.wotmod
+[UUP] WZ-132A	TheFalkonett/UUP-China	UUP/Chinese LTs/TheFalkonett's_UUP_WZ-132A.wotmod
+[UUP] Type 59	TheFalkonett/UUP-China	UUP/Chinese MTs/TheFalkonett's_UUP_Type_59.wotmod
+[UUP] 60G FT	TheFalkonett/UUP-China	UUP/Chinese TDs/TheFalkonett's_UUP_60G_FT.wotmod
+[UUP] TVP T 50 51	TheFalkonett/UUP-CZ-SK	UUP/Czech MTs/TheFalkonett's_UUP_TVP_T_50_51.wotmod
+[UUP] AMX M4 54	TheFalkonett/UUP-France	UUP/French HTs/TheFalkonett's_UUP_AMX_M4_54.wotmod
+[UUP] BDR G1 B	TheFalkonett/UUP-France	UUP/French HTs/TheFalkonett's_UUP_BDR_G1_B.wotmod
+[UUP] Char B1	TheFalkonett/UUP-France	UUP/French HTs/TheFalkonett's_UUP_Char_B1.wotmod
+[UUP] Bat Chat 12 t	TheFalkonett/UUP-France	UUP/French LTs/TheFalkonett's_UUP_Bat_Chat_12_t.wotmod
+[UUP] AMX 30 B	TheFalkonett/UUP-France	UUP/French MTs/TheFalkonett's_UUP_AMX_30_B.wotmod
+[UUP] Lorraine 40 t	TheFalkonett/UUP-France	UUP/French MTs/TheFalkonett's_UUP_Lorraine_40_t.wotmod
+[UUP] Bat Chat 155 58	TheFalkonett/UUP-France	UUP/French SPGs/TheFalkonett's_UUP_Bat_Chat_155_58.wotmod
+[UUP] AMX AC 46	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_AMX_AC_46.wotmod
+[UUP] AMX AC 48	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_AMX_AC_48.wotmod
+[UUP] AMX CdA	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_AMX_CdA.wotmod
+[UUP] ARL V39	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_ARL_V39.wotmod
+[UUP] FCM 36 PaK 40	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_FCM_36_PaK_40.wotmod
+[UUP] Foch	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_Foch.wotmod
+[UUP] Foch B-155	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_Foch_B-155.wotmod
+[UUP] FT AC	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_FT_AC.wotmod
+[UUP] S35 CA	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_S35_CA.wotmod
+[UUP] SAu 40	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_SAu_40.wotmod
+[UUP] UE 57	TheFalkonett/UUP-France	UUP/French TDs/TheFalkonett's_UUP_UE_57.wotmod
+[UUP] Maus	TheFalkonett/UUP-Germany	UUP/German HTs/TheFalkonett's_UUP_Maus.wotmod
+[UUP] SP I C	TheFalkonett/UUP-Germany	UUP/German LTs/TheFalkonett's_UUP_SP_I_C.wotmod
+[UUP] Grosstraktor	TheFalkonett/UUP-Germany	UUP/German MTs/TheFalkonett's_UUP_Grosstraktor.wotmod
+[UUP] Pz 58 Mutz	TheFalkonett/UUP-Germany	UUP/German MTs/TheFalkonett's_UUP_Pz_58_Mutz.wotmod
+[UUP] GW Tiger P	TheFalkonett/UUP-Germany	UUP/German SPGs/TheFalkonett's_UUP_GW_Tiger_P.wotmod
+[UUP] E 25	TheFalkonett/UUP-Germany	UUP/German TDs/TheFalkonett's_UUP_E_25.wotmod
+[UUP] Jagdpanzer E100	TheFalkonett/UUP-Germany	UUP/German TDs/TheFalkonett's_UUP_Jagdpanzer_E100.wotmod
+[UUP] Marder 38T	TheFalkonett/UUP-Germany	UUP/German TDs/TheFalkonett's_UUP_Marder_38T.wotmod
+[UUP] Pz.Sfl.IVc	TheFalkonett/UUP-Germany	UUP/German TDs/TheFalkonett's_UUP_Pz.Sfl.IVc.wotmod
+[UUP] O-Ho	TheFalkonett/UUP-Japan	UUP/Japanese HTs/TheFalkonett's_UUP_O-Ho.wotmod
+[UUP] O-Ni	TheFalkonett/UUP-Japan	UUP/Japanese HTs/TheFalkonett's_UUP_O-Ni.wotmod
+[UUP] Type 91	TheFalkonett/UUP-Japan	UUP/Japanese HTs/TheFalkonett's_UUP_Type_91.wotmod
+[UUP] Chi-Nu Kai	TheFalkonett/UUP-Japan	UUP/Japanese MTs/TheFalkonett's_UUP_Chi-Nu_Kai.wotmod
+[UUP] Chi-Ri	TheFalkonett/UUP-Japan	UUP/Japanese MTs/TheFalkonett's_UUP_Chi-Ri.wotmod
+[UUP] EMIL I	TheFalkonett/UUP-Sweden	UUP/Swedish HTs/TheFalkonett's_UUP_EMIL_I.wotmod
+[UUP] Ikv 65 Alt II	TheFalkonett/UUP-Sweden	UUP/Swedish TDs/TheFalkonett's_UUP_Ikv_65_Alt_II.wotmod
+[UUP] Ikv 90	TheFalkonett/UUP-Sweden	UUP/Swedish TDs/TheFalkonett's_UUP_Ikv_90.wotmod
+[UUP] Strv 103-0	TheFalkonett/UUP-Sweden	UUP/Swedish TDs/TheFalkonett's_UUP_Strv_103-0.wotmod
+[UUP] Strv 103B	TheFalkonett/UUP-Sweden	UUP/Swedish TDs/TheFalkonett's_UUP_Strv_103B.wotmod
+[UUP] UDES	TheFalkonett/UUP-Sweden	UUP/Swedish TDs/TheFalkonett's_UUP_UDES.wotmod
+[UUP] FV 215b	TheFalkonett/UUP-UK	UUP/British HTs/TheFalkonett's_UUP_FV_215b.wotmod
+[UUP] Super Conqueror	TheFalkonett/UUP-UK	UUP/British HTs/TheFalkonett's_UUP_Super_Conqueror.wotmod
+[UUP] AC 1	TheFalkonett/UUP-UK	UUP/British MTs/TheFalkonett's_UUP_AC_1.wotmod
+[UUP] Centurion Action X	TheFalkonett/UUP-UK	UUP/British MTs/TheFalkonett's_UUP_Centurion_Action_X.wotmod
+[UUP] M3 Grant	TheFalkonett/UUP-UK	UUP/British MTs/TheFalkonett's_UUP_M3_Grant.wotmod
+[UUP] Crusader SP	TheFalkonett/UUP-UK	UUP/British SPGs/TheFalkonett's_UUP_Crusader_SP.wotmod
+[UUP] C GC	TheFalkonett/UUP-UK	UUP/British SPGs/TheFalkonett's_UUP_C_GC.wotmod
+[UUP] FV207	TheFalkonett/UUP-UK	UUP/British SPGs/TheFalkonett's_UUP_FV207.wotmod
+[UUP] FV304	TheFalkonett/UUP-UK	UUP/British SPGs/TheFalkonett's_UUP_FV304.wotmod
+[UUP] FV3805	TheFalkonett/UUP-UK	UUP/British SPGs/TheFalkonett's_UUP_FV3805.wotmod
+[UUP] Sexton I	TheFalkonett/UUP-UK	UUP/British SPGs/TheFalkonett's_UUP_Sexton_I.wotmod
+[UUP] AT 15A	TheFalkonett/UUP-UK	UUP/British TDs/TheFalkonett's_UUP_AT_15A.wotmod
+[UUP] AT 7	TheFalkonett/UUP-UK	UUP/British TDs/TheFalkonett's_UUP_AT_7.wotmod
+[UUP] FV4005	TheFalkonett/UUP-UK	UUP/British TDs/TheFalkonett's_UUP_FV4005.wotmod
+[UUP] Tortoise	TheFalkonett/UUP-UK	UUP/British TDs/TheFalkonett's_UUP_Tortoise.wotmod
+[UUP] UC 2-pdr	TheFalkonett/UUP-UK	UUP/British TDs/TheFalkonett's_UUP_UC_2-pdr.wotmod
+[UUP] T29	TheFalkonett/UUP-USA	UUP/American HTs/TheFalkonett's_UUP_T29.wotmod
+[UUP] M22 Locust	TheFalkonett/UUP-USA	UUP/American LTs/TheFalkonett's_UUP_M22_Locust.wotmod
+[UUP] T49	TheFalkonett/UUP-USA	UUP/American LTs/TheFalkonett's_UUP_T49.wotmod
+[UUP] T7 Combat Car	TheFalkonett/UUP-USA	UUP/American LTs/TheFalkonett's_UUP_T7_Combat_Car.wotmod
+[UUP] T92	TheFalkonett/UUP-USA	UUP/American LTs/TheFalkonett's_UUP_T92.wotmod
+[UUP] M3 Lee	TheFalkonett/UUP-USA	UUP/American MTs/TheFalkonett's_UUP_M3_Lee.wotmod
+[UUP] M48A5	TheFalkonett/UUP-USA	UUP/American MTs/TheFalkonett's_UUP_M48A5.wotmod
+[UUP] M4A3E8	TheFalkonett/UUP-USA	UUP/American MTs/TheFalkonett's_UUP_M4A3E8.wotmod
+[UUP] T95E2	TheFalkonett/UUP-USA	UUP/American MTs/TheFalkonett's_UUP_T95E2.wotmod
+[UUP] T92 HMC	TheFalkonett/UUP-USA	UUP/American SPGs/TheFalkonett's_UUP_T92_HMC.wotmod
+[UUP] M18 Hellcat	TheFalkonett/UUP-USA	UUP/American TDs/TheFalkonett's_UUP_M18_Hellcat.wotmod
+[UUP] M56 Scorpion	TheFalkonett/UUP-USA	UUP/American TDs/TheFalkonett's_UUP_M56_Scorpion.wotmod
+[UUP] IS-7	TheFalkonett/UUP-USSR	UUP/Russian HTs/TheFalkonett's_UUP_IS-7.wotmod
+[UUP] Obj 705A	TheFalkonett/UUP-USSR	UUP/Russian HTs/TheFalkonett's_UUP_Obj_705A.wotmod
+[UUP] Obj 430 II	TheFalkonett/UUP-USSR	UUP/Russian MTs/TheFalkonett's_UUP_Obj_430_II.wotmod
+[UUP] STG	TheFalkonett/UUP-USSR	UUP/Russian MTs/TheFalkonett's_UUP_STG.wotmod
+[UUP] STG Guard	TheFalkonett/UUP-USSR	UUP/Russian MTs/TheFalkonett's_UUP_STG_Guard.wotmod
+[UUP] T-44-100	TheFalkonett/UUP-USSR	UUP/Russian MTs/TheFalkonett's_UUP_T-44-100.wotmod
+[UUP] Obj 261	TheFalkonett/UUP-USSR	UUP/Russian SPGs/TheFalkonett's_UUP_Obj_261.wotmod
+[UUP] SU-122A	TheFalkonett/UUP-USSR	UUP/Russian SPGs/TheFalkonett's_UUP_SU-122A.wotmod
+[UUP] SU-14-1	TheFalkonett/UUP-USSR	UUP/Russian SPGs/TheFalkonett's_UUP_SU-14-1.wotmod
+[UUP] SU-14-2	TheFalkonett/UUP-USSR	UUP/Russian SPGs/TheFalkonett's_UUP_SU-14-2.wotmod
+[UUP] SU-5	TheFalkonett/UUP-USSR	UUP/Russian SPGs/TheFalkonett's_UUP_SU-5.wotmod
+[UUP] SU-8	TheFalkonett/UUP-USSR	UUP/Russian SPGs/TheFalkonett's_UUP_SU-8.wotmod
+[UUP] Obj 263	TheFalkonett/UUP-USSR	UUP/Russian TDs/TheFalkonett's_UUP_Obj_263.wotmod
+
+Atacms's UML Addon/Standalone
+[Atacms] UUP A88 M53 55	khoai23/UML_test_downloader	mods/Atacms/UUP_A88_M53_55.wotmod
+[Atacms] GB95 Ekins Firefly M4A4	khoai23/UML_test_downloader	mods/Atacms/[atacms]GB95_Ekins_Firefly_M4A4.wotmod
+[Atacms] It14 P44 Pantera animation	khoai23/UML_test_downloader	mods/Atacms/[atacms]It14_P44_Pantera_animation.wotmod
+[Atacms] R87 T62A ejection	khoai23/UML_test_downloader	mods/Atacms/[atacms]R87_T62A_ejection.wotmod
+[Atacms] W14 T80U	khoai23/UML_test_downloader	mods/Atacms/[atacms]W14_T80U.wotmod
+
+Private, Unverified, etc.
+[Private] Edweird T55A	khoai23/UML_test_downloader	mods/Local/Edweird_T55A.wotmod
+[Private] Edweird T62	khoai23/UML_test_downloader	mods/Local/Edweird_T62.wotmod
+[Private] UML A44	khoai23/UML_test_downloader	mods/Local/UML_A44.wotmod
+[Private] UML IS-3	khoai23/UML_test_downloader	mods/Local/UML_IS-3.wotmod
+[Private] UML T-34-85VD	khoai23/UML_test_downloader	mods/Local/UML_T-34-85VD.wotmod
+[Private] UML T-54	khoai23/UML_test_downloader	mods/Local/UML_T-54.wotmod
+[Private] UML Type59D numbered	khoai23/UML_test_downloader	mods/Local/UML_Type59D_numbered.wotmod
