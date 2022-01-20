@@ -85,17 +85,6 @@ Falkonett UUP Project
 [UUP] Obj 263	TheFalkonett/UUP-USSR	UUP/Russian TDs/TheFalkonett's_UUP_Obj_263.wotmod
 
 Atacms's UML Addon/Standalone
-[Atacms] UUP A88 M53 55	khoai23/UML_test_downloader	mods/Atacms/UUP_A88_M53_55.wotmod
-[Atacms] GB95 Ekins Firefly M4A4	khoai23/UML_test_downloader	mods/Atacms/[atacms]GB95_Ekins_Firefly_M4A4.wotmod
-[Atacms] It14 P44 Pantera animation	khoai23/UML_test_downloader	mods/Atacms/[atacms]It14_P44_Pantera_animation.wotmod
-[Atacms] R87 T62A ejection	khoai23/UML_test_downloader	mods/Atacms/[atacms]R87_T62A_ejection.wotmod
-[Atacms] W14 T80U	khoai23/UML_test_downloader	mods/Atacms/[atacms]W14_T80U.wotmod
+
 
 Private, Unverified, etc.
-[Private] Edweird T55A	khoai23/UML_test_downloader	mods/Local/Edweird_T55A.wotmod
-[Private] Edweird T62	khoai23/UML_test_downloader	mods/Local/Edweird_T62.wotmod
-[Private] UML A44	khoai23/UML_test_downloader	mods/Local/UML_A44.wotmod
-[Private] UML IS-3	khoai23/UML_test_downloader	mods/Local/UML_IS-3.wotmod
-[Private] UML T-34-85VD	khoai23/UML_test_downloader	mods/Local/UML_T-34-85VD.wotmod
-[Private] UML T-54	khoai23/UML_test_downloader	mods/Local/UML_T-54.wotmod
-[Private] UML Type59D numbered	khoai23/UML_test_downloader	mods/Local/UML_Type59D_numbered.wotmod

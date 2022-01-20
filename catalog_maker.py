@@ -89,20 +89,20 @@ def export_sections_to_json(data, override_datafile=None, additional_datafile=No
     if(override_datafile):
         with io.open(override_datafile, "r", encoding="utf-8") as jf:
             override_dict = json.load(jf)
+    # create ignore_list from file. This list should contain "path" that should be ignored
+    # This will stop adding entries with specific paths into the sections.
     ignore_list = None
     if(ignore_datafile):
         with io.open(ignore_datafile, "r", encoding="utf-8") as jf:
             ignore_list = json.load(jf)
-    # create ignore_list from file. This list should contain "path" that should be ignored
-    # This will stop adding entries with specific paths into the sections.
     sections = {}
-    uup = sections["Falkonett UUP Project"] = {}
+    uup = sections["TheFalkonett's UUP Project"] = {}
     UUP_sections = [entry for entry in data if "UUP" in entry[0]] 
     for repo, path in UUP_sections:
         if(ignore_list and path in ignore_list):
             continue
         uup[description_maker_func(path, override_dict=override_dict, remove_phrases=["TheFalkonett's_UUP_"])] = (repo, path)
-    atacms = sections["Atacms's UML Addon/Standalone"] = {}
+    atacms = sections["Atacms's UML Models/Remodels"] = {}
     A_sections = [entry for entry in data if "Atacms" in entry[1]] 
     for repo, path in A_sections:
         if(ignore_list and path in ignore_list):
@@ -120,10 +120,14 @@ def export_sections_to_json(data, override_datafile=None, additional_datafile=No
         with io.open(additional_datafile, "r", encoding="utf-8") as jf:
             additional_dict = json.load(jf)
             formatted_additional = {desc: (None, "{:s}{:s}{:s}".format(name, SEPARATOR, dlink)) for name, (desc, dlink) in additional_dict.items()}
-            local.update(formatted_additional)
+            # split the additional downloads to correct category
+            atacms_additional = {k:v for k, v in formatted_additional.items() if "[Atacms]" in k}
+            atacms.update(atacms_additional)
+            local_additional = {k:v for k, v in formatted_additional.items() if k not in atacms_additional.keys()}
+            local.update(local_additional)
     # print(data, uup, atacms, local)
     with io.open(jsonfile, "w", encoding="utf-8") as jf:
-        json.dump(sections, jf)
+        json.dump(sections, jf, indent=2)
 
 def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", internal_delim="\t"):
     if(filepath[-4:] == ".txt"):
