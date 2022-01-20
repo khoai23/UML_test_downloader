@@ -412,7 +412,7 @@ def credit_dialog(download_set, credit_path, master=None, callback_fn=None, defa
     with io.open(credit_path, "r") as cf:
         all_credit = json.load(cf)
     credit_keys = set(_check_credit(dl, all_credit) for dl in download_set)
-    credit_keys.remove(None)
+    credit_keys.discard(None)
     if(defaultkey): # always add the key for UML
         credit_keys.add(defaultkey)
     # Credit should be (linkname, link, rest of credit)
