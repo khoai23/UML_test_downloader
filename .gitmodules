@@ -25,3 +25,6 @@
 [submodule "mods/UUP-Sweden"]
 	path = mods/UUP-Sweden
 	url = https://github.com/TheFalkonett/UUP-Sweden.git
+[submodule "converter/wot-src"]
+	path = converter/wot-src
+	url = https://github.com/IzeBerg/wot-src.git

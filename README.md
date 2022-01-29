@@ -25,3 +25,5 @@ Still lack a bunch of features:
 - [x] Crediting proper authors
 
 All credits goes to respective authors who published their own mod on github and made them compatible to UML.
+
+Converter script from standalone remodels to UML-compatible profile is now available [here](converter/README.md)

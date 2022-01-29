@@ -8,4 +8,8 @@ The point of this python script is to convert standalone remodels (replacing veh
 - [Optional] move all resources dictated by .model, .visual and .visual\_processed file to an unique location.
 - Rezip the new .wotmod into place
 
+TODO:
+- [ ] All mapping of custom icon name (currently only have britain_color)
+- [ ] Relocate resources and modify .visual\_processed filepath
+
 Each of these process should correspond to a single python function in the script.
