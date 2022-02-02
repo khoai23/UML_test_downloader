@@ -87,5 +87,20 @@
 			<path> maps/UMLplayerEmblems/dashCircle_white.dds </path>
 			<comment>dashed white circle (UK) </comment>
 		</dashCircle_white>
+		<ODS_V_white>
+			<id> 16 </id>	
+			<path> maps/UMLplayerEmblems/ODS_V_white.dds </path>
+			<comment>white V symbol </comment>
+		</ODS_V_white>
+		<ODS_Vsmall_white>
+			<id> 17 </id>	
+			<path> maps/UMLplayerEmblems/ODS_Vsmall_white.dds </path>
+			<comment>white V symbol (small) </comment>
+		</ODS_Vsmall_white>
+		<JGSDF_chevron_diamond_white_small>
+			<id> 18 </id>	
+			<path> maps/UMLplayerEmblems/chevron_diamond_white_small.dds </path>
+			<comment>one of the squadron designation of JGSDF </comment>
+		</JGSDF_chevron_diamond_white_small>
 	</emblems>
 </root>
