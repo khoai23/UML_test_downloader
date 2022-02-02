@@ -116,7 +116,7 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
                 f.write(chunk)
                 if(progressbar): # attempt to add % to progress value basing on the chunks downloaded
                     # print(len(chunk))
-                    progressbar["value"] += float(chunk_size) / correct_filesize * progressbar["length"]
+                    progressbar["value"] += float(chunk_size) / correct_filesize * 40.0
         else:
             f.write(data) # wholesale writing
     if(cache_loc is not None):

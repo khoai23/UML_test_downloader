@@ -4,21 +4,22 @@ import zipfile36 as zipfile
 import io, os
 import json
 
-from xml_loader import convert_WoT_to_UML, generateValueDict
+from xml_loader import recursive_cleanText, convert_WoT_to_UML, generateValueDict
 
 def add_suffix(filepath, suffix):
     fbase, fext = os.path.splitext(filepath)
     return fbase + suffix + fext
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Extract, convert, and rebuild .wotmod remodels to corresponding UML format.")
+    parser = argparse.ArgumentParser(description="Extract, convert, and rebuild .wotmod remodels to corresponding UML format.")
     parser.add_argument("input", type=str, help=".wotmod file")
-    parser.add_argument("--profile_name", type=str, default=None, help="Name of the new profile. If not specified, use the filename of the .wotmod as needed")
-    parser.add_argument("--output", type=str, default=None, help="Output file. Default to (oldfilename)_UML.wotmod")
+    parser.add_argument("-n", "--profile_name", type=str, default=None, help="Name of the new profile. If not specified, use the filename of the .wotmod as needed")
+    parser.add_argument("-o", "--output", type=str, default=None, help="Output file. Default to (oldfilename)_UML.wotmod")
     parser.add_argument("--engine_json_file", type=str, default="engine.json", help="Reference engine file extracted from wot-src")
     parser.add_argument("--gun_json_file", type=str, default="gun.json", help="Reference gun file extracted from wot-src")
-    parser.add_argument("--extracted", action="store_true", help="Set to not rebuild into wotmod again. Use if you want to customize the profile.")
+    parser.add_argument("-e", "--extracted", action="store_true", help="Set to not rebuild into wotmod again. Use if you want to customize the profile.")
     parser.add_argument("--relocate_data", action="store_true", help="Set to relocate all resource file and modify .visual(_processed) accordingly . Currently unimplemented.")
+    parser.add_argument("--pretty", action="store_false", help="Specify to disable default result of XML printing (no indent, no stripping values).")
     
     args = parser.parse_args()
     if(args.relocate_data):
@@ -52,6 +53,8 @@ if __name__ == "__main__":
                     profileValueDict = generateValueDict(args.input, wotTree, model_name=args.profile_name, engine_dict=engine_dict, gun_dict=gun_dict)
                     # print(profileValueDict)
                     umlTree = convert_WoT_to_UML(wotTree, default_dict=profileValueDict)
-                    ET.indent(umlTree)
+                    if(args.pretty): # pretty print functions, enabled by default
+                        recursive_cleanText(umlTree.getroot())
+                        ET.indent(umlTree)
                     outdata = ET.tostring(umlTree.getroot())
                     outresfile.write(outdata)

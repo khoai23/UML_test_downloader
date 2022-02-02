@@ -15,6 +15,12 @@ def recursive_nodename(node, prefix=None, separator="|"):
         listnode.extend(recursive_nodename(c, prefix=newprefix, separator=separator))
     return listnode
 
+def recursive_cleanText(node, cleaner_fn=lambda x: x.strip()):
+    if(node.text):
+        node.text = cleaner_fn(node.text)
+    for c in node:
+        recursive_cleanText(c, cleaner_fn=cleaner_fn)
+
 Convert_Tagset = {"clan",  "player", "inscription", "insigniaOnGun"}
 def convertCustomizationSlots(nodes, accepted_tagset=Convert_Tagset):
     # reformat WoT customization nodes to UML format
@@ -45,17 +51,15 @@ UML_conversion_dict = {
     "chassis/traces": "chassis/*/traces",
     "chassis/tracks": "chassis/*/tracks",
     "chassis/wheels": "chassis/*/wheels",
+    "chassis/topRightCarryingPoint": "chassis/*/topRightCarryingPoint",
+    "chassis/drivingWheels": "chassis/*/drivingWheels",
     "chassis/trackNodes": "chassis/*/trackNodes",
     "chassis/groundNodes": "chassis/*/groundNodes",
     "chassis/splineDesc": "chassis/*/splineDesc",
-    "chassis/trackParams/maxAmplitude": "chassis/*/trackNodes/maxAmplitude", # trackparams are loaded from here.. why? when we have already copied trackNodes?
-    "chassis/trackParams/maxOffset": "chassis/*/trackNodes/maxOffset",
-    "chassis/trackParams/gravity": "chassis/*/trackNodes/gravity",
-    "chassis/trackParams/thickness": "chassis/*/trackThickness",
     "chassis/physicalTracks": "chassis/*/physicalTracks",
     "chassis/hullPosition": "chassis/*/hullPosition",
+    "chassis/trackThickness": "chassis/*/trackThickness",
     "chassis/AODecals": "chassis/*/AODecals",
-    "chassis/hangarShadowTexture": "hull/hangarShadowTexture",
     # hull section - convert emblem/decal groups
     "hull/undamaged": "hull/models/undamaged",
     "hull/destroyed": "hull/models/destroyed",
@@ -108,7 +112,7 @@ def convert_WoT_to_UML(wotTree, conversion_dict=UML_conversion_dict, default_dic
         if(targetbranch == "?"):
             value = default_dict.get(truesourcepath, "#ERROR#")  # the default value SHOULD not happen once script is done 
             if(isinstance(value, str)):
-                convertedNode.text = value # if string, set as single value
+                convertedNode.text = value.strip() # if string, set as single value
             elif(isinstance(value, list)):
                 convertedNode.extend(value) # if list, set as parent node 
         else:
@@ -191,6 +195,7 @@ if __name__ == "__main__":
     profileValueDict = generateValueDict(sourcefile, wotTree, engine_dict=engine_dict, gun_dict=gun_dict)
     # print(profileValueDict)
     umlTree = convert_WoT_to_UML(wotTree, default_dict=profileValueDict)
+    recursive_cleanText(umlTree.getroot())
     ET.indent(umlTree)
     umlTree.write(targetfile)
     sys.exit(0)
