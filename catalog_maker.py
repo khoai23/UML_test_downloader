@@ -3,7 +3,8 @@ import json
 
 from cache import SEPARATOR
 
-repo_regex = re.compile(r"https://github.com/(.+).git")
+# two versions: https and git@
+repo_regex = re.compile(r"(https://github.com/|git@github.com:)(.+).git")
 
 def read_submodules(submodule_file=".gitmodules"):
     # Read and convert all submodule
@@ -15,7 +16,7 @@ def read_submodules(submodule_file=".gitmodules"):
         # load blocks, read the repo and respective path into dicts
         _, pathline, urlline = lines[i:i+3]
         path = pathline.split("=")[-1].strip()
-        repo = re.search(repo_regex, urlline).group(1)
+        repo = re.search(repo_regex, urlline).group(2)
         # path should be sanctioned as well
         path = os.path.relpath(path)
         substitute[path] = repo
@@ -54,7 +55,7 @@ def export_sections_to_txt(data, txtfile="other_packages.txt"):
     UUP_sections = [(descmaker(path), repo, path) for repo, path in UUP_sections ]
     
     A_desc = "Atacms's UML Addon/Standalone" # Atacms models
-    A_sections = [entry for entry in data if "Atacms" in entry[1]] 
+    A_sections = [entry for entry in data if "[atacms]" in entry[1]] 
     data = [entry for entry in data if entry not in A_sections] 
     # generate description: [Atacms] {vehicle name}
     descmaker = lambda path: "[Atacms] {:s}".format( path.split("/")[-1].replace(".wotmod", "").replace("[atacms]", "").replace("_", " ").strip() )
@@ -103,7 +104,7 @@ def export_sections_to_json(data, override_datafile=None, additional_datafile=No
             continue
         uup[description_maker_func(path, override_dict=override_dict, remove_phrases=["TheFalkonett's_UUP_"])] = (repo, path)
     atacms = sections["Atacms's UML Models/Remodels"] = {}
-    A_sections = [entry for entry in data if "Atacms" in entry[1]] 
+    A_sections = [entry for entry in data if "[atacms]" in entry[1]] 
     for repo, path in A_sections:
         if(ignore_list and path in ignore_list):
             continue

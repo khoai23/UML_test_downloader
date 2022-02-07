@@ -85,6 +85,13 @@ Falkonett UUP Project
 [UUP] Obj 263	TheFalkonett/UUP-USSR	UUP/Russian TDs/TheFalkonett's_UUP_Obj_263.wotmod
 
 Atacms's UML Addon/Standalone
-
+[Atacms] A88 M53 55	khoai23/UML_test_downloader	mods/Local/[atacms]A88_M53_55.wotmod
+[Atacms] GB95 Ekins Firefly M4A4	khoai23/UML_test_downloader	mods/Local/[atacms]GB95_Ekins_Firefly_M4A4.wotmod
+[Atacms] It14 P44 Pantera animation	khoai23/UML_test_downloader	mods/Local/[atacms]It14_P44_Pantera_animation.wotmod
+[Atacms] R87 T62A ejection	khoai23/UML_test_downloader	mods/Local/[atacms]R87_T62A_ejection.wotmod
 
 Private, Unverified, etc.
+[Private] UML A44	khoai23/UML_test_downloader	mods/Local/UML_A44.wotmod
+[Private] UML IS-3	khoai23/UML_test_downloader	mods/Local/UML_IS-3.wotmod
+[Private] UML T-34-85VD	khoai23/UML_test_downloader	mods/Local/UML_T-34-85VD.wotmod
+[Private] UML T-54	khoai23/UML_test_downloader	mods/Local/UML_T-54.wotmod

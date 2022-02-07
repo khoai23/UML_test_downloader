@@ -8,6 +8,7 @@ python catalog_maker.py
 # generate the spec file (UML_Installer.spec)
 pyi-makespec downloader.py --name UML_Installer --onefile --add-data packages;packages
 # add to spec file datas ``(os.path.join(sys.prefix, 'tcl', 'tix8.4.3'), 'tix8.4.3')``, replacing 8.4.3 with whatever version applicable to your python Tkinter
+# build the single-file .exe
 pyinstaller UML_Installer.spec
 ```
 
@@ -26,4 +27,4 @@ Still lack a bunch of features:
 
 All credits goes to respective authors who published their own mod on github and made them compatible to UML.
 
-Converter script from standalone remodels to UML-compatible profile is now available [here](converter/README.md)
+Converter script from standalone remodels to UML-compatible profile is now available [here](converter)

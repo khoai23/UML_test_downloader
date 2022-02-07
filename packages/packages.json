@@ -334,6 +334,22 @@
     ]
   },
   "Atacms's UML Models/Remodels": {
+    "Atacms Demo M-53/55 (setup spade)": [
+      "khoai23/UML_test_downloader",
+      "mods/Local/[atacms]A88_M53_55.wotmod"
+    ],
+    "GB95 Ekins Firefly M4A4": [
+      "khoai23/UML_test_downloader",
+      "mods/Local/[atacms]GB95_Ekins_Firefly_M4A4.wotmod"
+    ],
+    "Atacms Demo P-44 Pantera (swinging bucket)": [
+      "khoai23/UML_test_downloader",
+      "mods/Local/[atacms]It14_P44_Pantera_animation.wotmod"
+    ],
+    "Atacms Demo T-62 (shell ejection)": [
+      "khoai23/UML_test_downloader",
+      "mods/Local/[atacms]R87_T62A_ejection.wotmod"
+    ],
     "[Atacms] Centurion Mk. 10": [
       null,
       "[atacms]AGB01_Centurion_mk10.wotmod::https://drive.google.com/uc?export=download&id=1vnO42k3vRsoAbgXa02s87fDaVG69hEGr"
@@ -396,6 +412,22 @@
     ]
   },
   "Private, Unverified, etc.": {
+    "UML A44": [
+      "khoai23/UML_test_downloader",
+      "mods/Local/UML_A44.wotmod"
+    ],
+    "UML IS-3": [
+      "khoai23/UML_test_downloader",
+      "mods/Local/UML_IS-3.wotmod"
+    ],
+    "T-34-85's applicable camo on Victory Day 3D Style": [
+      "khoai23/UML_test_downloader",
+      "mods/Local/UML_T-34-85VD.wotmod"
+    ],
+    "UML T-54": [
+      "khoai23/UML_test_downloader",
+      "mods/Local/UML_T-54.wotmod"
+    ],
     "[UML] Edweird's T-55A": [
       null,
       "[UML]Edweird_T-55A.wotmod::https://drive.google.com/uc?export=download&id=19FTLpGDLS3mGb7MEAR-2m4T3m1Z1VKOR"

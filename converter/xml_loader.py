@@ -141,7 +141,29 @@ def convert_WoT_to_UML(wotTree, conversion_dict=UML_conversion_dict, default_dic
     # the model node will be turned into ElementTree to be dumped
     return ET.ElementTree(UML_root_node)
 
-emblemdicts = {15506: "britain_color"}
+emblemdicts_original = {'ussr_star': 15501, 
+   'germany_cross': 15502, 
+   'usa_star': 15503, 
+   'french_rose': 15504, 
+   'china_star': 15505, 
+   'britain_color': 15506, 
+   'germany_bundecross': 15507, 
+   'japanese_sun': 15508, 
+   'china_kuomintang': 15509, 
+   'alpha_tester': 15510, 
+   'beta_tester': 15511, 
+   'germany_ddr': 15512, 
+   'moder_ring': 15513, 
+   'czech_round': 15514, 
+   'swedish_flag': 15515, 
+   'poland_chekers': 15516, 
+   'italian_flag': 15500, 
+   'poland_flag': 409, 
+   'israel_flag': 424, 
+   'finland_flag': 437, 
+   'australia_flag': 439}
+emblemdicts = {idx:name for name, index in emblemdicts_original.items()}
+   
 def generateValueDict(modPath, wotTree, model_name=None, engine_dict=None, gun_dict=None, error_text="#ERROR#"):
     # create customized valueDict that changes depending on the input model
     profileValueDict = dict(UML_default_dict)
