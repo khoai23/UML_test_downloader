@@ -162,7 +162,7 @@ emblemdicts_original = {'ussr_star': 15501,
    'israel_flag': 424, 
    'finland_flag': 437, 
    'australia_flag': 439}
-emblemdicts = {idx:name for name, index in emblemdicts_original.items()}
+emblemdicts = {index:name for name, index in emblemdicts_original.items()}
    
 def generateValueDict(modPath, wotTree, model_name=None, engine_dict=None, gun_dict=None, error_text="#ERROR#"):
     # create customized valueDict that changes depending on the input model

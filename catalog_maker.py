@@ -1,5 +1,6 @@
 import re, io, os
 import json
+import sys
 
 from cache import SEPARATOR
 
@@ -83,7 +84,7 @@ def description_maker_func(path, override_dict=None, remove_phrases=[], descform
     cleanname = basename.replace(".wotmod", "").replace("_", " ").strip()
     return descformat.format(cleanname)
     
-def export_sections_to_json(data, override_datafile=None, additional_datafile=None, ignore_datafile=None, jsonfile="packages.json"):
+def export_sections_to_json(data, override_datafile=None, additional_datafile=None, ignore_datafile=None, private_additional=None, jsonfile="packages.json"):
     # create override_dict from file. This dict should be formatted "path": "custom description" 
     # This will override found paths in the data with the custom descriptor
     override_dict = None
@@ -98,7 +99,7 @@ def export_sections_to_json(data, override_datafile=None, additional_datafile=No
             ignore_list = json.load(jf)
     sections = {}
     uup = sections["TheFalkonett's UUP Project"] = {}
-    UUP_sections = [entry for entry in data if "UUP" in entry[0]] 
+    UUP_sections = [entry for entry in data if "Falkonett" in entry[0]] 
     for repo, path in UUP_sections:
         if(ignore_list and path in ignore_list):
             continue
@@ -126,6 +127,12 @@ def export_sections_to_json(data, override_datafile=None, additional_datafile=No
             atacms.update(atacms_additional)
             local_additional = {k:v for k, v in formatted_additional.items() if k not in atacms_additional.keys()}
             local.update(local_additional)
+    if(private_additional):
+        # private models; only available when running this file in private mode
+        with io.open(private_additional, "r", encoding="utf-8") as jf:
+            additional_dict = json.load(jf)
+            formatted_additional = {desc: (None, "{:s}{:s}{:s}".format(name, SEPARATOR, dlink)) for name, (desc, dlink) in additional_dict.items()}
+            local.update(formatted_additional)
     # print(data, uup, atacms, local)
     with io.open(jsonfile, "w", encoding="utf-8") as jf:
         json.dump(sections, jf, indent=2)
@@ -152,10 +159,12 @@ def read_sections_from_pkg(filepath, section_delim="\n\n", entry_delim="\n", int
     return formatted
 
 if __name__ == "__main__":
+    private_path = additional_datafile=os.path.join("packages", "private.json") if len(sys.argv) > 1 else None
     subdict = read_submodules()
     data = walk_folder("./mods", substitute=subdict)
     export_sections_to_txt(data, os.path.join("packages", "other_packages.txt"))
     export_sections_to_json(data, override_datafile=os.path.join("packages", "override.json"),
                                 ignore_datafile=os.path.join("packages", "ignore.json"),
                                 additional_datafile=os.path.join("packages", "additional.json"),
+                                private_additional=private_path,
                                 jsonfile=os.path.join("packages", "packages.json"))
