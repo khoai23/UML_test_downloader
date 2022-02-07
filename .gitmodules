@@ -28,3 +28,6 @@
 [submodule "converter/wot-src"]
 	path = converter/wot-src
 	url = https://github.com/IzeBerg/wot-src.git
+[submodule "mods/Local"]
+	path = mods/Local
+	url = git@github.com:khoai23/UML_UUP.git
