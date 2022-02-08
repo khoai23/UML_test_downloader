@@ -91,7 +91,7 @@ UML_default_dict = {
     "useWhitelist": "true"
 }
     
-def convert_WoT_to_UML(wotTree, conversion_dict=UML_conversion_dict, default_dict=UML_default_dict):
+def convert_WoT_to_UML(wotTree, conversion_dict=UML_conversion_dict, default_dict=UML_default_dict, ignore_failed_copy=False):
     # attempt to convert from opposite xml tree
     UML_root_node = ET.Element("root")
     models_node = ET.SubElement(UML_root_node, "models")
@@ -137,7 +137,9 @@ def convert_WoT_to_UML(wotTree, conversion_dict=UML_conversion_dict, default_dic
                     convertedNode.text = currentNode.text
             except StopIteration as e:
                 print("StopIteration caught with known set: {} {} {}".format(currentNode, targetbranch, [n.tag for n in currentNode]))
-                raise e
+                if(not ignore_failed_copy):
+                    # setting this flag will ignore missing elements
+                    raise e
     # the model node will be turned into ElementTree to be dumped
     return ET.ElementTree(UML_root_node)
 
