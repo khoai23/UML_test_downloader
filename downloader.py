@@ -89,45 +89,45 @@ def install(directoryvar, download_set, cache_obj, cache_obj_path=cache.DEFAULT_
     # if selected, attempt to find and copy old ownModel.xml from other valid directoryvar
     copy_ownModel, symlink_ownModel = cache_obj.get("copy_ownModel", 0) == 1, cache_obj.get("symlink_ownModel", 0) == 1
     if(copy_ownModel or symlink_ownModel):
-        # filepath is new location (copy) or the cached location (symlink)
         if(symlink_ownModel):
-            new_ownmodel_filepath = os.path.join(cache_loc, "ownModel.xml")
-        else:
-            new_ownmodel_filepath = os.path.join(UML_loc, "scripts", "client", "mods", "ownModel.xml")
-        
-        copied = False
-        for oldversion in (valid[1:] if copy_ownModel else valid): # go back from the latest version; copy to correct location
-            ownmodel_filepath = os.path.join(resmod_folder, oldversion, "scripts", "client", "mods", "ownModel.xml")
-            if(os.path.isfile(ownmodel_filepath) and not os.path.islink(ownmodel_filepath)):
-                shutil.copyfile(ownmodel_filepath, new_ownmodel_filepath)
-                outstream.write("Found ownModel.xml at {:s}, copied to {:s}".format(oldversion, ownmodel_filepath))
-                copied = True
-                break
-        if(not copied):
-            outstream.write("Did not find any ownModel.xml on older directories. Continuing.\n")
-            
-        if(symlink_ownModel):
+            # filepath is the cached location (symlink)
+            cached_ownmodel_filepath = os.path.join(cache_loc, "ownModel.xml")
             symlink_destination = os.path.join(UML_loc, "scripts", "client", "mods", "ownModel.xml")
             if(os.path.islink(symlink_destination)):
                 # already symlinked, nothing to do
                 outstream.write("Symlink already created, continuing.\n")
             else:
-                if(not os.path.isfile(new_ownmodel_filepath)):
-                    # make sure new_ownmodel_filepath have a file
-                    with io.open(new_ownmodel_filepath, "w") as temp:
+                if(not os.path.isfile(cached_ownmodel_filepath)):
+                    # make sure cached_ownmodel_filepath have a file
+                    with io.open(cached_ownmodel_filepath, "w") as temp:
                         pass
                 if(os.path.isfile(symlink_destination)):
                     # existing ownModel.xml; this should already been copied by the oldversion section above
                     os.remove(symlink_destination) 
-                # attenpting symlink
+                # attenmting symlink
                 try:
-                    os.symlink(new_ownmodel_filepath, symlink_destination)
+                    os.symlink(cached_ownmodel_filepath, symlink_destination)
                 except OSError as e:
-                    # insufficient privilege
+                    # insufficient privilege, copy directly
                     outstream.write("OSError caught: " + str(e) + "\n")
                     messagebox.showerror(title="Insufficient privilege", 
                         message="The process do not have enough privilege to create a symlink. Falling back to common copying.\n")
-                    shutil.copyfile(new_ownmodel_filepath, symlink_destination)
+                    shutil.copyfile(cached_ownmodel_filepath, symlink_destination)
+        else:
+            # filepath is the new location of ownModel (copy)
+            new_ownmodel_filepath = os.path.join(UML_loc, "scripts", "client", "mods", "ownModel.xml")
+            copied = False
+            for oldversion in (valid[1:] if copy_ownModel else valid): # go back from the latest version; copy to correct location
+                ownmodel_filepath = os.path.join(resmod_folder, oldversion, "scripts", "client", "mods", "ownModel.xml")
+                if(os.path.isfile(ownmodel_filepath) and (not os.path.islink(ownmodel_filepath) or not os.path.islink(new_ownmodel_filepath))):
+                    # if there is links already set up (in old or new ownModel), the copying is ignored
+                    # last condition is because if there is 3 versions 1-2-3, (1) is symlinked, (2) is copied, and (3) is symlinked again, subsequent copy will override the symlinked (3) with old config (2)
+                    shutil.copyfile(ownmodel_filepath, new_ownmodel_filepath)
+                    outstream.write("Found ownModel.xml at {:s}, copied to {:s}".format(oldversion, ownmodel_filepath))
+                    copied = True
+                    break
+            if(not copied):
+                outstream.write("Did not find any ownModel.xml on older directories. Continuing.\n")
 
     # download all the supplementary mods recorded in download_set into the mods folder
     for i, (filename, link) in enumerate(download_set):
