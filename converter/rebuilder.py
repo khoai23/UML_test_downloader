@@ -19,6 +19,7 @@ if __name__ == "__main__":
     parser.add_argument("--gun_json_file", type=str, default="gun.json", help="Reference gun file extracted from wot-src")
     parser.add_argument("-r", "--resource_only", action="store_true", help="Set to not create corresponding XML; useful if there are existing profiles packed with UML (e.g Mirukii's)")
     parser.add_argument("-e", "--extracted", action="store_true", help="Set to not rebuild into wotmod again. Use if you want to customize the profile.")
+    parser.add_argument("_-no_damaged_model", action="store_true", help="If set, do not import damaged model to the XML profile (show original vehicle's wreck)")
     parser.add_argument("--relocate_data", action="store_true", help="Set to relocate all resource file and modify .visual(_processed) accordingly . Currently unimplemented.")
     parser.add_argument("--pretty", action="store_false", help="Specify to disable default result of XML printing (no indent, no stripping values).")
     
@@ -55,6 +56,8 @@ if __name__ == "__main__":
                     with io.open(args.engine_json_file, "r") as ef, io.open(args.gun_json_file, "r") as gf:
                         engine_dict, gun_dict = json.load(ef), json.load(gf)
                     profileValueDict = generateValueDict(args.input, wotTree, model_name=args.profile_name, engine_dict=engine_dict, gun_dict=gun_dict)
+                    if(args.no_damaged_model): # do not create the destroyed model node when set
+                        profileValueDict.pop("chassis/destroyed", None) # 
                     # print(profileValueDict)
                     umlTree = convert_WoT_to_UML(wotTree, default_dict=profileValueDict)
                     if(args.pretty): # pretty print functions, enabled by default
