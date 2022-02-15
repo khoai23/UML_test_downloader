@@ -67,11 +67,22 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
                     outstream.write("GoogleDrive large file link detected; using token {:s}(becoming {:s})\n".format(token, newonlinefile))
                     response.close()
                     response = session.get(newonlinefile, allow_redirects=True, stream=stream)
+                if("text" in response.headers["content-type"]):
+                    # in some event, this return text/html page with confirm=t
+                    if("scan this file for viruses." in response.text):
+                        print("Google Drive virus scan detected; adding confirm=t tp to response.")
+                        response.close()
+                        response = session.get("{:s}&confirm=t".format(onlinefile), allow_redirects=True, stream=stream)
                     
             if(stream):
                 # if not stream, the response already contain the file anyway; why bother
                 # get filesize
-                correct_filesize = int(response.headers['content-length'])
+                is_chunked = response.headers.get('transfer-encoding', '') == 'chunked' # sometime this happens with a CDN
+                content_length_s = response.headers.get('content-length')
+                if not is_chunked and content_length_s.isdigit():
+                    correct_filesize = int(content_length_s)
+                else:
+                    correct_filesize = -1 # (always reset if content_length is not retrievable)
                 # if the file already exist, skip
                 if(os.path.exists(filepath) and os.stat(filepath).st_size == correct_filesize):
                     outstream.write("Found file {:s} already in directory with correct size, ignoring.\n".format(filepath))
@@ -116,7 +127,7 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
                 f.write(chunk)
                 if(progressbar): # attempt to add % to progress value basing on the chunks downloaded
                     # print(len(chunk))
-                    progressbar["value"] += float(chunk_size) / correct_filesize * 40.0
+                    progressbar["value"] += float(chunk_size) / correct_filesize * 100.0
         else:
             f.write(data) # wholesale writing
     if(cache_loc is not None):

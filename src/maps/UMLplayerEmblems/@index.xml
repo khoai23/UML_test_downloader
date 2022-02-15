@@ -102,5 +102,16 @@
 			<path> maps/UMLplayerEmblems/chevron_diamond_white_small.dds </path>
 			<comment>one of the squadron designation of JGSDF </comment>
 		</JGSDF_chevron_diamond_white_small>
+		<!-- Vietnamese Insignia -->
+		<PAVN_blue>
+			<id> 19 </id>	
+			<path> maps/UMLplayerEmblems/PAVN_blue.dds </path>
+			<comment> Vietnamese armored icon for NLF branch (Viet Cong)</comment>
+		</PAVN_blue>
+		<PAVN_green>
+			<id> 20 </id>	
+			<path> maps/UMLplayerEmblems/PAVN_green.dds </path>
+			<comment>Rare Vietnamese armored icon, used by some units </comment>
+		</PAVN_green>
 	</emblems>
 </root>
