@@ -19,7 +19,7 @@ if __name__ == "__main__":
     parser.add_argument("--gun_json_file", type=str, default="gun.json", help="Reference gun file extracted from wot-src")
     parser.add_argument("-r", "--resource_only", action="store_true", help="Set to not create corresponding XML; useful if there are existing profiles packed with UML (e.g Mirukii's)")
     parser.add_argument("-e", "--extracted", action="store_true", help="Set to not rebuild into wotmod again. Use if you want to customize the profile.")
-    parser.add_argument("_-no_damaged_model", action="store_true", help="If set, do not import damaged model to the XML profile (show original vehicle's wreck)")
+    parser.add_argument("--no_damaged_model", action="store_true", help="If set, do not import damaged model to the XML profile (show original vehicle's wreck)")
     parser.add_argument("--relocate_data", action="store_true", help="Set to relocate all resource file and modify .visual(_processed) accordingly . Currently unimplemented.")
     parser.add_argument("--pretty", action="store_false", help="Specify to disable default result of XML printing (no indent, no stripping values).")
     

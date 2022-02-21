@@ -406,10 +406,6 @@
       null,
       "[atacms]W15_type99obr2009.wotmod::https://drive.google.com/uc?export=download&id=1H9ZZqK_dmB904c9Tbb36xZomtUytRSIH"
     ],
-    "[Atacms] Type 10": [
-      null,
-      "[atacms]N28_type10.wotmod::https://drive.google.com/uc?export=download&id=1yhADzlB4_cd-_yR9F325-QdmygN9iZdO"
-    ],
     "[Atacms] Type 99G's parade camo pack (m.e. to tactical pack)": [
       null,
       "[atacms]W15_type99obr2009_camo_digital_parade.wotmod::https://drive.google.com/uc?export=download&id=1xfBjkK_h8T_VPpJFgPqDXpKIyO5QmW1l"
@@ -417,9 +413,17 @@
     "[Atacms] Type 99G's tactical camo pack (m.e. to parade pack)": [
       null,
       "[atacms]W15_type99obr2009_camo_digital_tactical.wotmod::https://drive.google.com/uc?export=download&id=15DzzUUsPmTyTCdRjcMZO5l6OLLXAR2t2"
+    ],
+    "[Atacms] Type 10": [
+      null,
+      "[atacms]N28_type10.wotmod::https://drive.google.com/uc?export=download&id=1yhADzlB4_cd-_yR9F325-QdmygN9iZdO"
     ]
   },
   "Private, Unverified, etc.": {
+    "[Addon] Team based emblems, camo and paints. Arena only.": [
+      "khoai23/UML_UUP",
+      "ReplaceOwnCustomization.wotmod"
+    ],
     "UML A44": [
       "khoai23/UML_UUP",
       "UML_A44.wotmod"
@@ -443,46 +447,6 @@
     "[UML] Edweird's Type 62": [
       null,
       "[UML]Edweird_Type62.wotmod::https://drive.google.com/uc?export=download&id=1-8peek84ZfhUYxA5wT0vHjLOoEnc4qwP"
-    ],
-    "[UML] Mirukii's BT-42 (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_BT-42_resource.wotmod::https://drive.google.com/uc?export=download&id=1LlP6q4CUF8hSz1RrKJGf2cXxBC610y4x"
-    ],
-    "[UML] Mirukii's Leopard 1A1A1 (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_Leopard1A1A1_resource.wotmod::https://drive.google.com/uc?export=download&id=1UoKoQVwVzgVEljMvtQ__E-aMV5ALnBMn"
-    ],
-    "[UML] Mirukii's Centurion Mk.9 Sho't Kal Dalet (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_ShotKalDalet_resource.wotmod::https://drive.google.com/uc?export=download&id=1JZDuYP54RST5LR-f9024ik-W5LN1kQI7"
-    ],
-    "[UML] Mirukii's T-64A (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_T-64A_resource.wotmod::https://drive.google.com/uc?export=download&id=1cGGfcEBoDzRmbiyqxOexpcm7i7Rc1bbP"
-    ],
-    "[UML] Mirukii's T-90A (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_T-90A_resource.wotmod::https://drive.google.com/uc?export=download&id=1MYu4FFUpqHBEfYw4neFOQW8qrnWdbvx2"
-    ],
-    "[UML] Mirukii's T-54AM USSR version (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_T-54AM_USSR_resource.wotmod::https://drive.google.com/uc?export=download&id=11bYVHwCvEU-R4XJzGt4o35qbW1uUSXpm"
-    ],
-    "[UML] Mirukii's 121 Remodel": [
-      null,
-      "[UML]Mirukii_121_Remodel.wotmod::https://drive.google.com/uc?export=download&id=110kMBce9dzeYjm71yHn9jkNlhK-UvEUX"
-    ],
-    "[UML] Mirukii's T-62A Remodel": [
-      null,
-      "[UML]Mirukii_T-62A_Remodel.wotmod::https://drive.google.com/uc?export=download&id=1go3A-zylSy22sxrRgCFdfwwVB5GLqgY5"
-    ],
-    "[UML] Mirukii's T-34-3 Remodel": [
-      null,
-      "[UML]Mirukii_T-34-3_Remodel.wotmod::https://drive.google.com/uc?export=download&id=1gdB8Wp0-vvCIS0SX9YtZuymb5WU1qVtc"
-    ],
-    "[UML] Type 59D with working camo & tactical number": [
-      null,
-      "[UML]Type59D_numbered.wotmod::https://drive.google.com/uc?export=download&id=1yXaDuE5vk8fwDpKzVuj3U-cz2Xw0Ui_s"
     ]
   }
 }

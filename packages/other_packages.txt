@@ -1,4 +1,6 @@
 Falkonett UUP Project
+[UUP] Edweird T55A PAVN profile	khoai23/UML_UUP	Edweird_T55A_PAVN_profile.wotmod
+[UUP] ReplaceOwnCustomization	khoai23/UML_UUP	ReplaceOwnCustomization.wotmod
 [UUP] UML A44	khoai23/UML_UUP	UML_A44.wotmod
 [UUP] UML IS-3	khoai23/UML_UUP	UML_IS-3.wotmod
 [UUP] UML T-34-85VD	khoai23/UML_UUP	UML_T-34-85VD.wotmod
