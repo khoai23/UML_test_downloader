@@ -1007,7 +1007,8 @@
     <tiling>1 1 0 0</tiling>
     <exclusionMask></exclusionMask>
     <density>1 1</density>
-    <aoTextureSize>1024 1024 </aoTextureSize>  </camouflage>
+    <aoTextureSize>1024 1024 </aoTextureSize>  
+  </camouflage>
 	</profileName_placeholder>
 
 <!-- insert more profiles here -->

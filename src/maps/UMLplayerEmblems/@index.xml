@@ -47,6 +47,7 @@
 			<path> maps/UMLplayerEmblems/sticker_07.dds </path>
 			<comment>white puma </comment>
 		</poland_puma>
+
 		<WoTi>
 			<id> 8 </id>	
 			<path> maps/UMLplayerEmblems/WoTi.dds </path>
@@ -102,7 +103,8 @@
 			<path> maps/UMLplayerEmblems/chevron_diamond_white_small.dds </path>
 			<comment>one of the squadron designation of JGSDF </comment>
 		</JGSDF_chevron_diamond_white_small>
-		<!-- Vietnamese Insignia -->
+
+		<!-- Vietnamese Insignias, courtesy of Ceberion_Lancer -->
 		<PAVN_blue>
 			<id> 19 </id>	
 			<path> maps/UMLplayerEmblems/PAVN_blue.dds </path>
@@ -113,5 +115,6 @@
 			<path> maps/UMLplayerEmblems/PAVN_green.dds </path>
 			<comment>Rare Vietnamese armored icon, used by some units </comment>
 		</PAVN_green>
+
 	</emblems>
 </root>
