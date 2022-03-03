@@ -10,6 +10,34 @@ def add_suffix(filepath, suffix):
     fbase, fext = os.path.splitext(filepath)
     return fbase + suffix + fext
 
+class ZipFileOrFolder:
+    def __init__(self, isfolder, locationOrPath, *args, **kwargs):
+        if(isfolder):
+            if not os.path.exists(locationOrPath):
+                os.makedirs(locationOrPath)
+            self._base = None
+            self._location = os.path.splitext(locationOrPath)[0]
+        else:
+            self._base = zipfile.ZipFile(locationOrPath, *args, **kwargs)
+            self._location = None
+    
+    def open(self, filename, mode, *args, **kwargs):
+        if(self._base is not None):
+            return self._base.open(filename, mode, *args, **kwargs)
+        else:
+            new_pathname = os.path.join(self._location, filename)
+            base_folder = os.path.dirname(new_pathname)
+            if not os.path.exists(base_folder):
+                os.makedirs(base_folder)
+            return io.open(new_pathname, mode + "b", *args, **kwargs) # mode is defaulted to rb/wb in the zipfiles
+    
+    def __enter__(self):
+        return self
+        
+    def __exit__(self, type, value, traceback):
+        if(self._base is not None):
+            self._base.close()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Extract, convert, and rebuild .wotmod remodels to corresponding UML format.")
     parser.add_argument("input", type=str, help=".wotmod file")
@@ -22,6 +50,7 @@ if __name__ == "__main__":
     parser.add_argument("--no_damaged_model", action="store_true", help="If set, do not import damaged model to the XML profile (show original vehicle's wreck)")
     parser.add_argument("--relocate_data", action="store_true", help="Set to relocate all resource file and modify .visual(_processed) accordingly . Currently unimplemented.")
     parser.add_argument("--pretty", action="store_false", help="Specify to disable default result of XML printing (no indent, no stripping values).")
+    parser.add_argument("--lax", action="store_false", help="If set, do not raise error when missing nodes during xml conversion.")
     
     args = parser.parse_args()
     if(args.relocate_data):
@@ -33,7 +62,7 @@ if __name__ == "__main__":
     internal_UML_profile_filename = os.path.join("res", "scripts", "client", "mods", "UMLprofiles", args.profile_name + ".xml")
     # print(args, internal_UML_profile_filename)
     # open the zipfile, both input and output
-    with zipfile.ZipFile(args.input, "r", compression=zipfile.ZIP_STORED) as inf, zipfile.ZipFile(args.output, "w", compression=zipfile.ZIP_STORED) as outf:
+    with zipfile.ZipFile(args.input, "r", compression=zipfile.ZIP_STORED) as inf, ZipFileOrFolder(args.extracted, args.output, "w", compression=zipfile.ZIP_STORED) as outf:
         # for everything not the profile, copy over
         for info in inf.infolist():
             if(info.is_dir()):
@@ -59,7 +88,7 @@ if __name__ == "__main__":
                     if(args.no_damaged_model): # do not create the destroyed model node when set
                         profileValueDict.pop("chassis/destroyed", None) # 
                     # print(profileValueDict)
-                    umlTree = convert_WoT_to_UML(wotTree, default_dict=profileValueDict)
+                    umlTree = convert_WoT_to_UML(wotTree, default_dict=profileValueDict, ignore_failed_copy=args.lax)
                     if(args.pretty): # pretty print functions, enabled by default
                         recursive_cleanText(umlTree.getroot())
                         if hasattr(ET, "indent"): # only available to some later versions. Bummer.

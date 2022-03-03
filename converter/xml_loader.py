@@ -85,6 +85,11 @@ UML_conversion_dict = {
     "camouflage": "camouflage"
 }
 
+UML_backup_conversion_dict = {
+    # UML backup config - some elements had been renamed; those elements can be converted directly
+    "customizationSlots": "emblemSlots",
+}
+
 UML_default_dict = {
     "enabled": "false",
     "swapNPC": "false",
@@ -127,6 +132,7 @@ def convert_WoT_to_UML(wotTree, conversion_dict=UML_conversion_dict, default_dic
                         # get the child node with the specific name
                         currentNode = next(n for n in currentNode if n.tag == nodeTag)
                 # the last nodetag would be copied over except the one marked with [convert] (which will undergo a conversion process)
+                # except for older remodels, which we can pull them over wholesale.
                 if("[convert]" in targetbranch):
                     targetbranch = targetbranch.replace("[convert]", "")
                     currentNode = next(n for n in currentNode if n.tag == targetbranch)
@@ -176,8 +182,15 @@ def generateValueDict(modPath, wotTree, model_name=None, engine_dict=None, gun_d
     # reference can be whatever. right now it's a credit
     profileValueDict["reference"] = "UML profile converted from {:s} by khoai23's script.".format(modPath)
     # default emblem: access emblems/default and convert to corresponding string name
-    emblemValue = int(wotTree.find("emblems/default").text)
+    emblemValue = wotTree.find("emblems/default").text
+    try:
+        emblemValue = int(emblemValue)
+    except ValueError as e:
+        if(emblemValue not in emblemdicts_original.keys()):
+            # older version MUST use correct values listed, else kick out ValueError
+            raise e
     profileValueDict["playerEmblem"] = emblemdicts.get(emblemValue, str(emblemValue))
+    
     # engine: wwsoundPC and wwsoundNPC extracted from wot-src by a finder script (@engines.xml)
     if(engine_dict):
         # engineName found from wotTree
@@ -211,6 +224,10 @@ def generateValueDict(modPath, wotTree, model_name=None, engine_dict=None, gun_d
         
     return profileValueDict
 
+def cleanDefaultWoTProfile(text):
+    # TODO the read profile will be parsed without xmlns tags
+    pass
+
 if __name__ == "__main__":
     sourcefile, targetfile = sys.argv[1:]
     wotTree = ET.parse(sourcefile).getroot() # currently not working on WoT xml due to xmlns:... element. TODO get rid of that.
@@ -220,7 +237,7 @@ if __name__ == "__main__":
     # print(profileValueDict)
     umlTree = convert_WoT_to_UML(wotTree, default_dict=profileValueDict)
     recursive_cleanText(umlTree.getroot())
-    ET.indent(umlTree)
+    # ET.indent(umlTree)
     umlTree.write(targetfile)
     sys.exit(0)
     import Levenshtein as lv

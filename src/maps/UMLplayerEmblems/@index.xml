@@ -116,5 +116,23 @@
 			<comment>Rare Vietnamese armored icon, used by some units </comment>
 		</PAVN_green>
 
+
+		<Z_square>
+			<id> 21 </id>	
+			<path> maps/UMLplayerEmblems/Z_square.dds </path>
+			<comment>one of the markings found on Russian vehicles during 2022 special miliitary operation </comment>
+		</Z_square>
+		<Z_thick>
+			<id> 22 </id>	
+			<path> maps/UMLplayerEmblems/Z_thick.dds </path>
+			<comment>one of the markings found on Russian vehicles during 2022 special miliitary operation </comment>
+		</Z_thick>
+		<Z_thin>
+			<id> 23 </id>	
+			<path> maps/UMLplayerEmblems/Z_thin.dds </path>
+			<comment>one of the markings found on Russian vehicles during 2022 special miliitary operation </comment>
+		</Z_thin>
+
+
 	</emblems>
 </root>
