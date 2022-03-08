@@ -460,6 +460,10 @@
       null,
       "[Mirukii]FV_TD.wotmod::https://drive.google.com/uc?export=download&id=1gDGG_OozvVWNM4FYBI8yLOIxSM9mnA4o"
     ],
+    "[Mirukii] Centurion Mk.9 Sho't Kal Dalet": [
+      null,
+      "[UML]Mirukii_ShotKalDalet.wotmod::https://drive.google.com/uc?export=download&id=1JZDuYP54RST5LR-f9024ik-W5LN1kQI7"
+    ],
     "[Mirukii] Tiran-5Sh (repl. all T-54/55 variants)": [
       null,
       "[Mirukii]Tiran_5Sh.wotmod::https://drive.google.com/uc?export=download&id=1ujurqPexC1FBZVKAU8sS66KcuL6HHFo4"
@@ -471,10 +475,6 @@
     "[UML] Mirukii's Leopard 1A1A1 (use lib_remodel.xml)": [
       null,
       "[UML]Mirukii_Leopard1A1A1_resource.wotmod::https://drive.google.com/uc?export=download&id=1UoKoQVwVzgVEljMvtQ__E-aMV5ALnBMn"
-    ],
-    "[UML] Mirukii's Centurion Mk.9 Sho't Kal Dalet (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_ShotKalDalet_resource.wotmod::https://drive.google.com/uc?export=download&id=1JZDuYP54RST5LR-f9024ik-W5LN1kQI7"
     ],
     "[UML] Mirukii's T-64A (use lib_remodel.xml)": [
       null,
@@ -519,6 +519,10 @@
     "[ASaltyFish] Type 59D w/ camo & tactical number": [
       null,
       "[ASaltyFish]Type59D_numbered.wotmod::https://drive.google.com/uc?export=download&id=1yXaDuE5vk8fwDpKzVuj3U-cz2Xw0Ui_s"
+    ],
+    "[Avalon] Centurion Mk.3, converted w/ tactical number": [
+      null,
+      "[Avalon]Centurion_Mk3.wotmod::https://drive.google.com/uc?export=download&id=1y4KByQVKJwjUi4LySWN-nh4Yto_VaAwA"
     ]
   }
 }
