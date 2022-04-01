@@ -38,13 +38,52 @@
 	germany_ddr
 	moder_ring
 	czech_round
+	italian_flag
 	poland_chekers
 	poland_flag
-	swedish_flag
-	israel_flag
 	finland_flag
+	myanmar_flag
+	canada_flag
+	denmark_flag
+	southafrica_flag
+	bulgaria_flag
+	switzerland_flag
+	russia_flag
+	sweden_flag
+	croatia_flag
+	israel_flag
+	belarus_flag
+	spain_flag
+	newzealand_flag
 	australia_flag
-
+	slovakia_flag
+	germany_flag
+	italy_flag
+	india_flag
+	southkorea_flag
+	japan_flag
+	ireland_flag
+	soviet_guard_emblem
+	turkey_flag
+	ukraine_flag
+	us_flag
+	serbia_flag
+	roc_flag
+	belgium_flag
+	vietnam_flag
+	georgia_flag
+	kyrgyzstan_flag
+	union_jack
+	soviet_flag
+	france_flag
+	china_flag
+	hksar_flag
+	thailand_flag
+	chile_flag
+	czech_flag
+	iceland_flag
+	romania_flag
+	
 	*********************************************************************
 	National inscriptions are pushed to global index so that they can be invoked in <fixedInscription> for all nations
 	National inscriptions pushed to global index use the following ID format:

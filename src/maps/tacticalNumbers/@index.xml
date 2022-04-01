@@ -39,8 +39,16 @@
 		<!-- courtesy of Ceberion_Lancer -->
 		<russian_red>
 			<indexStart>70</indexStart>	
+			<indexCount>10</indexCount>
 			<path>maps/tacticalNumbers/russian_red</path>
 		</russian_red>
+
+
+		<israel_shadow>
+			<indexStart>80</indexStart>	
+			<indexCount>16</indexCount>
+			<path>maps/tacticalNumbers/israel_shadow</path>
+		</israel_shadow>
 
 	</styleSets>
 </root>
