@@ -38,52 +38,13 @@
 	germany_ddr
 	moder_ring
 	czech_round
-	italian_flag
 	poland_chekers
 	poland_flag
-	finland_flag
-	myanmar_flag
-	canada_flag
-	denmark_flag
-	southafrica_flag
-	bulgaria_flag
-	switzerland_flag
-	russia_flag
-	sweden_flag
-	croatia_flag
+	swedish_flag
 	israel_flag
-	belarus_flag
-	spain_flag
-	newzealand_flag
+	finland_flag
 	australia_flag
-	slovakia_flag
-	germany_flag
-	italy_flag
-	india_flag
-	southkorea_flag
-	japan_flag
-	ireland_flag
-	soviet_guard_emblem
-	turkey_flag
-	ukraine_flag
-	us_flag
-	serbia_flag
-	roc_flag
-	belgium_flag
-	vietnam_flag
-	georgia_flag
-	kyrgyzstan_flag
-	union_jack
-	soviet_flag
-	france_flag
-	china_flag
-	hksar_flag
-	thailand_flag
-	chile_flag
-	czech_flag
-	iceland_flag
-	romania_flag
-	
+
 	*********************************************************************
 	National inscriptions are pushed to global index so that they can be invoked in <fixedInscription> for all nations
 	National inscriptions pushed to global index use the following ID format:
@@ -4200,85 +4161,6 @@ TrackNode(thickness=0.0, maxAmplitude=0.05000000074505806, maxOffset=0.050000000
     <exclusionMask></exclusionMask>
   </camouflage>
 	</W13_BMP1>
-
-
-
-
-	<EFGF_M61A5>
-	<enabled> False </enabled>
-	<swapNPC> False </swapNPC>
-	<useWhitelist> True </useWhitelist>
-	<whitelist>
-		f28_105_lefh18b2
-		gb17_grant_i
- 		A21_T14,
- 		GB48_FV215b_183
-	</whitelist>	
-	<chassis>
-		<undamaged>vehicles/terryzxc/EFGF_M61A5/normal/lod0/Chassis.model</undamaged>
-		<traces>
-{'textureSet': 'usa_01', 'lodDist': 120.0, 'bufferPrefs': 'largeTank', 'centerOffset': 1.5669100284576416, 'size': (0.46, 0.76)}
-		</traces>
-		<tracks>
-{'leftMaterial': 'track_mat_L_skinned', 'rightMaterial': 'track_mat_R_skinned', 'lodDist': 70.0, 'textureScale': -0.6399999856948853}
-		</tracks>
-		<wheels>
-{'groups': [(False, 'WD_R', 5, 1, 0.16076700389385223), (False, 'W_R', 6, 0, 0.35100001096725464), (True, 'WD_L', 5, 1, 0.16076700389385223), (True, 'W_L', 6, 0, 0.35100001096725464)], 'wheels': [(False, 'WD_R0', 0.3625209927558899, False, 60.0), (False, 'WD_R6', 0.3625209927558899, False, 60.0), (True, 'WD_L0', 0.3625209927558899, False, 60.0), (True, 'WD_L6', 0.3625209927558899, False, 60.0)], 'lodDist': 70.0, 'leadingWheelSyncAngle': 60.0}
-		</wheels>
-		<groundNodes>
-{'nodes': [], 'groups': []}
-		</groundNodes>
-		<trackNodes>
-{'nodes': [], 'groups': []}
-		</trackNodes>
-		<splineDesc>
-None
-		</splineDesc>
-		<trackParams>
-None
-		</trackParams>
-      <hullPosition>	0.000000 0.900000 0.000000	</hullPosition>
-      <AODecals>
-        <decal>
-          <transform>
-            <row0>	5.024127 0.000000 0.000000	</row0>
-            <row1>	0.000000 1.565710 0.000000	</row1>
-            <row2>	0.000000 0.000000 7.973395	</row2>
-            <row3>	0.000000 0.000000 0.000000	</row3>
-          </transform>
-        </decal>
-      </AODecals>
-	</chassis>
-	<hull>
-		<undamaged>vehicles/terryzxc/EFGF_M61A5/normal/lod0/Hull.model</undamaged>
-		<exhaust>
-      <pixie>gas_large</pixie>
-      <nodes>HP_Track_Exhaus_1 HP_Track_Exhaus_2 HP_Track_Exhaus_3 HP_Track_Exhaus_4</nodes>
-    </exhaust>
-    <hangarShadowTexture>vehicles/terryzxc/EFGF_M61A5/HangarShadowMap.dds</hangarShadowTexture>
-	</hull>
-	<turret>
-		<undamaged>vehicles/terryzxc/EFGF_M61A5/normal/lod0/Turret_01.model</undamaged>
-		<camouflage>
-			<tiling>0.75 0.75 0 0</tiling>
-			<exclusionMask>vehicles/terryzxc/EFGF_M61A5/CM_T.DDS</exclusionMask>
-		</camouflage>
-	</turret>
-	<gun>
-		<undamaged>vehicles/terryzxc/EFGF_M61A5/normal/lod0/Gun_01.model</undamaged>
-		<camouflage><tiling>0.75 0.75 0 0</tiling><exclusionMask>vehicles/terryzxc/EFGF_M61A5/CM_T.DDS</exclusionMask></camouflage>
-		<effects>shot_huge</effects>
-		<reloadEffect>reload155_170</reloadEffect>
-	</gun>
-	<engine>
-		<wwsoundPC>eng_v55_pc</wwsoundPC>	
-		<wwsoundNPC>eng_v55_npc</wwsoundNPC>
-	</engine>
-	<camouflage>
-    <tiling>1 1 0 0</tiling>
-    <exclusionMask>vehicles/terryzxc/EFGF_M61A5/CM_B.DDS</exclusionMask>
-  </camouflage>
-	</EFGF_M61A5>
 
 
 	<merkava4>
