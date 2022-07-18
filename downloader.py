@@ -442,8 +442,8 @@ def credit_dialog(download_set, credit_path, master=None, callback_fn=None, defa
         main_dialog.destroy()
     exitbtn = tk.Button(master=main_dialog, text="OK", command=exit_fn)
     exitbtn.grid(row=i+gridrowpref+2, column=0, sticky="s")
-    return main_dialog
-
+    return 
+    
 if __name__ == "__main__":
     # print("Application path:", application_path)
     window = tk_interface(pkg_path="packages/packages.json", credit_path="packages/credits.json")

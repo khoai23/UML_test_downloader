@@ -93,7 +93,7 @@ def download(filepath, onlinefile, stream=True, chunk_size=4096, retry=3, wait=1
                     cachepath = os.path.join(cache_loc, os.path.basename(filepath))
                     if(os.stat(cachepath).st_size == correct_filesize):
                         shutil.copyfile(cachepath, filepath)
-                        outstream.write("Found file in cache directory with correct size, copying {:s} -> {:s}\n".format(cachepath, filepath))
+                        outstream.write("Found file in cache directory with correct size {:d}, copying {:s} -> {:s}\n".format(correct_filesize, cachepath, filepath))
                         return
 
             # check header for content length

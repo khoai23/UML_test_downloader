@@ -448,6 +448,14 @@
       "khoai23/UML_UUP",
       "UML_T-54.wotmod"
     ],
+    "T-72A profile (need ASaltyFish's T-72B)": [
+      "khoai23/UML_UUP",
+      "[UML]T-72A_profileonly.wotmod"
+    ],
+    "T-90A ahistorical profile (need Mirukii T-90A)": [
+      "khoai23/UML_UUP",
+      "[UML]T-90A_ahistorical.wotmod"
+    ],
     "[UML] Edweird's T-55A": [
       null,
       "[UML]Edweird_T-55A.wotmod::https://drive.google.com/uc?export=download&id=19FTLpGDLS3mGb7MEAR-2m4T3m1Z1VKOR"
@@ -512,13 +520,21 @@
       null,
       "[ASaltyFish]T-72B3.wotmod::https://drive.google.com/uc?export=download&id=1hbWNE4fGI4v8eB9qq9i21m01RMMGi4jp"
     ],
-    "[ASaltyFish] T-80B/BV": [
+    "[ASaltyFish] T-80BVM (w/ UVH variant)": [
       null,
-      "[ASaltyFish]T-80B_BV.wotmod::https://drive.google.com/uc?export=download&id=1slcvwZ7J8ScIscs6y0_wdgT5SsydbVKr"
+      "[ASaltyFish]T-80B_BV.wotmod::https://drive.google.com/uc?export=download&id=1fOkgH3gsiAzA7qPXP0NCW7706ujrn63l"
     ],
     "[ASaltyFish] Type 59D w/ camo & tactical number": [
       null,
       "[ASaltyFish]Type59D_numbered.wotmod::https://drive.google.com/uc?export=download&id=1yXaDuE5vk8fwDpKzVuj3U-cz2Xw0Ui_s"
+    ],
+    "[ASaltyFish] Abrams M1A1HC": [
+      null,
+      "[ASaltyFish]M1A1HC_Abrams.wotmod::https://drive.google.com/uc?export=download&id=1AbBzjd4P8uY0a6ZRw23CtA3wuZ5WMeIj"
+    ],
+    "[ASaltyFish] Abrams M1A2": [
+      null,
+      "[ASaltyFish]M1A2_Abrams.wotmod::https://drive.google.com/uc?export=download&id=1FfNqCWNKdJSjbMfKuqSIvkPMJR26doNz"
     ],
     "[Avalon] Centurion Mk.3, converted w/ tactical number": [
       null,

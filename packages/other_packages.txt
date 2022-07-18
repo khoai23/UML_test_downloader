@@ -10,6 +10,8 @@ Falkonett UUP Project
 [UUP] [atacms]GB95 Ekins Firefly M4A4	khoai23/UML_UUP	[atacms]GB95_Ekins_Firefly_M4A4.wotmod
 [UUP] [atacms]It14 P44 Pantera animation	khoai23/UML_UUP	[atacms]It14_P44_Pantera_animation.wotmod
 [UUP] [atacms]R87 T62A ejection	khoai23/UML_UUP	[atacms]R87_T62A_ejection.wotmod
+[UUP] [UML]T-72A profileonly	khoai23/UML_UUP	[UML]T-72A_profileonly.wotmod
+[UUP] [UML]T-90A ahistorical	khoai23/UML_UUP	[UML]T-90A_ahistorical.wotmod
 [UUP] Type 62	TheFalkonett/UUP-China	UUP/Chinese LTs/TheFalkonett's_UUP_Type_62.wotmod
 [UUP] WZ-132A	TheFalkonett/UUP-China	UUP/Chinese LTs/TheFalkonett's_UUP_WZ-132A.wotmod
 [UUP] Type 59	TheFalkonett/UUP-China	UUP/Chinese MTs/TheFalkonett's_UUP_Type_59.wotmod
