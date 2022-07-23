@@ -988,8 +988,9 @@ TrackNode(thickness=-0.0015999999595806003, maxAmplitude=0.05000000074505806, ma
     </emblemSlots>
     <hangarShadowTexture>vehicles/german/G16_PzVIB_Tiger_II/PzVIB_Tiger_II_HangarShadowMap.dds</hangarShadowTexture>
     <camouflage>
-      <exclusionMask></exclusionMask>
       <tiling>1.48 1.48 0.000000 0.000000</tiling>
+      <density>97.1469 96.4924</density>
+      <aoTextureSize>1024 1024</aoTextureSize>
     </camouflage>
 	</hull>
 	<turret>
@@ -1020,15 +1021,16 @@ TrackNode(thickness=-0.0015999999595806003, maxAmplitude=0.05000000074505806, ma
         </player>
       </emblemSlots>
       <camouflage>
-        <exclusionMask></exclusionMask>
         <tiling>0.715 0.715 0.000000 0.000000</tiling>
+        <density>140 140</density>
+        <aoTextureSize>1024 1024</aoTextureSize>
       </camouflage>
       <showEmblemsOnGun>	false	</showEmblemsOnGun>
 	</turret>
 	<gun>
 		<undamaged>vehicles/german/G16_PzVIB_Tiger_II/normal/lod0/Gun_01.model</undamaged>
 		<destroyed>vehicles/german/G16_PzVIB_Tiger_II/crash/lod0/Gun_01.model</destroyed>
-		<camouflage><exclusionMask></exclusionMask><tiling>0.4 0.4 0.000000 0.000000</tiling></camouflage>
+		<camouflage><tiling>0.4 0.4 0.000000 0.000000</tiling><density>200 200</density><aoTextureSize>1024 1024</aoTextureSize></camouflage>
 		<emblemSlots><insigniaOnGun><rayStart>0.0437177 -0.0636021 4.20505</rayStart><rayEnd>0.188498 -0.0977738 4.20061</rayEnd><rayUp>0.074 0.07 4</rayUp><size>0.405</size><hideIfDamaged>	false	</hideIfDamaged></insigniaOnGun></emblemSlots>
       <effects>shot_main_mb</effects>
       <reloadEffect>reload85_107</reloadEffect>
@@ -1041,6 +1043,8 @@ TrackNode(thickness=-0.0015999999595806003, maxAmplitude=0.05000000074505806, ma
     <tiling>1 1 0 0</tiling>
     <exclusionMask>
     </exclusionMask>
+		<density>1 1</density>
+		<aoTextureSize>1024 1024</aoTextureSize>
   </camouflage>
 	</g16_pzvib_tiger_ii_porsche>
 
