@@ -478,7 +478,7 @@
     ],
     "[Mirukii] Centurion Mk.9 Sho't Kal Dalet": [
       null,
-      "[UML]Mirukii_ShotKalDalet.wotmod::https://drive.google.com/uc?export=download&id=1JZDuYP54RST5LR-f9024ik-W5LN1kQI7"
+      "[Mirukii]Shot_Kal_Dalet.wotmod::https://drive.google.com/uc?export=download&id=1JZDuYP54RST5LR-f9024ik-W5LN1kQI7"
     ],
     "[Mirukii] Tiran-5Sh (repl. all T-54/55 variants)": [
       null,
@@ -528,9 +528,13 @@
       null,
       "[ASaltyFish]T-72B3.wotmod::https://drive.google.com/uc?export=download&id=1hbWNE4fGI4v8eB9qq9i21m01RMMGi4jp"
     ],
+    "[ASaltyFish] T-80B/BV": [
+      null,
+      "[ASaltyFish]T-80B_BV.wotmod::https://drive.google.com/uc?export=download&id=1slcvwZ7J8ScIscs6y0_wdgT5SsydbVKr"
+    ],
     "[ASaltyFish] T-80BVM (w/ UVH variant)": [
       null,
-      "[ASaltyFish]T-80B_BV.wotmod::https://drive.google.com/uc?export=download&id=1fOkgH3gsiAzA7qPXP0NCW7706ujrn63l"
+      "[ASaltyFish]T-80BVM.wotmod::https://drive.google.com/uc?export=download&id=1fOkgH3gsiAzA7qPXP0NCW7706ujrn63l"
     ],
     "[ASaltyFish] Type 59D w/ camo & tactical number": [
       null,
@@ -547,6 +551,14 @@
     "[Avalon] Centurion Mk.3, converted w/ tactical number": [
       null,
       "[Avalon]Centurion_Mk3.wotmod::https://drive.google.com/uc?export=download&id=1y4KByQVKJwjUi4LySWN-nh4Yto_VaAwA"
+    ],
+    "[RazerTeck] Fictional T-68B mod. 1991, incomplete (no vt)": [
+      null,
+      "[RazerTeck]T-68B.wotmod::https://drive.google.com/uc?export=download&id=1BMh0Kye1zKcgoVhVAg2pfFilpWWclf1h"
+    ],
+    "[Arasgrandpa] Sherman M4 \"Mini Mule\", incomplete (no vt)": [
+      null,
+      "[Arasgrandpa]M4_MiniMule.wotmod::https://drive.google.com/uc?export=download&id=1HDl3vnqliKt_OxLnf1Dva5LC_7eLXqeK"
     ]
   }
 }
