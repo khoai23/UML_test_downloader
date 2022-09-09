@@ -429,6 +429,14 @@
     "[Atacms] BMP-1": [
       null,
       "[atacms]W13_BMP1.wotmod::https://drive.google.com/uc?export=download&id=1YdtK_NdK7nGrODyHGNLXEIGthIHOw25M"
+    ],
+    "[Atacms] Panzerhaubitze 2000, from low-quality vlss model": [
+      null,
+      "[atacms]PZH_2000.wotmod::https://drive.google.com/uc?export=download&id=126C_URlWIQNRrHiwxSFJLn3rNOr4zLEg"
+    ],
+    "[Atacms] Bandkanon 1C": [
+      null,
+      "[atacms]Bandkanon1C.wotmod::https://drive.google.com/uc?export=download&id=1zYgD7nrM2cTGXBgABMzcptDYmI2FdWvN"
     ]
   },
   "Private, Unverified, etc.": {
@@ -520,7 +528,7 @@
       null,
       "[ASaltyFish]T-72AV.wotmod::https://drive.google.com/uc?export=download&id=1n1T7SQ6HjRLaw3Pvp24UOARt2QXnoT9v"
     ],
-    "[ASaltyFish] T-72B": [
+    "[ASaltyFish] T-72B (fixed the \"T-72AV\" reference)": [
       null,
       "[ASaltyFish]T-72B.wotmod::https://drive.google.com/uc?export=download&id=1AtLNuepsm3t84gAnqP1w3ZY4r-1WCfH8"
     ],
@@ -528,7 +536,7 @@
       null,
       "[ASaltyFish]T-72B3.wotmod::https://drive.google.com/uc?export=download&id=1hbWNE4fGI4v8eB9qq9i21m01RMMGi4jp"
     ],
-    "[ASaltyFish] T-80B/BV": [
+    "[ASaltyFish] T-80B/BV with camo (w/o hangar/seasonal)": [
       null,
       "[ASaltyFish]T-80B_BV.wotmod::https://drive.google.com/uc?export=download&id=1slcvwZ7J8ScIscs6y0_wdgT5SsydbVKr"
     ],
@@ -547,6 +555,14 @@
     "[ASaltyFish] Abrams M1A2": [
       null,
       "[ASaltyFish]M1A2_Abrams.wotmod::https://drive.google.com/uc?export=download&id=1FfNqCWNKdJSjbMfKuqSIvkPMJR26doNz"
+    ],
+    "[ASaltyFish] Leopard 2A5/2A6": [
+      null,
+      "[ASaltyFish]Leopard_2A5_2A6.wotmod::https://drive.google.com/uc?export=download&id=1Pc1ya0wxMqoZpx2wx6a9Wy0t9vSUMmUN"
+    ],
+    "[ASaltyFish] Type 90": [
+      null,
+      "[ASaltyFish]Type_90.wotmod::https://drive.google.com/uc?export=download&id=1JHcPjOcHEOGlWXUUhzyj92kWFosCrBOK"
     ],
     "[Avalon] Centurion Mk.3, converted w/ tactical number": [
       null,
