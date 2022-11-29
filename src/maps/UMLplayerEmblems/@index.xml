@@ -132,6 +132,12 @@
 			<path> maps/UMLplayerEmblems/Z_thin.dds </path>
 			<comment>one of the markings found on Russian vehicles during 2022 special miliitary operation </comment>
 		</Z_thin>
+		
+		<IFF01>
+			<id> 24 </id>	
+			<path> maps/UMLplayerEmblems/IFF_marking01.dds </path>
+			<comment>US thermal IFF panel marking "THIS SIDE OFF"</comment>
+		</IFF01>
 
 
 	</emblems>
