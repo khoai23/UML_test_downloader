@@ -9,6 +9,24 @@ from xml_loader import recursive_cleanText, convert_WoT_to_UML, generateValueDic
 def add_suffix(filepath, suffix):
     fbase, fext = os.path.splitext(filepath)
     return fbase + suffix + fext
+    
+def convert_xml(inresfile, outresfile, args):
+    indata = inresfile.read().decode('utf-8')
+    wotTree = ET.fromstring(indata)
+    with io.open(args.engine_json_file, "r") as ef, io.open(args.gun_json_file, "r") as gf:
+        engine_dict, gun_dict = json.load(ef), json.load(gf)
+    profileValueDict = generateValueDict(args.input, wotTree, model_name=args.profile_name, engine_dict=engine_dict, gun_dict=gun_dict)
+    if(args.no_damaged_model): # do not create the destroyed model node when set
+        profileValueDict.pop("chassis/destroyed", None) # 
+    # print(profileValueDict)
+    umlTree = convert_WoT_to_UML(wotTree, default_dict=profileValueDict, ignore_failed_copy=args.lax)
+    if(args.pretty): # pretty print functions, enabled by default
+        recursive_cleanText(umlTree.getroot())
+        if hasattr(ET, "indent"): # only available to some later versions. Bummer.
+            ET.indent(umlTree)
+    outdata = ET.tostring(umlTree.getroot())
+    outresfile.write(outdata)
+    
 
 class ZipFileOrFolder:
     def __init__(self, isfolder, locationOrPath, *args, **kwargs):
@@ -80,18 +98,4 @@ if __name__ == "__main__":
                     continue
                 print("Converting " + info.filename)
                 with inf.open(info.filename, "r") as inresfile, outf.open(internal_UML_profile_filename, "w") as outresfile:
-                    indata = inresfile.read().decode('utf-8')
-                    wotTree = ET.fromstring(indata)
-                    with io.open(args.engine_json_file, "r") as ef, io.open(args.gun_json_file, "r") as gf:
-                        engine_dict, gun_dict = json.load(ef), json.load(gf)
-                    profileValueDict = generateValueDict(args.input, wotTree, model_name=args.profile_name, engine_dict=engine_dict, gun_dict=gun_dict)
-                    if(args.no_damaged_model): # do not create the destroyed model node when set
-                        profileValueDict.pop("chassis/destroyed", None) # 
-                    # print(profileValueDict)
-                    umlTree = convert_WoT_to_UML(wotTree, default_dict=profileValueDict, ignore_failed_copy=args.lax)
-                    if(args.pretty): # pretty print functions, enabled by default
-                        recursive_cleanText(umlTree.getroot())
-                        if hasattr(ET, "indent"): # only available to some later versions. Bummer.
-                            ET.indent(umlTree)
-                    outdata = ET.tostring(umlTree.getroot())
-                    outresfile.write(outdata)
+                    convert_xml(inresfile, outresfile, args)
