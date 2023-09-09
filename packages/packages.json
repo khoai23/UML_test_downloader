@@ -426,6 +426,10 @@
       null,
       "[atacms]N30_Merkava_mk4_Baz.wotmod::https://drive.google.com/uc?export=download&id=1UeGBfUKEUGcizll7mx-joIvInUyqtbOL"
     ],
+    "[Atacms] M1A2 SEP with TUSK package": [
+      null,
+      "[atacms]N32_M1A2SEP_TUSK.wotmod::https://drive.google.com/uc?export=download&id=1ZYUFH_5GOFLa8xdscovknKQ9nk6W8GZu"
+    ],
     "[Atacms] BMP-1": [
       null,
       "[atacms]W13_BMP1.wotmod::https://drive.google.com/uc?export=download&id=1YdtK_NdK7nGrODyHGNLXEIGthIHOw25M"
@@ -491,90 +495,6 @@
     "[Mirukii] Tiran-5Sh (repl. all T-54/55 variants)": [
       null,
       "[Mirukii]Tiran_5Sh.wotmod::https://drive.google.com/uc?export=download&id=1ujurqPexC1FBZVKAU8sS66KcuL6HHFo4"
-    ],
-    "[UML] Mirukii's BT-42 (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_BT-42_resource.wotmod::https://drive.google.com/uc?export=download&id=1LlP6q4CUF8hSz1RrKJGf2cXxBC610y4x"
-    ],
-    "[UML] Mirukii's Leopard 1A1A1 (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_Leopard1A1A1_resource.wotmod::https://drive.google.com/uc?export=download&id=1UoKoQVwVzgVEljMvtQ__E-aMV5ALnBMn"
-    ],
-    "[UML] Mirukii's T-64A (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_T-64A_resource.wotmod::https://drive.google.com/uc?export=download&id=1cGGfcEBoDzRmbiyqxOexpcm7i7Rc1bbP"
-    ],
-    "[UML] Mirukii's T-90A (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_T-90A_resource.wotmod::https://drive.google.com/uc?export=download&id=1MYu4FFUpqHBEfYw4neFOQW8qrnWdbvx2"
-    ],
-    "[UML] Mirukii's T-54AM USSR version (use lib_remodel.xml)": [
-      null,
-      "[UML]Mirukii_T-54AM_USSR_resource.wotmod::https://drive.google.com/uc?export=download&id=11bYVHwCvEU-R4XJzGt4o35qbW1uUSXpm"
-    ],
-    "[UML] Mirukii's 121 Remodel": [
-      null,
-      "[UML]Mirukii_121_Remodel.wotmod::https://drive.google.com/uc?export=download&id=110kMBce9dzeYjm71yHn9jkNlhK-UvEUX"
-    ],
-    "[UML] Mirukii's T-62A Remodel": [
-      null,
-      "[UML]Mirukii_T-62A_Remodel.wotmod::https://drive.google.com/uc?export=download&id=1go3A-zylSy22sxrRgCFdfwwVB5GLqgY5"
-    ],
-    "[UML] Mirukii's T-34-3 Remodel": [
-      null,
-      "[UML]Mirukii_T-34-3_Remodel.wotmod::https://drive.google.com/uc?export=download&id=1gdB8Wp0-vvCIS0SX9YtZuymb5WU1qVtc"
-    ],
-    "[ASaltyFish] T-72AV (TURMS-T)": [
-      null,
-      "[ASaltyFish]T-72AV.wotmod::https://drive.google.com/uc?export=download&id=1n1T7SQ6HjRLaw3Pvp24UOARt2QXnoT9v"
-    ],
-    "[ASaltyFish] T-72B (fixed the \"T-72AV\" reference)": [
-      null,
-      "[ASaltyFish]T-72B.wotmod::https://drive.google.com/uc?export=download&id=1AtLNuepsm3t84gAnqP1w3ZY4r-1WCfH8"
-    ],
-    "[ASaltyFish] T-72B3": [
-      null,
-      "[ASaltyFish]T-72B3.wotmod::https://drive.google.com/uc?export=download&id=1hbWNE4fGI4v8eB9qq9i21m01RMMGi4jp"
-    ],
-    "[ASaltyFish] T-80B/BV with camo (w/o hangar/seasonal)": [
-      null,
-      "[ASaltyFish]T-80B_BV.wotmod::https://drive.google.com/uc?export=download&id=1slcvwZ7J8ScIscs6y0_wdgT5SsydbVKr"
-    ],
-    "[ASaltyFish] T-80BVM (w/ UVH variant)": [
-      null,
-      "[ASaltyFish]T-80BVM.wotmod::https://drive.google.com/uc?export=download&id=1fOkgH3gsiAzA7qPXP0NCW7706ujrn63l"
-    ],
-    "[ASaltyFish] Type 59D w/ camo & tactical number": [
-      null,
-      "[ASaltyFish]Type59D_numbered.wotmod::https://drive.google.com/uc?export=download&id=1yXaDuE5vk8fwDpKzVuj3U-cz2Xw0Ui_s"
-    ],
-    "[ASaltyFish] Abrams M1A1HC": [
-      null,
-      "[ASaltyFish]M1A1HC_Abrams.wotmod::https://drive.google.com/uc?export=download&id=1AbBzjd4P8uY0a6ZRw23CtA3wuZ5WMeIj"
-    ],
-    "[ASaltyFish] Abrams M1A2": [
-      null,
-      "[ASaltyFish]M1A2_Abrams.wotmod::https://drive.google.com/uc?export=download&id=1FfNqCWNKdJSjbMfKuqSIvkPMJR26doNz"
-    ],
-    "[ASaltyFish] Leopard 2A5/2A6": [
-      null,
-      "[ASaltyFish]Leopard_2A5_2A6.wotmod::https://drive.google.com/uc?export=download&id=1Pc1ya0wxMqoZpx2wx6a9Wy0t9vSUMmUN"
-    ],
-    "[ASaltyFish] Type 90": [
-      null,
-      "[ASaltyFish]Type_90.wotmod::https://drive.google.com/uc?export=download&id=1JHcPjOcHEOGlWXUUhzyj92kWFosCrBOK"
-    ],
-    "[Avalon] Centurion Mk.3, converted w/ tactical number": [
-      null,
-      "[Avalon]Centurion_Mk3.wotmod::https://drive.google.com/uc?export=download&id=1y4KByQVKJwjUi4LySWN-nh4Yto_VaAwA"
-    ],
-    "[RazerTeck] Fictional T-68B mod. 1991, incomplete (no vt)": [
-      null,
-      "[RazerTeck]T-68B.wotmod::https://drive.google.com/uc?export=download&id=1BMh0Kye1zKcgoVhVAg2pfFilpWWclf1h"
-    ],
-    "[Arasgrandpa] Sherman M4 \"Mini Mule\", incomplete (no vt)": [
-      null,
-      "[Arasgrandpa]M4_MiniMule.wotmod::https://drive.google.com/uc?export=download&id=1HDl3vnqliKt_OxLnf1Dva5LC_7eLXqeK"
     ]
   }
 }

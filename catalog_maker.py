@@ -168,3 +168,4 @@ if __name__ == "__main__":
                                 additional_datafile=os.path.join("packages", "additional.json"),
                                 private_additional=private_path,
                                 jsonfile=os.path.join("packages", "packages.json"))
+    print("Done generating package file (json/txt)")
