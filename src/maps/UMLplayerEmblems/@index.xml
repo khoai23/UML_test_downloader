@@ -2,7 +2,7 @@
 
 	<!-- index offset to move UML emblems away from sections already occupied by stock WoT decals-->	
 	<!-- by setting it to 0 it's possible to overwrite stock WoT playerEmblems -->
-	<offset> 16000 </offset> 
+	<offset> 19000 </offset> 
 
 	<emblems>
 

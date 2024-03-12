@@ -1,7 +1,7 @@
 <root>
 	<!-- index offset to move these decals away from sections already occupied by stock WoT decals-->	
 	<!-- by setting it to 0 it's possible to overwrite stock WoT playerEmblems -->
-	<offset> 16100 </offset> 
+	<offset> 19100 </offset> 
 
 	<styleSets>
 		<germany>
